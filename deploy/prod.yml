@@ -50,6 +50,6 @@ spec:
   - name: DATABASE_PORT
     value: "5432"
   - name: DATABASE_NAME
-    value: spetakkel
+    value: spammer
   - name: VAULT_MOUNTPATH
     value: postgresql/prod-fss/

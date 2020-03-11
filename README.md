@@ -1,7 +1,7 @@
-Spetakkel [![Actions Status](https://github.com/navikt/helse-spetakkel/workflows/master/badge.svg)](https://github.com/navikt/helse-spetakkel/actions)
+Spammer [![Actions Status](https://github.com/navikt/helse-spammer/workflows/master/badge.svg)](https://github.com/navikt/helse-spammer/actions)
 =============
 
-Metrikker for sykepenger.
+Lager meldinger til Slack basert på interessante events.
 
 # Henvendelser
 
