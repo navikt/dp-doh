@@ -1,13 +1,16 @@
 package no.nav.helse.spammer
 
-import no.nav.helse.rapids_rivers.*
+import no.nav.helse.rapids_rivers.JsonMessage
+import no.nav.helse.rapids_rivers.RapidsConnection
+import no.nav.helse.rapids_rivers.River
+import no.nav.helse.rapids_rivers.asLocalDateTime
 import kotlin.time.ExperimentalTime
 
 @ExperimentalTime
 internal class UtbetalingMonitor(
     rapidsConnection: RapidsConnection,
-    private val slackClient: SlackClient?
-) : River.PacketListener {
+    slackClient: SlackClient?
+) {
 
     init {
         River(rapidsConnection).apply {
@@ -17,46 +20,54 @@ internal class UtbetalingMonitor(
             validate { it.requireKey("organisasjonsnummer") }
             validate { it.requireKey("vedtaksperiodeId") }
             validate { it.requireKey("endringstidspunkt") }
-            validate { it.requireAny("gjeldendeTilstand", listOf("UTBETALT", "UTBETALING_FEILET")) }
-        }.register(this)
+            validate { it.requireValue("gjeldendeTilstand", "UTBETALING_FEILET") }
+        }.register(UtbetalingFeilet(slackClient))
+
+        River(rapidsConnection).apply {
+            validate { it.requireValue("@event_name", "vedtaksperiode_endret") }
+            validate { it.requireKey("aktørId") }
+            validate { it.requireKey("fødselsnummer") }
+            validate { it.requireKey("organisasjonsnummer") }
+            validate { it.requireKey("vedtaksperiodeId") }
+            validate { it.requireKey("endringstidspunkt") }
+            validate { it.requireValue("forrigeTilstand", "TIL_UTBETALING") }
+            validate { it.requireValue("gjeldendeTilstand", "AVSLUTTET") }
+        }.register(UtbetalingOk(slackClient))
     }
 
-    override fun onPacket(packet: JsonMessage, context: RapidsConnection.MessageContext) {
-        if (packet["gjeldendeTilstand"].asText() == "UTBETALING_FEILET") return utbetalingFeilet(packet)
-        utbetalingOk(packet)
-    }
-
-    private fun utbetalingOk(packet: JsonMessage) {
-        slackClient?.postMessage(
-            String.format(
-                "Utbetaling for vedtaksperiode <%s|%s> (<%s|tjenestekall>) gikk OK",
-                Kibana.createUrl(String.format("\"%s\"", packet["vedtaksperiodeId"].asText()), packet["endringstidspunkt"].asLocalDateTime().minusHours(1)),
-                packet["vedtaksperiodeId"].asText(),
-                Kibana.createUrl(
-                    String.format("\"%s\"", packet["vedtaksperiodeId"].asText()),
-                    packet["endringstidspunkt"].asLocalDateTime().minusHours(1),
-                    null,
-                    "tjenestekall-*"
+    private class UtbetalingFeilet(private val slackClient: SlackClient?): River.PacketListener {
+        override fun onPacket(packet: JsonMessage, context: RapidsConnection.MessageContext) {
+            slackClient?.postMessage(
+                String.format(
+                    "Utbetaling for vedtaksperiode <%s|%s> (<%s|tjenestekall>) feilet!",
+                    Kibana.createUrl(String.format("\"%s\"", packet["vedtaksperiodeId"].asText()), packet["endringstidspunkt"].asLocalDateTime().minusHours(1)),
+                    packet["vedtaksperiodeId"].asText(),
+                    Kibana.createUrl(
+                        String.format("\"%s\"", packet["vedtaksperiodeId"].asText()),
+                        packet["endringstidspunkt"].asLocalDateTime().minusHours(1),
+                        null,
+                        "tjenestekall-*"
+                    )
                 )
             )
-        )
+        }
     }
 
-    private fun utbetalingFeilet(packet: JsonMessage) {
-        slackClient?.postMessage(
-            String.format(
-                "Utbetaling for vedtaksperiode <%s|%s> (<%s|tjenestekall>) feilet!",
-                Kibana.createUrl(String.format("\"%s\"", packet["vedtaksperiodeId"].asText()), packet["endringstidspunkt"].asLocalDateTime().minusHours(1)),
-                packet["vedtaksperiodeId"].asText(),
-                Kibana.createUrl(
-                    String.format("\"%s\"", packet["vedtaksperiodeId"].asText()),
-                    packet["endringstidspunkt"].asLocalDateTime().minusHours(1),
-                    null,
-                    "tjenestekall-*"
+    private class UtbetalingOk(private val slackClient: SlackClient?): River.PacketListener {
+        override fun onPacket(packet: JsonMessage, context: RapidsConnection.MessageContext) {
+            slackClient?.postMessage(
+                String.format(
+                    "Utbetaling for vedtaksperiode <%s|%s> (<%s|tjenestekall>) gikk OK",
+                    Kibana.createUrl(String.format("\"%s\"", packet["vedtaksperiodeId"].asText()), packet["endringstidspunkt"].asLocalDateTime().minusHours(1)),
+                    packet["vedtaksperiodeId"].asText(),
+                    Kibana.createUrl(
+                        String.format("\"%s\"", packet["vedtaksperiodeId"].asText()),
+                        packet["endringstidspunkt"].asLocalDateTime().minusHours(1),
+                        null,
+                        "tjenestekall-*"
+                    )
                 )
             )
-        )
+        }
     }
-
-    override fun onError(problems: MessageProblems, context: RapidsConnection.MessageContext) {}
 }
