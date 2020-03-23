@@ -20,6 +20,16 @@ internal class UtbetalingMonitor(
             validate { it.requireKey("organisasjonsnummer") }
             validate { it.requireKey("vedtaksperiodeId") }
             validate { it.requireKey("endringstidspunkt") }
+            validate { it.requireValue("gjeldendeTilstand", "TIL_UTBETALING") }
+        }.register(TilUtbetaling(slackClient))
+
+        River(rapidsConnection).apply {
+            validate { it.requireValue("@event_name", "vedtaksperiode_endret") }
+            validate { it.requireKey("aktørId") }
+            validate { it.requireKey("fødselsnummer") }
+            validate { it.requireKey("organisasjonsnummer") }
+            validate { it.requireKey("vedtaksperiodeId") }
+            validate { it.requireKey("endringstidspunkt") }
             validate { it.requireValue("gjeldendeTilstand", "UTBETALING_FEILET") }
         }.register(UtbetalingFeilet(slackClient))
 
@@ -33,6 +43,24 @@ internal class UtbetalingMonitor(
             validate { it.requireValue("forrigeTilstand", "TIL_UTBETALING") }
             validate { it.requireValue("gjeldendeTilstand", "AVSLUTTET") }
         }.register(UtbetalingOk(slackClient))
+    }
+
+    private class TilUtbetaling(private val slackClient: SlackClient?): River.PacketListener {
+        override fun onPacket(packet: JsonMessage, context: RapidsConnection.MessageContext) {
+            slackClient?.postMessage(
+                String.format(
+                    "Utbetaling for vedtaksperiode <%s|%s> (<%s|tjenestekall>) er sendt til Spenn/Oppdrag :pray:",
+                    Kibana.createUrl(String.format("\"%s\"", packet["vedtaksperiodeId"].asText()), packet["endringstidspunkt"].asLocalDateTime().minusHours(1)),
+                    packet["vedtaksperiodeId"].asText(),
+                    Kibana.createUrl(
+                        String.format("\"%s\"", packet["vedtaksperiodeId"].asText()),
+                        packet["endringstidspunkt"].asLocalDateTime().minusHours(1),
+                        null,
+                        "tjenestekall-*"
+                    )
+                )
+            )
+        }
     }
 
     private class UtbetalingFeilet(private val slackClient: SlackClient?): River.PacketListener {
