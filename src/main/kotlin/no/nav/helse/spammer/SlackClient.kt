@@ -86,7 +86,7 @@ internal class SlackClient(private val accessToken: String, private val channel:
 
             return responseBody
         } catch (err: IOException) {
-            log.error("feil ved posting til slack: {}", err.messge, err)
+            log.error("feil ved posting til slack: {}", err.message, err)
         } finally {
             connection?.disconnect()
         }
