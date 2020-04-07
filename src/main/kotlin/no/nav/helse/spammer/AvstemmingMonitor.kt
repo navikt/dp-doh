@@ -24,7 +24,7 @@ internal class AvstemmingMonitor(
 
     override fun onPacket(packet: JsonMessage, context: RapidsConnection.MessageContext) {
         slackClient?.postMessage(String.format(
-            "Avstemming <%s|%s> for %s ble kjørt %s siden. %d oppdrag ble avstemt",
+            "Avstemming <%s|%s> for %s ble kjørt for %s siden. %d oppdrag ble avstemt",
             Kibana.createUrl(String.format("\"%s\"", packet["@id"].asText()), packet["@opprettet"].asLocalDateTime().minusHours(1)),
             packet["@id"].asText(),
             packet["dagen"].asLocalDate().format(tidsstempel),
