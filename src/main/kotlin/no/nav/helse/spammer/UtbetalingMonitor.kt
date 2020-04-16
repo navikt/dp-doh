@@ -9,7 +9,8 @@ import kotlin.time.ExperimentalTime
 @ExperimentalTime
 internal class UtbetalingMonitor(
     rapidsConnection: RapidsConnection,
-    slackClient: SlackClient?
+    slackClient: SlackClient?,
+    slackThreadDao: SlackThreadDao?
 ) {
 
     init {
@@ -21,7 +22,7 @@ internal class UtbetalingMonitor(
             validate { it.requireKey("vedtaksperiodeId") }
             validate { it.requireKey("endringstidspunkt") }
             validate { it.requireValue("gjeldendeTilstand", "TIL_UTBETALING") }
-        }.register(TilUtbetaling(slackClient))
+        }.register(TilUtbetaling(slackClient, slackThreadDao))
 
         River(rapidsConnection).apply {
             validate { it.requireValue("@event_name", "vedtaksperiode_endret") }
@@ -31,7 +32,7 @@ internal class UtbetalingMonitor(
             validate { it.requireKey("vedtaksperiodeId") }
             validate { it.requireKey("endringstidspunkt") }
             validate { it.requireValue("gjeldendeTilstand", "UTBETALING_FEILET") }
-        }.register(UtbetalingFeilet(slackClient))
+        }.register(UtbetalingFeilet(slackClient, slackThreadDao))
 
         River(rapidsConnection).apply {
             validate { it.requireValue("@event_name", "vedtaksperiode_endret") }
@@ -42,12 +43,15 @@ internal class UtbetalingMonitor(
             validate { it.requireKey("endringstidspunkt") }
             validate { it.requireValue("forrigeTilstand", "TIL_UTBETALING") }
             validate { it.requireValue("gjeldendeTilstand", "AVSLUTTET") }
-        }.register(UtbetalingOk(slackClient))
+        }.register(UtbetalingOk(slackClient, slackThreadDao))
     }
 
-    private class TilUtbetaling(private val slackClient: SlackClient?): River.PacketListener {
+    private class TilUtbetaling(private val slackClient: SlackClient?, private val slackThreadDao: SlackThreadDao?): River.PacketListener {
         override fun onPacket(packet: JsonMessage, context: RapidsConnection.MessageContext) {
+            if (slackThreadDao == null) return
             slackClient?.postMessage(
+                slackThreadDao,
+                packet["vedtaksperiodeId"].asText(),
                 String.format(
                     "Utbetaling for vedtaksperiode <%s|%s> (<%s|tjenestekall>) er sendt til Spenn/Oppdrag :pray:",
                     Kibana.createUrl(String.format("\"%s\"", packet["vedtaksperiodeId"].asText()), packet["endringstidspunkt"].asLocalDateTime().minusHours(1)),
@@ -63,9 +67,12 @@ internal class UtbetalingMonitor(
         }
     }
 
-    private class UtbetalingFeilet(private val slackClient: SlackClient?): River.PacketListener {
+    private class UtbetalingFeilet(private val slackClient: SlackClient?, private val slackThreadDao: SlackThreadDao?): River.PacketListener {
         override fun onPacket(packet: JsonMessage, context: RapidsConnection.MessageContext) {
+            if (slackThreadDao == null) return
             slackClient?.postMessage(
+                slackThreadDao,
+                packet["vedtaksperiodeId"].asText(),
                 String.format(
                     "Utbetaling for vedtaksperiode <%s|%s> (<%s|tjenestekall>) feilet!",
                     Kibana.createUrl(String.format("\"%s\"", packet["vedtaksperiodeId"].asText()), packet["endringstidspunkt"].asLocalDateTime().minusHours(1)),
@@ -81,9 +88,12 @@ internal class UtbetalingMonitor(
         }
     }
 
-    private class UtbetalingOk(private val slackClient: SlackClient?): River.PacketListener {
+    private class UtbetalingOk(private val slackClient: SlackClient?, private val slackThreadDao: SlackThreadDao?): River.PacketListener {
         override fun onPacket(packet: JsonMessage, context: RapidsConnection.MessageContext) {
+            if (slackThreadDao == null) return
             slackClient?.postMessage(
+                slackThreadDao,
+                packet["vedtaksperiodeId"].asText(),
                 String.format(
                     "Utbetaling for vedtaksperiode <%s|%s> (<%s|tjenestekall>) gikk OK",
                     Kibana.createUrl(String.format("\"%s\"", packet["vedtaksperiodeId"].asText()), packet["endringstidspunkt"].asLocalDateTime().minusHours(1)),

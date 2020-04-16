@@ -21,7 +21,7 @@ fun main() {
     RapidApplication.create(env).apply {
         PåminnelseMonitor(this, slackClient, slackThreadDao)
         TidITilstandMonitor(this, slackClient, slackThreadDao)
-        UtbetalingMonitor(this, slackClient)
+        UtbetalingMonitor(this, slackClient, slackThreadDao)
         AvstemmingMonitor(this, slackClient)
     }.apply {
         register(object : RapidsConnection.StatusListener {
