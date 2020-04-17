@@ -23,6 +23,7 @@ fun main() {
         TidITilstandMonitor(this, slackClient, slackThreadDao)
         UtbetalingMonitor(this, slackClient, slackThreadDao)
         AvstemmingMonitor(this, slackClient)
+        AppStateMonitor(this, slackClient)
     }.apply {
         register(object : RapidsConnection.StatusListener {
             override fun onStartup(rapidsConnection: RapidsConnection) {
