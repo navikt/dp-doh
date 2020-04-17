@@ -22,24 +22,28 @@ internal class AppStateMonitor(
         }.register(this)
     }
 
+    private var lastReportTime = LocalDateTime.MIN
+
     override fun onPacket(packet: JsonMessage, context: RapidsConnection.MessageContext) {
-        packet["states"]
+        if (lastReportTime > LocalDateTime.now().minusMinutes(2)) return // don't create alerts too eagerly
+        val appsDown = packet["states"]
             .fields()
             .asSequence()
             .filter { it.value.isIntegralNumber && it.value.asInt() == 0 }
             .map { it.key }
             .toList()
-            .takeIf(List<*>::isNotEmpty)
-            ?.also { apps ->
-                val appString = apps.last().let { siste ->
-                    if (apps.size == 1) siste
-                    else apps.subList(0, apps.size - 1).joinToString() + " og $siste"
-                }
-                slackClient?.postMessage(String.format(
-                    "%s har ikke svart på ping sendt %s siden.",
-                    appString,
-                    humanReadableTime(ChronoUnit.SECONDS.between(packet["since"].asLocalDateTime(), LocalDateTime.now()))
-                ))
-            }
+
+        if (appsDown.isEmpty()) return
+
+        val appString = appsDown.last().let { siste ->
+            if (appsDown.size == 1) siste
+            else appsDown.subList(0, appsDown.size - 1).joinToString() + " og $siste"
+        }
+        slackClient?.postMessage(String.format(
+            "%s har ikke svart på ping sendt %s siden.",
+            appString,
+            humanReadableTime(ChronoUnit.SECONDS.between(packet["since"].asLocalDateTime(), LocalDateTime.now()))
+        ))
+        lastReportTime = LocalDateTime.now()
     }
 }
