@@ -1,10 +1,8 @@
 package no.nav.helse.spammer
 
 import com.fasterxml.jackson.databind.JsonNode
-import no.nav.helse.rapids_rivers.JsonMessage
-import no.nav.helse.rapids_rivers.RapidsConnection
-import no.nav.helse.rapids_rivers.River
-import no.nav.helse.rapids_rivers.asLocalDateTime
+import no.nav.helse.rapids_rivers.*
+import org.slf4j.LoggerFactory
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 
@@ -13,9 +11,14 @@ internal class AppStateMonitor(
     private val slackClient: SlackClient?
 ) : River.PacketListener {
 
+    private companion object {
+        private val log = LoggerFactory.getLogger(AppStateMonitor::class.java)
+        private val sikkerLogg = LoggerFactory.getLogger("tjenestekall")
+    }
+
     init {
         River(rapidsConnection).apply {
-            validate { it.requireValue("@event_name", "app_status") }
+            validate { it.demandValue("@event_name", "app_status") }
             validate { it.requireArray("states") {
                 requireKey("app", "state")
                 require("last_active_time", JsonNode::asLocalDateTime)
@@ -26,6 +29,10 @@ internal class AppStateMonitor(
     }
 
     private var lastReportTime = LocalDateTime.MIN
+    override fun onError(problems: MessageProblems, context: RapidsConnection.MessageContext) {
+        log.error(problems.toString())
+        sikkerLogg.error(problems.toExtendedReport())
+    }
 
     override fun onPacket(packet: JsonMessage, context: RapidsConnection.MessageContext) {
         if (lastReportTime > LocalDateTime.now().minusMinutes(2)) return // don't create alerts too eagerly
@@ -40,11 +47,13 @@ internal class AppStateMonitor(
             if (appsDown.size == 1) siste.printApp()
             else appsDown.subList(0, appsDown.size - 1).joinToString { it.printApp() } + " og ${siste.printApp()}"
         }
-        slackClient?.postMessage(String.format(
+        val logtext = String.format(
             "%s er antatt nede fordi de ikke har svart på ping innen %s siden.",
             appString,
-            humanReadableTime(ChronoUnit.SECONDS.between(packet["since"].asLocalDateTime(), LocalDateTime.now()))
-        ))
+            humanReadableTime(ChronoUnit.SECONDS.between(packet["threshold"].asLocalDateTime(), LocalDateTime.now()))
+        )
+        log.warn(logtext)
+        slackClient?.postMessage(logtext)
         lastReportTime = LocalDateTime.now()
     }
 
