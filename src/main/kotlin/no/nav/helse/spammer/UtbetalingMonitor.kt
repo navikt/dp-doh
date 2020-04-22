@@ -20,7 +20,7 @@ internal class UtbetalingMonitor(
             validate { it.requireKey("fødselsnummer") }
             validate { it.requireKey("organisasjonsnummer") }
             validate { it.requireKey("vedtaksperiodeId") }
-            validate { it.requireKey("endringstidspunkt") }
+            validate { it.requireKey("@opprettet") }
             validate { it.requireValue("gjeldendeTilstand", "TIL_UTBETALING") }
         }.register(TilUtbetaling(slackClient, slackThreadDao))
 
@@ -30,7 +30,7 @@ internal class UtbetalingMonitor(
             validate { it.requireKey("fødselsnummer") }
             validate { it.requireKey("organisasjonsnummer") }
             validate { it.requireKey("vedtaksperiodeId") }
-            validate { it.requireKey("endringstidspunkt") }
+            validate { it.requireKey("@opprettet") }
             validate { it.requireValue("gjeldendeTilstand", "UTBETALING_FEILET") }
         }.register(UtbetalingFeilet(slackClient, slackThreadDao))
 
@@ -40,7 +40,7 @@ internal class UtbetalingMonitor(
             validate { it.requireKey("fødselsnummer") }
             validate { it.requireKey("organisasjonsnummer") }
             validate { it.requireKey("vedtaksperiodeId") }
-            validate { it.requireKey("endringstidspunkt") }
+            validate { it.requireKey("@opprettet") }
             validate { it.requireValue("forrigeTilstand", "TIL_UTBETALING") }
             validate { it.requireValue("gjeldendeTilstand", "AVSLUTTET") }
         }.register(UtbetalingOk(slackClient, slackThreadDao))
@@ -54,11 +54,11 @@ internal class UtbetalingMonitor(
                 packet["vedtaksperiodeId"].asText(),
                 String.format(
                     "Utbetaling for vedtaksperiode <%s|%s> (<%s|tjenestekall>) er sendt til Spenn/Oppdrag :pray:",
-                    Kibana.createUrl(String.format("\"%s\"", packet["vedtaksperiodeId"].asText()), packet["endringstidspunkt"].asLocalDateTime().minusHours(1)),
+                    Kibana.createUrl(String.format("\"%s\"", packet["vedtaksperiodeId"].asText()), packet["@opprettet"].asLocalDateTime().minusHours(1)),
                     packet["vedtaksperiodeId"].asText(),
                     Kibana.createUrl(
                         String.format("\"%s\"", packet["vedtaksperiodeId"].asText()),
-                        packet["endringstidspunkt"].asLocalDateTime().minusHours(1),
+                        packet["@opprettet"].asLocalDateTime().minusHours(1),
                         null,
                         "tjenestekall-*"
                     )
@@ -75,11 +75,11 @@ internal class UtbetalingMonitor(
                 packet["vedtaksperiodeId"].asText(),
                 String.format(
                     "Utbetaling for vedtaksperiode <%s|%s> (<%s|tjenestekall>) feilet!",
-                    Kibana.createUrl(String.format("\"%s\"", packet["vedtaksperiodeId"].asText()), packet["endringstidspunkt"].asLocalDateTime().minusHours(1)),
+                    Kibana.createUrl(String.format("\"%s\"", packet["vedtaksperiodeId"].asText()), packet["@opprettet"].asLocalDateTime().minusHours(1)),
                     packet["vedtaksperiodeId"].asText(),
                     Kibana.createUrl(
                         String.format("\"%s\"", packet["vedtaksperiodeId"].asText()),
-                        packet["endringstidspunkt"].asLocalDateTime().minusHours(1),
+                        packet["@opprettet"].asLocalDateTime().minusHours(1),
                         null,
                         "tjenestekall-*"
                     )
@@ -96,11 +96,11 @@ internal class UtbetalingMonitor(
                 packet["vedtaksperiodeId"].asText(),
                 String.format(
                     "Utbetaling for vedtaksperiode <%s|%s> (<%s|tjenestekall>) gikk OK",
-                    Kibana.createUrl(String.format("\"%s\"", packet["vedtaksperiodeId"].asText()), packet["endringstidspunkt"].asLocalDateTime().minusHours(1)),
+                    Kibana.createUrl(String.format("\"%s\"", packet["vedtaksperiodeId"].asText()), packet["@opprettet"].asLocalDateTime().minusHours(1)),
                     packet["vedtaksperiodeId"].asText(),
                     Kibana.createUrl(
                         String.format("\"%s\"", packet["vedtaksperiodeId"].asText()),
-                        packet["endringstidspunkt"].asLocalDateTime().minusHours(1),
+                        packet["@opprettet"].asLocalDateTime().minusHours(1),
                         null,
                         "tjenestekall-*"
                     )
