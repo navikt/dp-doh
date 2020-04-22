@@ -1,15 +1,11 @@
 package no.nav.helse.spammer
 
-import io.prometheus.client.Histogram
 import net.logstash.logback.argument.StructuredArguments.keyValue
 import no.nav.helse.rapids_rivers.*
 import org.slf4j.LoggerFactory
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME
 import kotlin.time.ExperimentalTime
-import kotlin.time.days
-import kotlin.time.hours
-import kotlin.time.minutes
 
 @ExperimentalTime
 internal class TidITilstandMonitor(
@@ -20,25 +16,12 @@ internal class TidITilstandMonitor(
 
     private companion object {
         private val log = LoggerFactory.getLogger(TidITilstandMonitor::class.java)
-        private val histogram = Histogram.build(
-            "vedtaksperiode_tilstand_latency_seconds",
-            "Antall sekunder en vedtaksperiode er i en tilstand"
-        )
-            .labelNames("tilstand")
-            .buckets(
-                1.minutes.inSeconds,
-                1.hours.inSeconds,
-                12.hours.inSeconds,
-                24.hours.inSeconds,
-                7.days.inSeconds,
-                30.days.inSeconds
-            )
-            .register()
+        private val sikkerLog = LoggerFactory.getLogger("tjenestekall")
     }
 
     init {
         River(rapidsConnection).apply {
-            validate { it.requireValue("@event_name", "vedtaksperiode_tid_i_tilstand") }
+            validate { it.demandValue("@event_name", "vedtaksperiode_tid_i_tilstand") }
             validate { it.requireKey("aktørId") }
             validate { it.requireKey("fødselsnummer") }
             validate { it.requireKey("organisasjonsnummer") }
@@ -90,7 +73,9 @@ internal class TidITilstandMonitor(
         )
     }
 
-    override fun onError(problems: MessageProblems, context: RapidsConnection.MessageContext) {}
+    override fun onError(problems: MessageProblems, context: RapidsConnection.MessageContext) {
+        sikkerLog.error("forstod ikke vedtaksperiode_tid_i_tilstand:\n${problems.toExtendedReport()}")
+    }
 
     private class TidITilstand(private val packet: JsonMessage) {
         val aktørId: String get() = packet["aktørId"].asText()

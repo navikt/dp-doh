@@ -2,6 +2,7 @@ package no.nav.helse.spammer
 
 import com.fasterxml.jackson.databind.JsonNode
 import no.nav.helse.rapids_rivers.*
+import org.slf4j.LoggerFactory
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
@@ -11,11 +12,15 @@ internal class AvstemmingMonitor(
     private val slackClient: SlackClient?
 ) : River.PacketListener {
 
+    private companion object {
+        private val sikkerLog = LoggerFactory.getLogger("tjenestekall")
+    }
+
     private val tidsstempel = DateTimeFormatter.ofPattern("eeee d. MMMM Y")
 
     init {
         River(rapidsConnection).apply {
-            validate { it.requireValue("@event_name", "avstemming") }
+            validate { it.demandValue("@event_name", "avstemming") }
             validate { it.requireKey("@id", "antall_oppdrag") }
             validate { it.requireArray("fagområder") {
                 requireKey("nøkkel_fom", "nøkkel_tom", "antall_oppdrag", "antall_avstemmingsmeldinger")
@@ -23,6 +28,10 @@ internal class AvstemmingMonitor(
             validate { it.require("@opprettet", JsonNode::asLocalDateTime) }
             validate { it.require("dagen", JsonNode::asLocalDate) }
         }.register(this)
+    }
+
+    override fun onError(problems: MessageProblems, context: RapidsConnection.MessageContext) {
+        sikkerLog.error("forstod ikke avstemming:\n${problems.toExtendedReport()}")
     }
 
     override fun onPacket(packet: JsonMessage, context: RapidsConnection.MessageContext) {

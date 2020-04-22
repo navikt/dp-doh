@@ -13,11 +13,12 @@ internal class PåminnelseMonitor(
 
     private companion object {
         private val log = LoggerFactory.getLogger(PåminnelseMonitor::class.java)
+        private val sikkerLog = LoggerFactory.getLogger("tjenestekall")
     }
 
     init {
         River(rapidsConnection).apply {
-            validate { it.requireValue("@event_name", "påminnelse") }
+            validate { it.demandValue("@event_name", "påminnelse") }
             validate { it.requireKey("vedtaksperiodeId") }
             validate { it.requireKey("antallGangerPåminnet") }
             validate { it.requireKey("tilstandsendringstidspunkt") }
@@ -25,13 +26,15 @@ internal class PåminnelseMonitor(
         }.register(this)
     }
 
+    override fun onError(problems: MessageProblems, context: RapidsConnection.MessageContext) {
+        sikkerLog.error("forstod ikke påminnelse:\n${problems.toExtendedReport()}")
+    }
+
     override fun onPacket(packet: JsonMessage, context: RapidsConnection.MessageContext) {
         val påminnelse = Påminnelse(packet)
         if (2 > påminnelse.antallGangerPåminnet) return
         alert(påminnelse)
     }
-
-    override fun onError(problems: MessageProblems, context: RapidsConnection.MessageContext) {}
 
     private fun alert(påminnelse: Påminnelse) {
         log.error(
