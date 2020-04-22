@@ -81,8 +81,8 @@ internal class SlackClient(private val accessToken: String, private val channel:
             }
 
             val responseBody = connection.inputStream.readText()
-            log.info("response from slack: code=$responseCode")
-            tjenestekall.info("response from slack: code=$responseCode body=$responseBody")
+            log.debug("response from slack: code=$responseCode")
+            tjenestekall.debug("response from slack: code=$responseCode body=$responseBody")
 
             return responseBody
         } catch (err: IOException) {
