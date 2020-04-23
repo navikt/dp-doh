@@ -21,17 +21,12 @@ internal class TidITilstandMonitor(
 
     init {
         River(rapidsConnection).apply {
-            validate { it.demandValue("@event_name", "vedtaksperiode_tid_i_tilstand") }
-            validate { it.requireKey("aktørId") }
-            validate { it.requireKey("fødselsnummer") }
-            validate { it.requireKey("organisasjonsnummer") }
-            validate { it.requireKey("vedtaksperiodeId") }
-            validate { it.requireKey("tilstand") }
-            validate { it.requireKey("nyTilstand") }
-            validate { it.requireKey("starttid") }
-            validate { it.requireKey("sluttid") }
-            validate { it.requireKey("timeout") }
-            validate { it.requireKey("tid_i_tilstand") }
+            validate {
+                it.demandValue("@event_name", "vedtaksperiode_tid_i_tilstand")
+                it.requireKey("aktørId", "fødselsnummer", "organisasjonsnummer",
+                    "vedtaksperiodeId", "tilstand", "nyTilstand", "starttid", "sluttid",
+                    "timeout", "tid_i_tilstand", "endret_tilstand_på_grunn_av.event_name")
+            }
         }.register(this)
     }
 
@@ -41,12 +36,13 @@ internal class TidITilstandMonitor(
         if (tidITilstand.forventetTidITilstand == 0L || tidITilstand.tidITilstand < tidITilstand.forventetTidITilstand) return
 
         log.warn(
-            "{} kom seg omsider videre fra {} til {} etter {} fra {}. Forventet tid i tilstand var {}",
+            "{} kom seg omsider videre fra {} til {} etter {} fra {} på grunn av mottatt {}. Forventet tid i tilstand var {}",
             keyValue("vedtaksperiodeId", tidITilstand.vedtaksperiodeId),
             keyValue("tilstand", tidITilstand.tilstand),
             keyValue("nyTilstand", tidITilstand.nyTilstand),
             humanReadableTime(tidITilstand.tidITilstand),
             tidITilstand.starttid.format(ISO_LOCAL_DATE_TIME),
+            packet["endret_tilstand_på_grunn_av.event_name"].asText(),
             humanReadableTime(tidITilstand.forventetTidITilstand)
         )
 
@@ -55,7 +51,7 @@ internal class TidITilstandMonitor(
         if (slackThreadDao == null) return
         slackClient.postMessage(
             slackThreadDao, tidITilstand.vedtaksperiodeId, String.format(
-                "Vedtaksperiode <%s|%s> (<%s|tjenestekall>) kom seg videre fra %s til %s etter %s siden %s. Forventet tid i tilstand var %s",
+                "Vedtaksperiode <%s|%s> (<%s|tjenestekall>) kom seg videre fra %s til %s etter %s siden %s (på grunn av mottatt %s). Forventet tid i tilstand var %s",
                 Kibana.createUrl(String.format("\"%s\"", tidITilstand.vedtaksperiodeId), tidITilstand.starttid),
                 tidITilstand.vedtaksperiodeId,
                 Kibana.createUrl(
@@ -68,6 +64,7 @@ internal class TidITilstandMonitor(
                 tidITilstand.nyTilstand,
                 humanReadableTime(tidITilstand.tidITilstand),
                 tidITilstand.starttid.format(ISO_LOCAL_DATE_TIME),
+                packet["endret_tilstand_på_grunn_av.event_name"].asText(),
                 humanReadableTime(tidITilstand.forventetTidITilstand)
             )
         )
