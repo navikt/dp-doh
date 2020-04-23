@@ -35,7 +35,7 @@ internal class TidITilstandMonitor(
 
         if (tidITilstand.forventetTidITilstand == 0L || tidITilstand.tidITilstand < tidITilstand.forventetTidITilstand) return
 
-        log.warn(
+        log.info(
             "{} kom seg omsider videre fra {} til {} etter {} fra {} på grunn av mottatt {}. Forventet tid i tilstand var {}",
             keyValue("vedtaksperiodeId", tidITilstand.vedtaksperiodeId),
             keyValue("tilstand", tidITilstand.tilstand),
