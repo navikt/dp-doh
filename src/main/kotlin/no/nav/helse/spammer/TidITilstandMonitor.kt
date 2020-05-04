@@ -25,7 +25,7 @@ internal class TidITilstandMonitor(
                 it.demandValue("@event_name", "vedtaksperiode_tid_i_tilstand")
                 it.requireKey("aktørId", "fødselsnummer", "organisasjonsnummer",
                     "vedtaksperiodeId", "tilstand", "nyTilstand", "starttid", "sluttid",
-                    "timeout", "tid_i_tilstand", "endret_tilstand_på_grunn_av.event_name")
+                    "timeout_første_påminnelse", "tid_i_tilstand", "endret_tilstand_på_grunn_av.event_name")
             }
         }.register(this)
     }
@@ -87,6 +87,6 @@ internal class TidITilstandMonitor(
         val starttid: LocalDateTime get() = packet["starttid"].asLocalDateTime()
         val sluttid: LocalDateTime get() = packet["sluttid"].asLocalDateTime()
         val tidITilstand: Long get() = packet["tid_i_tilstand"].asLong()
-        val forventetTidITilstand: Long get() = packet["timeout"].asLong()
+        val forventetTidITilstand: Long get() = packet["timeout_første_påminnelse"].asLong() + 3600 // plus 1 hour to allow handling of the initial reminder
     }
 }
