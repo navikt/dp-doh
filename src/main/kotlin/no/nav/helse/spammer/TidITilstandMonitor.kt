@@ -87,6 +87,9 @@ internal class TidITilstandMonitor(
         val starttid: LocalDateTime get() = packet["starttid"].asLocalDateTime()
         val sluttid: LocalDateTime get() = packet["sluttid"].asLocalDateTime()
         val tidITilstand: Long get() = packet["tid_i_tilstand"].asLong()
-        val forventetTidITilstand: Long get() = packet["timeout_første_påminnelse"].asLong() + 3600 // plus 1 hour to allow handling of the initial reminder
+        val forventetTidITilstand: Long get() = packet["timeout_første_påminnelse"].asLong()
+            .takeIf { it > 0 }
+            ?.let { it + 3600 /* plus 1 hour to allow handling of the initial reminder */ }
+            ?: 0
     }
 }
