@@ -58,12 +58,12 @@ internal class TidITilstandMonitor(
             slackThreadDao, tidITilstand.vedtaksperiodeId, String.format(
                 "Vedtaksperiode <%s|%s> (<%s|tjenestekall>) kom seg videre fra %s til %s etter %s siden %s (på grunn av mottatt %s). Forventet tid i tilstand var %s",
                 Kibana.createUrl(
-                    String.format("\"%s\" AND NOT level:Debug AND NOT level:Info", tidITilstand.vedtaksperiodeId),
+                    String.format("\"%s\"", tidITilstand.vedtaksperiodeId),
                     tidITilstand.starttid
                 ),
                 tidITilstand.vedtaksperiodeId,
                 Kibana.createUrl(
-                    String.format("\"%s\" AND NOT level:Debug AND NOT level:Info", tidITilstand.vedtaksperiodeId),
+                    String.format("\"%s\"", tidITilstand.vedtaksperiodeId),
                     tidITilstand.starttid,
                     null,
                     "tjenestekall-*"
