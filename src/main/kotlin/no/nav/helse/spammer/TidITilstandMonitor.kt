@@ -1,10 +1,12 @@
 package no.nav.helse.spammer
 
+import com.fasterxml.jackson.databind.JsonNode
 import net.logstash.logback.argument.StructuredArguments.keyValue
 import no.nav.helse.rapids_rivers.*
 import org.slf4j.LoggerFactory
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME
+import java.time.temporal.ChronoUnit
 import kotlin.time.ExperimentalTime
 
 @ExperimentalTime
@@ -24,8 +26,11 @@ internal class TidITilstandMonitor(
             validate {
                 it.demandValue("@event_name", "vedtaksperiode_tid_i_tilstand")
                 it.requireKey("aktørId", "fødselsnummer", "organisasjonsnummer",
-                    "vedtaksperiodeId", "tilstand", "nyTilstand", "starttid", "sluttid",
+                    "vedtaksperiodeId", "tilstand", "nyTilstand",
                     "timeout_første_påminnelse", "tid_i_tilstand", "endret_tilstand_på_grunn_av.event_name")
+                it.require("starttid", JsonNode::asLocalDateTime)
+                it.require("sluttid", JsonNode::asLocalDateTime)
+                it.require("makstid", JsonNode::asLocalDateTime)
             }
         }.register(this)
     }
@@ -33,7 +38,7 @@ internal class TidITilstandMonitor(
     override fun onPacket(packet: JsonMessage, context: RapidsConnection.MessageContext) {
         val tidITilstand = TidITilstand(packet)
 
-        if (tidITilstand.forventetTidITilstand == 0L || tidITilstand.tidITilstand < tidITilstand.forventetTidITilstand) return
+        if (tidITilstand.tidITilstand < tidITilstand.forventetTidITilstand) return
 
         log.info(
             "{} kom seg omsider videre fra {} til {} etter {} fra {} på grunn av mottatt {}. Forventet tid i tilstand var {}",
@@ -87,9 +92,9 @@ internal class TidITilstandMonitor(
         val starttid: LocalDateTime get() = packet["starttid"].asLocalDateTime()
         val sluttid: LocalDateTime get() = packet["sluttid"].asLocalDateTime()
         val tidITilstand: Long get() = packet["tid_i_tilstand"].asLong()
-        val forventetTidITilstand: Long get() = packet["timeout_første_påminnelse"].asLong()
-            .takeIf { it > 0 }
-            ?.let { it + 3600 /* plus 1 hour to allow handling of the initial reminder */ }
-            ?: 0
+        val forventetTidITilstand: Long get() = packet["makstid"].asLocalDateTime()
+            .takeUnless { it == LocalDateTime.MAX }
+            ?.let { ChronoUnit.SECONDS.between(starttid, it) }
+            ?: Long.MAX_VALUE
     }
 }
