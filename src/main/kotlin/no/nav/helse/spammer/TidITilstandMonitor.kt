@@ -39,7 +39,6 @@ internal class TidITilstandMonitor(
     override fun onPacket(packet: JsonMessage, context: RapidsConnection.MessageContext) {
         val tidITilstand = TidITilstand(packet)
 
-        if (tidITilstand.tidITilstand < tidITilstand.forventetTidITilstand) return
 
         val tidITilstandTekst = humanReadableTime(tidITilstand.forventetTidITilstand.absoluteValue)
         val makstidtekst = if (tidITilstand.forventetTidITilstand < 0) "Makstid passert med $tidITilstandTekst" else "Forventet tid i tilstand var maks $tidITilstandTekst"
@@ -56,9 +55,10 @@ internal class TidITilstandMonitor(
             makstidtekst
         )
 
+        if (tidITilstand.tidITilstand < tidITilstand.forventetTidITilstand) return
         if (tidITilstand.nyTilstand == "TIL_INFOTRYGD") return
-
         if (slackThreadDao == null) return
+
         slackClient.postMessage(
             slackThreadDao, tidITilstand.vedtaksperiodeId, String.format(
                 "Vedtaksperiode <%s|%s> (<%s|tjenestekall>) kom seg videre fra %s til %s etter %s siden %s (på grunn av mottatt %s). Forventet makstid i tilstand var %s. %s",
