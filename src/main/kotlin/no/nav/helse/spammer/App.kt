@@ -19,7 +19,6 @@ fun main() {
     val slackThreadDao = dataSourceBuilder?.let { SlackThreadDao(dataSourceBuilder.getDataSource()) }
 
     RapidApplication.create(env).apply {
-        PåminnelseMonitor(this, slackClient, slackThreadDao)
         TidITilstandMonitor(this, slackClient, slackThreadDao)
         UtbetalingMonitor(this, slackClient, slackThreadDao)
         AvstemmingMonitor(this, slackClient)
