@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME
 import java.time.temporal.ChronoUnit
+import kotlin.math.absoluteValue
 import kotlin.time.ExperimentalTime
 
 @ExperimentalTime
@@ -40,15 +41,19 @@ internal class TidITilstandMonitor(
 
         if (tidITilstand.tidITilstand < tidITilstand.forventetTidITilstand) return
 
+        val tidITilstandTekst = humanReadableTime(tidITilstand.forventetTidITilstand.absoluteValue)
+        val makstidtekst = if (tidITilstand.forventetTidITilstand < 0) "Makstid passert med $tidITilstandTekst" else "Forventet tid i tilstand var maks $tidITilstandTekst"
+
         log.info(
-            "{} kom seg omsider videre fra {} til {} etter {} fra {} på grunn av mottatt {}. Forventet tid i tilstand var {}",
+            "{} kom seg omsider videre fra {} til {} etter {} fra {} på grunn av mottatt {}. Forventet makstid i tilstand var {}. {}",
             keyValue("vedtaksperiodeId", tidITilstand.vedtaksperiodeId),
             keyValue("tilstand", tidITilstand.tilstand),
             keyValue("nyTilstand", tidITilstand.nyTilstand),
             humanReadableTime(tidITilstand.tidITilstand),
             tidITilstand.starttid.format(ISO_LOCAL_DATE_TIME),
             packet["endret_tilstand_på_grunn_av.event_name"].asText(),
-            humanReadableTime(tidITilstand.forventetTidITilstand)
+            tidITilstand.makstid.format(ISO_LOCAL_DATE_TIME),
+            makstidtekst
         )
 
         if (tidITilstand.tilstand == "AVVENTER_GODKJENNING" && tidITilstand.nyTilstand == "TIL_INFOTRYGD") return
@@ -56,7 +61,7 @@ internal class TidITilstandMonitor(
         if (slackThreadDao == null) return
         slackClient.postMessage(
             slackThreadDao, tidITilstand.vedtaksperiodeId, String.format(
-                "Vedtaksperiode <%s|%s> (<%s|tjenestekall>) kom seg videre fra %s til %s etter %s siden %s (på grunn av mottatt %s). Forventet tid i tilstand var %s",
+                "Vedtaksperiode <%s|%s> (<%s|tjenestekall>) kom seg videre fra %s til %s etter %s siden %s (på grunn av mottatt %s). Forventet makstid i tilstand var %s. %s",
                 Kibana.createUrl(
                     String.format("\"%s\"", tidITilstand.vedtaksperiodeId),
                     tidITilstand.starttid
@@ -73,7 +78,8 @@ internal class TidITilstandMonitor(
                 humanReadableTime(tidITilstand.tidITilstand),
                 tidITilstand.starttid.format(ISO_LOCAL_DATE_TIME),
                 packet["endret_tilstand_på_grunn_av.event_name"].asText(),
-                humanReadableTime(tidITilstand.forventetTidITilstand)
+                tidITilstand.makstid.format(ISO_LOCAL_DATE_TIME),
+                makstidtekst
             )
         )
     }
@@ -92,7 +98,8 @@ internal class TidITilstandMonitor(
         val starttid: LocalDateTime get() = packet["starttid"].asLocalDateTime()
         val sluttid: LocalDateTime get() = packet["sluttid"].asLocalDateTime()
         val tidITilstand: Long get() = packet["tid_i_tilstand"].asLong()
-        val forventetTidITilstand: Long get() = packet["makstid"].asLocalDateTime()
+        val makstid: LocalDateTime get() = packet["makstid"].asLocalDateTime()
+        val forventetTidITilstand: Long get() = makstid
             .takeUnless { it == LocalDateTime.MAX }
             ?.let { ChronoUnit.SECONDS.between(starttid, it) }
             ?: Long.MAX_VALUE
