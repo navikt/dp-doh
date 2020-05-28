@@ -1,7 +1,6 @@
 name: Build and deploy
 
-# TODO: Uncomment this
-#on: [push]
+on: [push]
 
 env:
   IMAGE: docker.pkg.github.com/${{ github.repository }}/dp-doh:${{ github.sha }}
