@@ -26,8 +26,8 @@ repositories {
 }
 
 application {
-    applicationName = "dp-SERVICENAME"
-    mainClassName = "no.nav.dagpenger.SERVICENAME"
+    applicationName = "dp-doh"
+    mainClassName = "no.nav.dagpenger.doh.AppKt"
 }
 
 java {
@@ -37,6 +37,11 @@ java {
 tasks.withType<KotlinCompile>().all {
     kotlinOptions.jvmTarget = JavaVersion.VERSION_1_8.toString()
 }
+
+val flywayVersion = "6.2.3"
+val hikariVersion = "3.4.2"
+val vaultJdbcVersion = "1.3.1"
+val kotliqueryVersion = "1.3.1"
 
 dependencies {
     implementation(kotlin("stdlib"))
@@ -50,6 +55,14 @@ dependencies {
     testImplementation(Junit5.api)
     testImplementation(KoTest.runner)
     testRuntimeOnly(Junit5.engine)
+
+    implementation("org.flywaydb:flyway-core:$flywayVersion")
+    implementation("com.zaxxer:HikariCP:$hikariVersion")
+    implementation("no.nav:vault-jdbc:$vaultJdbcVersion")
+    implementation("com.github.seratch:kotliquery:$kotliqueryVersion")
+
+    implementation("com.bazaarvoice.jackson:rison:2.9.10.2")
+    testImplementation("com.opentable.components:otj-pg-embedded:0.13.3")
 }
 
 spotless {
