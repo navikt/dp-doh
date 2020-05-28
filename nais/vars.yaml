@@ -1,0 +1,4 @@
+app: dp-oppslag-arbeidsforhold
+namespace: default
+team: teamdagpenger
+service_user: srvdp-arbforhold

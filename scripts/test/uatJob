@@ -1,0 +1,79 @@
+#######################################
+#!/usr/bin/env bash
+#
+# Script for setting a job running uat tests
+#
+# Requirements:
+# - kubectl in path.
+# 
+# Arguments: -f jobname -p path to kuztomise file
+#######################################
+
+set -o errexit
+set -o pipefail
+[[ "${DEBUG}" == 'true' ]] && set -o xtrace
+
+namespace=dagpenger-test
+job_name=dagpenger-funksjonelle-tester
+overlay_path=tests/uat
+
+parse_command_line() {
+  while [ "$1" != "" ]; do
+    case $1 in
+        -j | --jobname )        shift 
+                                job_name=$1
+                                ;;
+        -p | --overlayPath)     shift 
+                                overlay_path=$1
+                                ;;
+        -h | --help )           usage
+                                exit
+                                ;;
+        * )                     usage
+                                exit 1
+    esac
+    shift
+  done
+}
+
+usage() {
+  echo "Usage: ${0}  -j jobname -p path_to_overlay"
+}
+
+set_context() {
+  kubectl config use-context dev-fss
+}
+
+recreate_job() {
+  kubectl delete -k ${overlay_path} --ignore-not-found=true
+  kubectl apply -k ${overlay_path} 
+}
+
+watch_job() {
+    while true; do
+        res=$(kubectl get jobs ${job_name}  -n ${namespace} -o=jsonpath='{.status.conditions[*].type}')
+        if [ "$res" == "Complete" ]; then
+            log_job
+            exit 0
+        elif [ "$res" == "Failed" ]; then
+            log_job
+            exit 1
+        else
+          sleep 2
+        fi
+    done
+}
+
+
+log_job() {
+  kubectl -n ${namespace} logs -l job-name=${job_name} --tail=1000
+}
+
+main() {
+  parse_command_line $@
+  set_context
+  recreate_job
+  watch_job
+}
+
+main $@

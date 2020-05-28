@@ -1,0 +1,89 @@
+name: Build and deploy
+
+# TODO: Uncomment this
+#on: [push]
+
+env:
+  IMAGE: docker.pkg.github.com/${{ github.repository }}/dp-oppslag-arbeidsforhold:${{ github.sha }}
+
+jobs:
+  build:
+    name: Build and publish Docker image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: '13.x'
+
+      - name: Cache gradle dependencies
+        uses: actions/cache@v1
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('build.gradle.kts', 'buildSrc/src/main/kotlin/Constants.kt') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Build with Gradle
+        run: ./gradlew build --info
+
+      - name: Build and Publish Docker image
+        if: github.ref == 'refs/heads/master'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          docker build -t $IMAGE .
+          docker login docker.pkg.github.com -u ${GITHUB_REPOSITORY} -p ${GITHUB_TOKEN}
+          docker push $IMAGE
+
+      - name: Archive NAIS yaml
+        if: github.ref == 'refs/heads/master'
+        uses: actions/upload-artifact@v1
+        with:
+          name: nais-yaml
+          path: nais
+
+  deploy-dev:
+    name: Deploy to dev
+    needs: [build]
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch NAIS yaml
+        uses: actions/download-artifact@v1
+        with:
+          name: nais-yaml
+          path: nais
+
+      - uses: nais/deploy/actions/deploy@v1
+        env:
+          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
+          CLUSTER: dev-fss
+          RESOURCE: nais/alerts.yaml,nais/dev/nais.yaml
+          VARS: nais/vars.yaml
+          VAR: alerts_slack_channel=#team-dagpenger-alerts-non-prod
+          PRINT_PAYLOAD: true
+
+  deploy-prod:
+    name: Deploy to Production
+    needs: [deploy-dev]
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch NAIS yaml
+        uses: actions/download-artifact@v1
+        with:
+          name: nais-yaml
+          path: nais
+
+      - uses: nais/deploy/actions/deploy@v1
+        env:
+          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
+          CLUSTER: prod-fss
+          RESOURCE: nais/alerts.yaml,nais/prod/nais.yaml
+          VARS: nais/vars.yaml
+          VAR: alerts_slack_channel=#team-dagpenger-alerts
+          PRINT_PAYLOAD: true
