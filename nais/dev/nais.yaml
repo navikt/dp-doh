@@ -27,6 +27,7 @@ spec:
       memory: 256Mi
   secureLogs:
     enabled: true
+  webproxy: true
   vault:
     enabled: true
     paths:
