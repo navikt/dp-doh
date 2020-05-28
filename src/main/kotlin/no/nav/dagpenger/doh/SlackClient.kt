@@ -67,7 +67,7 @@ internal class SlackClient(private val accessToken: String, private val channel:
                 doOutput = true
                 setRequestProperty("Authorization", "Bearer $accessToken")
                 setRequestProperty("Content-Type", "application/json; charset=utf-8")
-                setRequestProperty("User-Agent", "navikt/spammer")
+                setRequestProperty("User-Agent", "navikt/dp-doh")
 
                 outputStream.use { it.bufferedWriter(Charsets.UTF_8).apply { write(jsonPayload); flush() } }
             }
