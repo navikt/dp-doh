@@ -1,4 +1,6 @@
-# Dagpenger-SERVICENAME
+# dp-doh
+
+Lager meldinger til Slack basert på interessante events fra Dagpenger.
 
 ## Komme i gang
 
