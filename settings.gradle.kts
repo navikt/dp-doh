@@ -1,4 +1,4 @@
-rootProject.name = "dagpenger-SERVICENAME"
+rootProject.name = "dp-doh"
 
 pluginManagement {
     repositories {
