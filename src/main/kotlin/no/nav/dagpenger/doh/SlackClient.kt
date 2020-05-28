@@ -44,7 +44,6 @@ internal class SlackClient(private val accessToken: String, private val channel:
     }
 
     fun postMessage(text: String, threadTs: String? = null, broadcast: Boolean = false): String? {
-        log.info("Sender til slack.. ")
         return "https://slack.com/api/chat.postMessage".post(objectMapper.writeValueAsString(mutableMapOf<String, Any>(
             "channel" to channel,
             "text" to text
