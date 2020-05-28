@@ -66,23 +66,23 @@ jobs:
           VAR: alerts_slack_channel=#team-dagpenger-alerts-non-prod
           PRINT_PAYLOAD: true
 
-#  deploy-prod:
-#    name: Deploy to Production
-#    needs: [deploy-dev]
-#    if: github.ref == 'refs/heads/master'
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Fetch NAIS yaml
-#        uses: actions/download-artifact@v1
-#        with:
-#          name: nais-yaml
-#          path: nais
-#
-#      - uses: nais/deploy/actions/deploy@v1
-#        env:
-#          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
-#          CLUSTER: prod-fss
-#          RESOURCE: nais/alerts.yaml,nais/prod/nais.yaml
-#          VARS: nais/vars.yaml
-#          VAR: alerts_slack_channel=#team-dagpenger-alerts
-#          PRINT_PAYLOAD: true
+  deploy-prod:
+    name: Deploy to Production
+    needs: [deploy-dev]
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch NAIS yaml
+        uses: actions/download-artifact@v1
+        with:
+          name: nais-yaml
+          path: nais
+
+      - uses: nais/deploy/actions/deploy@v1
+        env:
+          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
+          CLUSTER: prod-fss
+          RESOURCE: nais/alerts.yaml,nais/prod/nais.yaml
+          VARS: nais/vars.yaml
+          VAR: alerts_slack_channel=#team-dagpenger-alerts
+          PRINT_PAYLOAD: true
