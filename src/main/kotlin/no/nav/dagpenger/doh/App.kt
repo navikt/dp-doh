@@ -8,6 +8,7 @@ import no.nav.helse.rapids_rivers.RapidsConnection
 fun main() {
     val env = System.getenv()
     // val dataSourceBuilder = env["DATABASE_HOST"]?.let { DataSourceBuilder(env) }
+
     val slackClient = env["SLACK_ACCESS_TOKEN"]?.let {
         SlackClient(
                 accessToken = it,
