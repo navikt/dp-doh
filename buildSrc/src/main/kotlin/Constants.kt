@@ -162,7 +162,7 @@ object Log4j2 {
 
     object Logstash {
         private const val version = "1.0.2"
-        const val logstashLayout = "com.vlkan.log4j2:log4j2-logstash-layout-fatjar:$version"
+        const val logstashLayout = "com.vlkan.log4j2:log4j2-logstash-layout:$version"
     }
 }
 

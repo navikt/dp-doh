@@ -13,7 +13,7 @@ set -o errexit
 set -o pipefail
 [[ "${DEBUG}" == 'true' ]] && set -o xtrace
 
-namespace=dagpenger-test
+namespace=teamdagpenger
 job_name=dagpenger-funksjonelle-tester
 overlay_path=tests/uat
 
