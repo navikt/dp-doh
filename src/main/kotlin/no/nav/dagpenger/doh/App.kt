@@ -21,6 +21,7 @@ fun main() {
     RapidApplication.create(env).apply {
         BehovUtenLøsningMonitor(this, slackClient)
         AppStateMonitor(this, slackClient)
+        AktivitetsloggMonitor(this)
     }.apply {
         register(object : RapidsConnection.StatusListener {
             override fun onStartup(rapidsConnection: RapidsConnection) {
