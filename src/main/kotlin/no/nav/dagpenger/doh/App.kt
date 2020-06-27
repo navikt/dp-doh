@@ -11,8 +11,8 @@ fun main() {
 
     val slackClient = env["SLACK_ACCESS_TOKEN"]?.let {
         SlackClient(
-                accessToken = it,
-                channel = env.getValue("SLACK_CHANNEL_ID")
+            accessToken = it,
+            channel = env.getValue("SLACK_CHANNEL_ID")
         )
     }
 
@@ -22,6 +22,7 @@ fun main() {
         BehovUtenLøsningMonitor(this, slackClient)
         AppStateMonitor(this, slackClient)
         AktivitetsloggMonitor(this)
+        VedtakEndretMonitor(this)
     }.apply {
         register(object : RapidsConnection.StatusListener {
             override fun onStartup(rapidsConnection: RapidsConnection) {
