@@ -1,4 +1,4 @@
 app: dp-doh
-namespace: default
+namespace: teamdagpenger
 team: teamdagpenger
 service_user: srvdp-doh
