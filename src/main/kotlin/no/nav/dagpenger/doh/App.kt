@@ -9,7 +9,7 @@ fun main() {
     val env = System.getenv()
     // val dataSourceBuilder = env["DATABASE_HOST"]?.let { DataSourceBuilder(env) }
 
-    val slackClient = env["SLACK_ACCESS_TOKEN_DISABLED"]?.let {
+    val slackClient = env["SLACK_ACCESS_TOKEN"]?.let {
         SlackClient(
             accessToken = it,
             channel = env.getValue("SLACK_CHANNEL_ID")
