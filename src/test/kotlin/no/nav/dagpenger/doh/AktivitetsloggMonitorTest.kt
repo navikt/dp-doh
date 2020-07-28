@@ -28,15 +28,40 @@ internal class AktivitetsloggMonitorTest {
             listOf(
                 "alvorlighetsgrad",
                 "melding",
-                "tilstand"
+                "tilstand",
+                "harFlereFeil"
             ).toTypedArray(),
             listOf(
                 "WARN",
                 "foo",
-                "ny"
+                "ny",
+                "false"
             ).toTypedArray()
         ).also {
             it shouldBe 1.0
+        }
+    }
+
+    @Test
+    fun `skal telle om det er flere feil ved tilstandsendringer`() {
+        rapid.sendTestMessage(vedtakEndretMedFlereFeilJson)
+
+        registry.getSampleValue(
+            "dp_aktivitet_totals",
+            listOf(
+                "alvorlighetsgrad",
+                "melding",
+                "tilstand",
+                "harFlereFeil"
+            ).toTypedArray(),
+            listOf(
+                "ERROR",
+                "foo",
+                "ny",
+                "true"
+            ).toTypedArray()
+        ).also {
+            it shouldBe 2.0
         }
     }
 }
@@ -50,6 +75,26 @@ private val vedtakEndretJson = """{
     "aktiviteter": [
       {
         "alvorlighetsgrad": "WARN",
+        "melding": "foo"
+      }
+    ]
+  }
+}
+""".trimIndent()
+
+//language=JSON
+private val vedtakEndretMedFlereFeilJson = """{
+  "@event_name": "vedtak_endret",
+  "gjeldendeTilstand": "ferdig",
+  "forrigeTilstand": "ny",
+  "aktivitetslogg": {
+    "aktiviteter": [
+      {
+        "alvorlighetsgrad": "ERROR",
+        "melding": "foo"
+      },
+      {
+        "alvorlighetsgrad": "ERROR",
         "melding": "foo"
       }
     ]

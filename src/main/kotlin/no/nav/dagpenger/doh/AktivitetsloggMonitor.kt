@@ -9,7 +9,12 @@ import no.nav.helse.rapids_rivers.River
 internal class AktivitetsloggMonitor(rapidsConnection: RapidsConnection) : River.PacketListener {
     private companion object {
         private val aktivitetCounter = Counter.build("dp_aktivitet_totals", "Antall aktiviteter")
-            .labelNames("alvorlighetsgrad", "melding", "tilstand")
+            .labelNames(
+                "alvorlighetsgrad",
+                "melding",
+                "tilstand",
+                "harFlereFeil"
+            )
             .register()
     }
 
@@ -27,6 +32,12 @@ internal class AktivitetsloggMonitor(rapidsConnection: RapidsConnection) : River
 
     override fun onPacket(packet: JsonMessage, context: RapidsConnection.MessageContext) {
         val tilstand = packet["forrigeTilstand"].asText()
+        val harFlereFeil = packet["aktivitetslogg.aktiviteter"]
+            .takeIf(JsonNode::isArray)
+            ?.count { it["alvorlighetsgrad"].asText() in listOf("ERROR") }.let {
+                it !== null && it > 1
+            }
+
         packet["aktivitetslogg.aktiviteter"]
             .takeIf(JsonNode::isArray)
             ?.filter { it["alvorlighetsgrad"].asText() in listOf("WARN", "ERROR") }
@@ -34,7 +45,8 @@ internal class AktivitetsloggMonitor(rapidsConnection: RapidsConnection) : River
                 aktivitetCounter.labels(
                     it["alvorlighetsgrad"].asText(),
                     it["melding"].asText(),
-                    tilstand
+                    tilstand,
+                    harFlereFeil.toString()
                 ).inc()
             }
     }
