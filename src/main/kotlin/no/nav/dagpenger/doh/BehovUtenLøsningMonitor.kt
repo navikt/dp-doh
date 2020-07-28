@@ -18,9 +18,7 @@ internal class BehovUtenLøsningMonitor(
     private companion object {
         private val sikkerLog = LoggerFactory.getLogger("tjenestekall")
         private val uløsteBehovCounter = Counter.build("dp_uløste_behov", "Antall behov uten løsning")
-            .labelNames(
-                "mangler"
-            )
+            .labelNames("behovType")
             .register()
     }
 
@@ -43,9 +41,9 @@ internal class BehovUtenLøsningMonitor(
     }
 
     override fun onPacket(packet: JsonMessage, context: RapidsConnection.MessageContext) {
-        uløsteBehovCounter.labels(
-            packet["mangler"].toLabel()
-        ).inc()
+        packet["mangler"].map(JsonNode::asText).forEach {
+            uløsteBehovCounter.labels(it).inc()
+        }
 
         slackClient?.postMessage(
             String.format(
