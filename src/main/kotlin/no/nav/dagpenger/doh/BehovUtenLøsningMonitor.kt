@@ -1,6 +1,7 @@
 package no.nav.dagpenger.doh
 
 import com.fasterxml.jackson.databind.JsonNode
+import io.prometheus.client.Counter
 import java.time.temporal.ChronoUnit
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageProblems
@@ -16,6 +17,11 @@ internal class BehovUtenLøsningMonitor(
 
     private companion object {
         private val sikkerLog = LoggerFactory.getLogger("tjenestekall")
+        private val uløsteBehovCounter = Counter.build("dp_uløste_behov", "Antall behov uten løsning")
+            .labelNames(
+                "mangler"
+            )
+            .register()
     }
 
     init {
@@ -27,7 +33,8 @@ internal class BehovUtenLøsningMonitor(
                 it.requireArray("løsninger")
                 it.requireArray("mangler")
                 it.require("@opprettet", JsonNode::asLocalDateTime)
-                it.require("behov_opprettet", JsonNode::asLocalDateTime) }
+                it.require("behov_opprettet", JsonNode::asLocalDateTime)
+            }
         }.register(this)
     }
 
@@ -36,12 +43,28 @@ internal class BehovUtenLøsningMonitor(
     }
 
     override fun onPacket(packet: JsonMessage, context: RapidsConnection.MessageContext) {
-        slackClient?.postMessage(String.format(
-            "Behov <%s|%s> mottok aldri løsning for %s innen %s",
-                Kibana.createUrl(String.format("\"%s\"", packet["behov_id"].asText()), packet["behov_opprettet"].asLocalDateTime().minusHours(1)),
-            packet["behov_id"].asText(),
-            packet["mangler"].joinToString(),
-                humanReadableTime(ChronoUnit.SECONDS.between(packet["behov_opprettet"].asLocalDateTime(), packet["@opprettet"].asLocalDateTime()))
-        ))
+        uløsteBehovCounter.labels(
+            packet["mangler"].toLabel()
+        ).inc()
+
+        slackClient?.postMessage(
+            String.format(
+                "Behov <%s|%s> mottok aldri løsning for %s innen %s",
+                Kibana.createUrl(
+                    String.format("\"%s\"", packet["behov_id"].asText()),
+                    packet["behov_opprettet"].asLocalDateTime().minusHours(1)
+                ),
+                packet["behov_id"].asText(),
+                packet["mangler"].joinToString(),
+                humanReadableTime(
+                    ChronoUnit.SECONDS.between(
+                        packet["behov_opprettet"].asLocalDateTime(),
+                        packet["@opprettet"].asLocalDateTime()
+                    )
+                )
+            )
+        )
     }
+
+    private fun JsonNode.toLabel() = this.map(JsonNode::asText).sorted().joinToString()
 }

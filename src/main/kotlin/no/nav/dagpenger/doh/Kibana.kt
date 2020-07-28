@@ -12,9 +12,16 @@ object Kibana {
 
     private val risonMapper = ObjectMapper(RisonFactory())
 
-    fun createUrl(query: String, startTime: LocalDateTime, endTime: LocalDateTime? = null, index: String = defaultIndex) =
-            createUrl(query, startTime.isoLocalDateTime(), endTime?.isoLocalDateTime()
-                    ?: "now", index)
+    fun createUrl(
+        query: String,
+        startTime: LocalDateTime,
+        endTime: LocalDateTime? = null,
+        index: String = defaultIndex
+    ) =
+        createUrl(
+            query, startTime.isoLocalDateTime(), endTime?.isoLocalDateTime()
+                ?: "now", index
+        )
 
     fun createUrl(
         query: String,
