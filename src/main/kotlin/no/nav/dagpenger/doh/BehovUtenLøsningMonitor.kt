@@ -17,7 +17,7 @@ internal class BehovUtenLøsningMonitor(
 
     private companion object {
         private val sikkerLog = LoggerFactory.getLogger("tjenestekall")
-        private val uløsteBehovCounter = Counter.build("dp_uløste_behov", "Antall behov uten løsning")
+        private val uløsteBehovCounter = Counter.build("dp_uloste_behov", "Antall behov uten løsning")
             .labelNames("behovType")
             .register()
     }
