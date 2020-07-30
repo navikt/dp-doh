@@ -3,12 +3,12 @@ package no.nav.dagpenger.doh
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import org.slf4j.LoggerFactory
 import java.io.IOException
 import java.io.InputStream
 import java.net.HttpURLConnection
 import java.net.URL
 import java.time.LocalDateTime
-import org.slf4j.LoggerFactory
 
 internal fun SlackClient?.postMessage(slackThreadDao: SlackThreadDao, vedtaksperiodeId: String, message: String) {
     if (this == null) return
@@ -44,15 +44,19 @@ internal class SlackClient(private val accessToken: String, private val channel:
     }
 
     fun postMessage(text: String, threadTs: String? = null, broadcast: Boolean = false): String? {
-        return "https://slack.com/api/chat.postMessage".post(objectMapper.writeValueAsString(mutableMapOf<String, Any>(
-            "channel" to channel,
-            "text" to text
-        ).apply {
-            threadTs?.also {
-                put("thread_ts", it)
-                put("reply_broadcast", broadcast)
-            }
-        }))?.let {
+        return "https://slack.com/api/chat.postMessage".post(
+            objectMapper.writeValueAsString(
+                mutableMapOf<String, Any>(
+                    "channel" to channel,
+                    "text" to text
+                ).apply {
+                    threadTs?.also {
+                        put("thread_ts", it)
+                        put("reply_broadcast", broadcast)
+                    }
+                }
+            )
+        )?.let {
             objectMapper.readTree(it)["ts"]?.asText()
         }
     }

@@ -40,8 +40,10 @@ internal class VedtakEndretMonitorTest {
 }
 
 //language=JSON
-private val vedtakEndretJson = """{
+private val vedtakEndretJson =
+    """{
   "@event_name": "vedtak_endret",
   "gjeldendeTilstand": "ferdig",
   "forrigeTilstand": "ny"
-}""".trimIndent()
+}
+    """.trimIndent()
