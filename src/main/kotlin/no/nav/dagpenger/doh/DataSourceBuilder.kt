@@ -2,9 +2,9 @@ package no.nav.dagpenger.doh
 
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
-import javax.sql.DataSource
 import no.nav.vault.jdbc.hikaricp.HikariCPVaultUtil
 import org.flywaydb.core.Flyway
+import javax.sql.DataSource
 
 // Understands how to create a data source from environment variables
 internal class DataSourceBuilder(env: Map<String, String>) {
@@ -21,7 +21,8 @@ internal class DataSourceBuilder(env: Map<String, String>) {
             requireNotNull(env["DATABASE_HOST"]) { "database host must be set if jdbc url is not provided" },
             requireNotNull(env["DATABASE_PORT"]) { "database port must be set if jdbc url is not provided" },
             requireNotNull(databaseName) { "database name must be set if jdbc url is not provided" },
-            env["DATABASE_USERNAME"]?.let { "?user=$it" } ?: "")
+            env["DATABASE_USERNAME"]?.let { "?user=$it" } ?: ""
+        )
 
         env["DATABASE_USERNAME"]?.let { this.username = it }
         env["DATABASE_PASSWORD"]?.let { this.password = it }

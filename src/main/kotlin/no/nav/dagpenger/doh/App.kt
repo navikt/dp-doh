@@ -1,8 +1,8 @@
 package no.nav.dagpenger.doh
 
-import kotlin.time.ExperimentalTime
 import no.nav.helse.rapids_rivers.RapidApplication
 import no.nav.helse.rapids_rivers.RapidsConnection
+import kotlin.time.ExperimentalTime
 
 @ExperimentalTime
 fun main() {
