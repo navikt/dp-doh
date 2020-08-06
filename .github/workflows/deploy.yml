@@ -63,7 +63,7 @@ jobs:
           CLUSTER: dev-fss
           RESOURCE: nais/alerts.yaml,nais/dev/nais.yaml
           VARS: nais/vars.yaml
-          VAR: alerts_slack_channel=#team-dagpenger-alerts-non-prod
+          VAR: alerts_slack_channel=#team-dagpenger-alert-non-prod
           PRINT_PAYLOAD: true
 
   deploy-prod:
