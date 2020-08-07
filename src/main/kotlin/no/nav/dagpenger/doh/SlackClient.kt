@@ -43,12 +43,18 @@ internal class SlackClient(private val accessToken: String, private val channel:
             .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
     }
 
-    fun postMessage(text: String, threadTs: String? = null, broadcast: Boolean = false): String? {
+    fun postMessage(
+        text: String,
+        threadTs: String? = null,
+        broadcast: Boolean = false,
+        emoji: String = ":scream:"
+    ): String? {
         return "https://slack.com/api/chat.postMessage".post(
             objectMapper.writeValueAsString(
                 mutableMapOf<String, Any>(
                     "channel" to channel,
-                    "text" to text
+                    "text" to text,
+                    "icon_emoji" to emoji
                 ).apply {
                     threadTs?.also {
                         put("thread_ts", it)

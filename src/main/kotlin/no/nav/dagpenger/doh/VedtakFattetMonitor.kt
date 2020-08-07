@@ -24,14 +24,15 @@ internal class VedtakFattetMonitor(
 
     override fun onPacket(packet: JsonMessage, context: RapidsConnection.MessageContext) {
         slackClient?.postMessage(
-            String.format(
+            text = String.format(
                 "Vedtak <%s|%s> har blitt fattet",
                 Kibana.createUrl(
                     String.format("\"%s\"", packet["vedtakId"].asText()),
                     packet["behov_opprettet"].asLocalDateTime().minusHours(1)
                 ),
                 packet["vedtakId"].asText()
-            )
+            ),
+            emoji = ":tada:"
         )
     }
 
