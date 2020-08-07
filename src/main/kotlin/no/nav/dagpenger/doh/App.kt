@@ -23,6 +23,7 @@ fun main() {
         AppStateMonitor(this, slackClient)
         AktivitetsloggMonitor(this)
         VedtakEndretMonitor(this)
+        VedtakFattetMonitor(this, slackClient)
     }.apply {
         register(object : RapidsConnection.StatusListener {
             override fun onStartup(rapidsConnection: RapidsConnection) {

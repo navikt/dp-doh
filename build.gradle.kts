@@ -54,6 +54,7 @@ dependencies {
     testImplementation(kotlin("test"))
     testImplementation(Junit5.api)
     testImplementation(KoTest.runner)
+    testImplementation(Mockk.mockk)
     testRuntimeOnly(Junit5.engine)
 
     implementation("org.flywaydb:flyway-core:$flywayVersion")
