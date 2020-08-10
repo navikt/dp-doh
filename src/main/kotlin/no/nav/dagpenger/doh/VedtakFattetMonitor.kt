@@ -2,7 +2,6 @@ package no.nav.dagpenger.doh
 
 import com.fasterxml.jackson.databind.JsonNode
 import no.nav.helse.rapids_rivers.JsonMessage
-import no.nav.helse.rapids_rivers.MessageProblems
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.River
 import no.nav.helse.rapids_rivers.asLocalDateTime
@@ -34,9 +33,5 @@ internal class VedtakFattetMonitor(
             ),
             emoji = ":tada:"
         )
-    }
-
-    override fun onError(problems: MessageProblems, context: RapidsConnection.MessageContext) {
-        println(problems.toExtendedReport())
     }
 }
