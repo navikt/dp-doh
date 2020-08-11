@@ -5,12 +5,14 @@ import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.River
 
-private val tilstandCounter = Counter
-    .build("dp_vedtak_endret", "Antall tilstandsendringer")
-    .labelNames("tilstand", "forrigeTilstand")
-    .register()
-
 internal class VedtakEndretMonitor(rapidsConnection: RapidsConnection) : River.PacketListener {
+    companion object {
+        private val tilstandCounter = Counter
+            .build("dp_vedtak_endret", "Antall tilstandsendringer")
+            .labelNames("tilstand", "forrigeTilstand")
+            .register()
+    }
+
     init {
         River(rapidsConnection).apply {
             validate {

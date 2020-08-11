@@ -1,5 +1,6 @@
 package no.nav.dagpenger.doh
 
+import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
@@ -22,9 +23,22 @@ internal class VedtakFattetMonitorTest {
 
     @Test
     fun `skal poste fattede vedtak på Slack`() {
+        every {
+            slack.postMessage(allAny())
+        } returns "ts from slack"
+
         rapid.sendTestMessage(vedtakEndretJson)
 
         verify(exactly = 1) {
+            slack.postMessage(allAny())
+        }
+    }
+
+    @Test
+    fun `skal logge errors ved kjipe meldinger`() {
+        rapid.sendTestMessage(kjipMelding)
+
+        verify(exactly = 0) {
             slack.postMessage(allAny())
         }
     }
@@ -38,5 +52,13 @@ private val vedtakEndretJson =
   "forrigeTilstand": "ny",
   "vedtakId": "123",
   "behov_opprettet": "${LocalDateTime.now()}"
+}
+    """.trimIndent()
+
+//language=JSON
+private val kjipMelding =
+    """{
+  "@event_name": "vedtak_endret",
+  "gjeldendeTilstand": "VedtakFattet"
 }
     """.trimIndent()
