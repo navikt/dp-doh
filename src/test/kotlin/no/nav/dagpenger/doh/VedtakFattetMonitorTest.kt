@@ -51,7 +51,7 @@ private val vedtakEndretJson =
   "gjeldendeTilstand": "VedtakFattet",
   "forrigeTilstand": "ny",
   "vedtakId": "123",
-  "behov_opprettet": "${LocalDateTime.now()}"
+  "@opprettet": "${LocalDateTime.now()}"
 }
     """.trimIndent()
 

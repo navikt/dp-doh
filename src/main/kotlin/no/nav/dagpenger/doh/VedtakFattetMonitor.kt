@@ -23,7 +23,7 @@ internal class VedtakFattetMonitor(
                 it.demandValue("@event_name", "vedtak_endret")
                 it.demandValue("gjeldendeTilstand", "VedtakFattet")
                 it.requireKey("vedtakId")
-                it.require("behov_opprettet", JsonNode::asLocalDateTime)
+                it.require("@opprettet", JsonNode::asLocalDateTime)
             }
         }.register(this)
     }
@@ -34,7 +34,7 @@ internal class VedtakFattetMonitor(
                 "Vedtak <%s|%s> har blitt fattet",
                 Kibana.createUrl(
                     String.format("\"%s\"", packet["vedtakId"].asText()),
-                    packet["behov_opprettet"].asLocalDateTime().minusHours(1)
+                    packet["@opprettet"].asLocalDateTime().minusHours(1)
                 ),
                 packet["vedtakId"].asText()
             ).also { log.info("Melding for Slack om VedtakFattet: $it") },
