@@ -37,11 +37,9 @@ internal class VedtakFattetMonitor(
                     packet["@opprettet"].asLocalDateTime().minusHours(1)
                 ),
                 packet["vedtakId"].asText()
-            ).also { log.info("Melding for Slack om VedtakFattet: $it") },
+            ),
             emoji = ":tada:"
-        ).also {
-            log.info { "Sendte melding til Slack om VedtakFattet, fikk $it tilbake" }
-        }
+        )
     }
 
     override fun onError(problems: MessageProblems, context: RapidsConnection.MessageContext) {
