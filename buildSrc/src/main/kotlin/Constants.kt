@@ -24,7 +24,7 @@ object Cucumber {
 object Dagpenger {
 
     object Biblioteker {
-        const val version = "2020.07.30-12.21.8857eb1469bf"
+        const val version = "2020.08.19-13.35.3a044ff6fea7"
         const val stsKlient = "com.github.navikt.dp-biblioteker:sts-klient:$version"
         const val grunnbeløp = "com.github.navikt.dp-biblioteker:grunnbelop:$version"
         const val ktorUtils = "com.github.navikt.dp-biblioteker:ktor-utils:$version"
@@ -45,8 +45,8 @@ object Dagpenger {
         }
     }
 
-    const val Streams = "com.github.navikt:dagpenger-streams:2020.05.15-23.03.e0ab571caee4"
-    const val Events = "com.github.navikt:dagpenger-events:2020.05.15-21.57.e4685fc2a371"
+    const val Streams = "com.github.navikt:dagpenger-streams:2020.08.19-13.32.0fd360f3ef11"
+    const val Events = "com.github.navikt:dagpenger-events:2020.08.19-10.57.d2fe892352eb"
 }
 
 object Database {
@@ -121,7 +121,7 @@ object Konfig {
 }
 
 object Kotlin {
-    const val version = "1.3.72"
+    const val version = "1.4.0"
     const val stdlib = "org.jetbrains.kotlin:kotlin-stdlib:$version"
 
     object Coroutines {
@@ -136,7 +136,7 @@ object Kotlin {
 }
 
 object KoTest {
-    const val version = "4.0.3"
+    const val version = "4.2.0.RC2"
 
     // for kotest framework
     const val runner = "io.kotest:kotest-runner-junit5-jvm:$version"
@@ -156,7 +156,7 @@ object Kotlinx {
 }
 
 object Ktor {
-    const val version = "1.3.2"
+    const val version = "1.4.0"
     const val server = "io.ktor:ktor-server:$version"
     const val serverNetty = "io.ktor:ktor-server-netty:$version"
     const val auth = "io.ktor:ktor-auth:$version"

@@ -47,9 +47,9 @@ dependencies {
     implementation(kotlin("stdlib"))
 
     implementation(RapidAndRivers)
-
     implementation(Konfig.konfig)
     implementation(Kotlin.Logging.kotlinLogging)
+    implementation(Ktor.serverNetty)
 
     testImplementation(kotlin("test"))
     testImplementation(Junit5.api)
