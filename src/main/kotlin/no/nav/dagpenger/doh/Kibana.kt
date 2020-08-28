@@ -19,7 +19,8 @@ object Kibana {
         index: String = defaultIndex
     ) =
         createUrl(
-            query, startTime.isoLocalDateTime(),
+            query,
+            startTime.isoLocalDateTime(),
             endTime?.isoLocalDateTime()
                 ?: "now",
             index

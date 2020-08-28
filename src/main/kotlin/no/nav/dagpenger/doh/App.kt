@@ -25,10 +25,12 @@ fun main() {
         VedtakEndretMonitor(this)
         VedtakFattetMonitor(this, slackClient)
     }.apply {
-        register(object : RapidsConnection.StatusListener {
-            override fun onStartup(rapidsConnection: RapidsConnection) {
-                // dataSourceBuilder?.migrate()
+        register(
+            object : RapidsConnection.StatusListener {
+                override fun onStartup(rapidsConnection: RapidsConnection) {
+                    // dataSourceBuilder?.migrate()
+                }
             }
-        })
+        )
     }.start()
 }
