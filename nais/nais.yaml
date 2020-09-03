@@ -1,10 +1,10 @@
 apiVersion: nais.io/v1alpha1
 kind: Application
 metadata:
-  name: {{app}}
-  namespace: {{namespace}}
+  name: dp-doh
+  namespace: teamdagpenger
   labels:
-    team: {{team}}
+    team: teamdagpenger
 spec:
   image: {{ image }}
   port: 8080
@@ -17,7 +17,7 @@ spec:
     path: /metrics
   replicas:
     min: 1
-    max: 1
+    max: 6
   resources:
     limits:
       cpu: 500m
@@ -27,16 +27,17 @@ spec:
       memory: 256Mi
   secureLogs:
     enabled: true
-  webproxy: true
-  vault:
-    enabled: true
-    paths:
-      - kvPath: "serviceuser/data/dev/{{service_user}}"
-        mountPath: "/var/run/secrets/nais.io/service_user"
+  filesFrom:
+    - secret: serviceuser-srvdp-doh
+      mountPath: "/var/run/secrets/nais.io/service_user"
+  envFrom:
+    - secret: credential-slack
+    - configmap: kafka-bootstrap-servers
   env:
-    - name: KAFKA_BOOTSTRAP_SERVERS
-      value: b27apvl00045.preprod.local:8443,b27apvl00046.preprod.local:8443,b27apvl00047.preprod.local:8443
     - name: KAFKA_CONSUMER_GROUP_ID
       value: dp-doh-v1
     - name: KAFKA_RAPID_TOPIC
       value: privat-dagpenger-behov-v2
+  accessPolicy:
+    external:
+      - host: slack.com
