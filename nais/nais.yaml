@@ -39,5 +39,6 @@ spec:
     - name: KAFKA_RAPID_TOPIC
       value: privat-dagpenger-behov-v2
   accessPolicy:
-    external:
-      - host: slack.com
+    outbound:
+      external:
+        - host: slack.com
