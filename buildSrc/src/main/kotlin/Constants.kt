@@ -24,7 +24,7 @@ object Cucumber {
 object Dagpenger {
 
     object Biblioteker {
-        const val version = "2020.08.19-13.35.3a044ff6fea7"
+        const val version = "2020.09.16-07.28.a797a00c180a"
         const val stsKlient = "com.github.navikt.dp-biblioteker:sts-klient:$version"
         const val grunnbeløp = "com.github.navikt.dp-biblioteker:grunnbelop:$version"
         const val ktorUtils = "com.github.navikt.dp-biblioteker:ktor-utils:$version"
@@ -242,7 +242,7 @@ object Shadow {
 }
 
 object TestContainers {
-    const val version = "1.13.0"
+    const val version = "1.15.0-rc2"
     const val postgresql = "org.testcontainers:postgresql:$version"
     const val kafka = "org.testcontainers:kafka:$version"
 }
