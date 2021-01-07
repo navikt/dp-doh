@@ -28,7 +28,7 @@ internal class ManuellBehandlingMonitor(
     override fun onPacket(packet: JsonMessage, context: RapidsConnection.MessageContext) {
         slackClient?.postMessage(
             text = String.format(
-                "Seksjon %s kan ikke løses automatisk. Søknad %s går til manuell behandling i Arena",
+                "På grunn av %s kan ikke søknaden %s automatiseres, den går til manuell behandling i Arena",
                 packet["seksjon_navn"].asText(),
                 packet["søknad_uuid"].asText(),
             ),
