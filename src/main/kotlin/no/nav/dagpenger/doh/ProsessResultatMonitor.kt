@@ -1,6 +1,7 @@
 package no.nav.dagpenger.doh
 
 import com.fasterxml.jackson.databind.JsonNode
+import io.prometheus.client.Counter
 import mu.KotlinLogging
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageProblems
@@ -15,6 +16,10 @@ internal class ProsessResultatMonitor(
     companion object {
         private val log = KotlinLogging.logger { }
         private val sikkerlogg = KotlinLogging.logger("tjenestekall")
+        private val resultatCounter = Counter
+            .build("dp_prosessresultat", "Resultat av automatiseringsprosessen")
+            .labelNames("resultat")
+            .register()
     }
 
     init {
@@ -28,6 +33,8 @@ internal class ProsessResultatMonitor(
     }
 
     override fun onPacket(packet: JsonMessage, context: RapidsConnection.MessageContext) {
+        resultatCounter.labels(packet["resultat"].asText()).inc()
+
         slackClient?.postMessage(
             text = String.format(
                 "Prosessen for <%s|%s> har blitt ferdig med resultatet %s",

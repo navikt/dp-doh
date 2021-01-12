@@ -18,5 +18,6 @@ fun main() {
         AppStateMonitor(this, slackClient)
         UløstOppgaveMonitor(this, slackClient)
         ProsessResultatMonitor(this, slackClient)
+        ManuellBehandlingMonitor(this, slackClient)
     }.start()
 }
