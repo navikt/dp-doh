@@ -16,7 +16,7 @@ internal class ManuellBehandlingMonitor(
         private val sikkerlogg = KotlinLogging.logger("tjenestekall")
         private val manuellCounter = Counter
             .build("dp_manuell_behandling", "Søknader som blir sendt til manuell behandling")
-            .labelNames("manuell")
+            .labelNames("grunn")
             .register()
     }
 
@@ -31,7 +31,7 @@ internal class ManuellBehandlingMonitor(
     }
 
     override fun onPacket(packet: JsonMessage, context: RapidsConnection.MessageContext) {
-        manuellCounter.inc()
+        manuellCounter.labels(packet["seksjon_navn"].asText()).inc()
 
         slackClient?.postMessage(
             text = String.format(
