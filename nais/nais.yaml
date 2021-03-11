@@ -40,6 +40,8 @@ spec:
       value: privat-dagpenger-behov-v2
     - name: DP_QUIZ_RETTING_URL
       value: {{dp_quiz_retting_url}}
+    - name: KAFKA_PREFER_ON_PREM
+      value: "true"
   accessPolicy:
     outbound:
       external:

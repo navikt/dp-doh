@@ -2,6 +2,7 @@ package no.nav.dagpenger.doh
 
 import com.fasterxml.jackson.databind.JsonNode
 import no.nav.helse.rapids_rivers.JsonMessage
+import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.MessageProblems
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.River
@@ -35,12 +36,12 @@ internal class AppStateMonitor(
     }
 
     private var lastReportTime = LocalDateTime.MIN
-    override fun onError(problems: MessageProblems, context: RapidsConnection.MessageContext) {
+    override fun onError(problems: MessageProblems, context: MessageContext) {
         log.error(problems.toString())
         sikkerLogg.error(problems.toExtendedReport())
     }
 
-    override fun onPacket(packet: JsonMessage, context: RapidsConnection.MessageContext) {
+    override fun onPacket(packet: JsonMessage, context: MessageContext) {
         if (lastReportTime > LocalDateTime.now().minusMinutes(2)) return // don't create alerts too eagerly
         val appsDown = packet["states"]
             .filter { it["state"].asInt() == 0 }

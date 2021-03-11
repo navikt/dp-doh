@@ -2,6 +2,7 @@ package no.nav.dagpenger.doh
 
 import mu.KotlinLogging
 import no.nav.helse.rapids_rivers.JsonMessage
+import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.MessageProblems
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.River
@@ -28,7 +29,7 @@ internal class UløstOppgaveMonitor(
         }.register(this)
     }
 
-    override fun onPacket(packet: JsonMessage, context: RapidsConnection.MessageContext) {
+    override fun onPacket(packet: JsonMessage, context: MessageContext) {
         slackClient?.postMessage(
             text = String.format(
                 "Nå må noen løse oppgaver her! <%s|%s> venter på en saksbehandler.",
@@ -39,7 +40,7 @@ internal class UløstOppgaveMonitor(
         )
     }
 
-    override fun onError(problems: MessageProblems, context: RapidsConnection.MessageContext) {
+    override fun onError(problems: MessageProblems, context: MessageContext) {
         sikkerlogg.info(problems.toExtendedReport())
     }
 }

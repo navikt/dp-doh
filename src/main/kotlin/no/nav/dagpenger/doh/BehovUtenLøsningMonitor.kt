@@ -3,6 +3,7 @@ package no.nav.dagpenger.doh
 import com.fasterxml.jackson.databind.JsonNode
 import io.prometheus.client.Counter
 import no.nav.helse.rapids_rivers.JsonMessage
+import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.MessageProblems
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.River
@@ -36,11 +37,11 @@ internal class BehovUtenLøsningMonitor(
         }.register(this)
     }
 
-    override fun onError(problems: MessageProblems, context: RapidsConnection.MessageContext) {
+    override fun onError(problems: MessageProblems, context: MessageContext) {
         sikkerLog.error("forstod ikke behov_uten_fullstendig_løsning:\n${problems.toExtendedReport()}")
     }
 
-    override fun onPacket(packet: JsonMessage, context: RapidsConnection.MessageContext) {
+    override fun onPacket(packet: JsonMessage, context: MessageContext) {
         packet["mangler"].map(JsonNode::asText).forEach {
             uløsteBehovCounter.labels(it).inc()
         }

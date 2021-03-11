@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import io.prometheus.client.Counter
 import mu.KotlinLogging
 import no.nav.helse.rapids_rivers.JsonMessage
+import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.MessageProblems
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.River
@@ -32,7 +33,7 @@ internal class ProsessResultatMonitor(
         }.register(this)
     }
 
-    override fun onPacket(packet: JsonMessage, context: RapidsConnection.MessageContext) {
+    override fun onPacket(packet: JsonMessage, context: MessageContext) {
         resultatCounter.labels(packet["resultat"].asText()).inc()
 
         slackClient?.postMessage(
@@ -49,7 +50,7 @@ internal class ProsessResultatMonitor(
         )
     }
 
-    override fun onError(problems: MessageProblems, context: RapidsConnection.MessageContext) {
+    override fun onError(problems: MessageProblems, context: MessageContext) {
         sikkerlogg.info(problems.toExtendedReport())
     }
 }

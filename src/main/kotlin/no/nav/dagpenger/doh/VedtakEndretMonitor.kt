@@ -2,6 +2,7 @@ package no.nav.dagpenger.doh
 
 import io.prometheus.client.Counter
 import no.nav.helse.rapids_rivers.JsonMessage
+import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.River
 
@@ -25,7 +26,7 @@ internal class VedtakEndretMonitor(rapidsConnection: RapidsConnection) : River.P
         }.register(this)
     }
 
-    override fun onPacket(packet: JsonMessage, context: RapidsConnection.MessageContext) {
+    override fun onPacket(packet: JsonMessage, context: MessageContext) {
         tilstandCounter
             .labels(
                 packet["gjeldendeTilstand"].asText(),
