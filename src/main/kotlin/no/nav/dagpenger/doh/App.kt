@@ -1,20 +1,12 @@
 package no.nav.dagpenger.doh
 
+import no.nav.dagpenger.doh.Configuration.slackClient
 import no.nav.helse.rapids_rivers.RapidApplication
 import kotlin.time.ExperimentalTime
 
 @ExperimentalTime
 fun main() {
-    val env = System.getenv()
-
-    val slackClient = env["SLACK_ACCESS_TOKEN"]?.let {
-        SlackClient(
-            accessToken = it,
-            channel = env.getValue("SLACK_CHANNEL_ID")
-        )
-    }
-
-    RapidApplication.create(env).apply {
+    RapidApplication.create(Configuration.asMap()).apply {
         AppStateMonitor(this, slackClient)
         UløstOppgaveMonitor(this, slackClient)
         ProsessResultatMonitor(this, slackClient)

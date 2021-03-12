@@ -6,7 +6,7 @@ metadata:
   labels:
     team: teamdagpenger
 spec:
-  image: {{ image }}
+  image: { { image } }
   port: 8080
   liveness:
     path: /isalive
@@ -25,23 +25,15 @@ spec:
     requests:
       cpu: 200m
       memory: 256Mi
+  kafka:
+    pool: {{ kafka_pool }}
   secureLogs:
     enabled: true
-  filesFrom:
-    - secret: serviceuser-srvdp-doh
-      mountPath: "/var/run/secrets/nais.io/service_user"
   envFrom:
     - secret: credential-slack
-    - configmap: kafka-bootstrap-servers
   env:
-    - name: KAFKA_CONSUMER_GROUP_ID
-      value: dp-doh-v1
-    - name: KAFKA_RAPID_TOPIC
-      value: privat-dagpenger-behov-v2
     - name: DP_QUIZ_RETTING_URL
       value: {{dp_quiz_retting_url}}
-    - name: KAFKA_PREFER_ON_PREM
-      value: "true"
   accessPolicy:
     outbound:
       external:
