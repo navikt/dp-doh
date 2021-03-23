@@ -45,7 +45,7 @@ object Dagpenger {
         }
     }
 
-    const val Streams = "com.github.navikt:dagpenger-streams:2021.03.17-08.56.ed62f8f9a325"
+    const val Streams = "com.github.navikt:dagpenger-streams:2021.03.22-19.09.82a577cfa379"
     const val Events = "com.github.navikt:dagpenger-events:2021.02.19-08.31.cfd52901bc9f"
 }
 
@@ -221,7 +221,7 @@ object Prometheus {
     }
 }
 
-const val RapidAndRivers = "com.github.navikt:rapids-and-rivers:1.a77261b"
+const val RapidAndRivers = "com.github.navikt:rapids-and-rivers:1.f3e5de3"
 
 object Slf4j {
     const val version = "1.7.25"
