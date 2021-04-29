@@ -32,7 +32,7 @@ internal object Configuration {
         properties.getOrNull(Key("SLACK_ACCESS_TOKEN", stringType))?.let {
             SlackClient(
                 accessToken = it,
-                channel = properties[Key("DP_SLACKER_CHANNEL_ID", stringType)]
+                channel = System.getenv()["DP_SLACKER_CHANNEL_ID"]!!
             )
         }
     }
