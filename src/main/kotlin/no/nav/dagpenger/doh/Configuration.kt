@@ -19,11 +19,20 @@ internal object Configuration {
 
     private val properties = systemProperties() overriding EnvironmentVariables() overriding defaultProperties
 
-    val slackClient: SlackClient? by lazy {
+    val slackAlertClient: SlackClient? by lazy {
         properties.getOrNull(Key("SLACK_ACCESS_TOKEN", stringType))?.let {
             SlackClient(
                 accessToken = it,
                 channel = properties[Key("DP_SLACKER_ALERT_CHANNEL_ID", stringType)]
+            )
+        }
+    }
+
+    val slackClient: SlackClient? by lazy {
+        properties.getOrNull(Key("SLACK_ACCESS_TOKEN", stringType))?.let {
+            SlackClient(
+                accessToken = it,
+                channel = properties[Key("DP_SLACKER_CHANNEL_ID", stringType)]
             )
         }
     }
