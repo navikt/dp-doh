@@ -34,6 +34,8 @@ spec:
   env:
     - name: DP_QUIZ_RETTING_URL
       value: {{dp_quiz_retting_url}}
+    - name: DP_SLACKER_ALERT_CHANNEL_ID
+      value: {{dp_slacker_alert_channel_id}}
   accessPolicy:
     outbound:
       external:

@@ -2,5 +2,7 @@ app: dp-doh
 namespace: teamdagpenger
 team: teamdagpenger
 alerts_slack_channel: "#team-dagpenger-alert"
+dp_slacker_alert_channel_id: "CAHJ7634G"
+dp_slacker_channel_id: "C02140D4USC"
 kafka_pool: nav-prod
 dp_quiz_retting_url: "https://dp-saksbehandling.intern.nav.no/arbeid/dagpenger/saksbehandling"
