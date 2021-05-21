@@ -1,4 +1,4 @@
-***
+/***
  *  Avhengigheter for Dapgenger jvm prosjekter.
  *
  *  Denne fila skal kun editeres i fra https://github.com/navikt/dp-service-template. Sjekk inn ny versjon og kjør
