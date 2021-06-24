@@ -24,7 +24,7 @@ object Cucumber {
 object Dagpenger {
 
     object Biblioteker {
-        const val version = "2021.05.21-09.36.ed293b8f28a9"
+        const val version = "2021.06.23-14.39.74fbb7b79fde"
         const val stsKlient = "com.github.navikt.dp-biblioteker:sts-klient:$version"
         const val grunnbeløp = "com.github.navikt.dp-biblioteker:grunnbelop:$version"
         const val ktorUtils = "com.github.navikt.dp-biblioteker:ktor-utils:$version"
@@ -45,16 +45,16 @@ object Dagpenger {
         }
     }
 
-    const val Streams = "com.github.navikt:dagpenger-streams:2021.05.18-14.31.6be662ea8106"
-    const val Events = "com.github.navikt:dagpenger-events:2021.02.19-08.31.cfd52901bc9f"
+    const val Streams = "com.github.navikt:dagpenger-streams:2021.06.23-14.29.bbb62ad15d52"
+    const val Events = "com.github.navikt:dagpenger-events:2021.06.23-14.38.f9ef5d423585"
 }
 
 object Database {
-    const val Postgres = "org.postgresql:postgresql:42.2.11"
+    const val Postgres = "org.postgresql:postgresql:42.2.22"
     const val Kotlinquery = "com.github.seratch:kotliquery:1.3.1"
-    const val Flyway = "org.flywaydb:flyway-core:6.3.2"
-    const val HikariCP = "com.zaxxer:HikariCP:3.4.1"
-    const val VaultJdbc = "no.nav:vault-jdbc:1.3.1"
+    const val Flyway = "org.flywaydb:flyway-core:7.10.0"
+    const val HikariCP = "com.zaxxer:HikariCP:4.0.3"
+    const val VaultJdbc = "no.nav:vault-jdbc:1.3.7"
 }
 
 object Fuel {
@@ -69,14 +69,14 @@ object GradleWrapper {
 }
 
 object Jackson {
-    const val version = "2.12.1"
+    const val version = "2.12.3"
     const val core = "com.fasterxml.jackson.core:jackson-core:$version"
     const val kotlin = "com.fasterxml.jackson.module:jackson-module-kotlin:$version"
     const val jsr310 = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$version"
 }
 
 object Junit5 {
-    const val version = "5.7.1"
+    const val version = "5.7.2"
     const val api = "org.junit.jupiter:junit-jupiter-api:$version"
     const val params = "org.junit.jupiter:junit-jupiter-params:$version"
     const val engine = "org.junit.jupiter:junit-jupiter-engine:$version"
@@ -96,14 +96,14 @@ object JsonAssert {
 }
 
 object Kafka {
-    const val version = "2.4.1"
+    const val version = "2.8.0"
     const val clients = "org.apache.kafka:kafka-clients:$version"
     const val streams = "org.apache.kafka:kafka-streams:$version"
     const val streamTestUtils = "org.apache.kafka:kafka-streams-test-utils:$version"
     fun library(name: String) = "org.apache.kafka:kafka-$name:$version"
 
     object Confluent {
-        const val version = "5.4.0"
+        const val version = "6.2.0"
         const val avroStreamSerdes = "io.confluent:kafka-streams-avro-serde:$version"
         fun library(name: String) = "io.confluent:$name:$version"
     }
@@ -113,16 +113,12 @@ object KafkaEmbedded {
     const val env = "no.nav:kafka-embedded-env:2.4.0"
 }
 
-object Klint {
-    const val version = "0.33.0"
-}
-
 object Konfig {
     const val konfig = "com.natpryce:konfig:1.6.10.0"
 }
 
 object Kotlin {
-    const val version = "1.4.30"
+    const val version = "1.5.10"
     const val stdlib = "org.jetbrains.kotlin:kotlin-stdlib:$version"
 
     object Coroutines {
@@ -131,7 +127,7 @@ object Kotlin {
     }
 
     object Logging {
-        const val version = "2.0.4"
+        const val version = "2.0.8"
         const val kotlinLogging = "io.github.microutils:kotlin-logging:$version"
     }
 }
@@ -157,7 +153,7 @@ object Kotlinx {
 }
 
 object Ktor {
-    const val version = "1.5.1"
+    const val version = "1.6.0"
     const val server = "io.ktor:ktor-server:$version"
     const val serverNetty = "io.ktor:ktor-server-netty:$version"
     const val auth = "io.ktor:ktor-auth:$version"
@@ -169,7 +165,7 @@ object Ktor {
 }
 
 object Log4j2 {
-    const val version = "2.14.0"
+    const val version = "2.14.1"
     const val api = "org.apache.logging.log4j:log4j-api:$version"
     const val core = "org.apache.logging.log4j:log4j-core:$version"
     const val slf4j = "org.apache.logging.log4j:log4j-slf4j-impl:$version"
@@ -183,7 +179,7 @@ object Log4j2 {
 }
 
 object Micrometer {
-    const val version = "1.4.0"
+    const val version = "1.7.0"
     const val prometheusRegistry = "io.micrometer:micrometer-registry-prometheus:$version"
 }
 
@@ -199,7 +195,7 @@ object Moshi {
 }
 
 object Mockk {
-    const val version = "1.10.6"
+    const val version = "1.11.0"
     const val mockk = "io.mockk:mockk:$version"
 }
 
@@ -209,7 +205,7 @@ object Nare {
 }
 
 object Prometheus {
-    const val version = "0.8.1"
+    const val version = "0.11.0"
     const val common = "io.prometheus:simpleclient_common:$version"
     const val hotspot = "io.prometheus:simpleclient_hotspot:$version"
     const val log4j2 = "io.prometheus:simpleclient_log4j2:$version"
@@ -221,7 +217,7 @@ object Prometheus {
     }
 }
 
-const val RapidAndRivers = "com.github.navikt:rapids-and-rivers:1.f3e5de3"
+const val RapidAndRivers = "com.github.navikt:rapids-and-rivers:20210617121814-3e67e4d"
 
 object Slf4j {
     const val version = "1.7.25"
