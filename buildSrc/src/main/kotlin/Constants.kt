@@ -133,7 +133,7 @@ object Kotlin {
 }
 
 object KoTest {
-    const val version = "4.4.1"
+    const val version = "4.6.0"
 
     // for kotest framework
     const val runner = "io.kotest:kotest-runner-junit5-jvm:$version"
@@ -229,12 +229,12 @@ object Ktlint {
 }
 
 object Spotless {
-    const val version = "5.10.1"
+    const val version = "5.14.0"
     const val spotless = "com.diffplug.spotless"
 }
 
 object Shadow {
-    const val version = "5.2.0"
+    const val version = "7.0.0"
     const val shadow = "com.github.johnrengelman.shadow"
 }
 
@@ -259,7 +259,7 @@ object Wiremock {
 }
 
 object Graphql {
-    const val version = "4.0.0-alpha.12"
+    const val version = "4.1.1"
     const val graphql = "com.expediagroup.graphql"
     val client = library("client")
     fun library(name: String) = "com.expediagroup:graphql-kotlin-$name:$version"
