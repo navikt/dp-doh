@@ -54,7 +54,8 @@ internal class SlackClient(private val accessToken: String, private val channel:
                 mutableMapOf<String, Any>(
                     "channel" to channel,
                     "text" to text,
-                    "icon_emoji" to emoji
+                    "icon_emoji" to emoji,
+                    "as_user" to false
                 ).apply {
                     threadTs?.also {
                         put("thread_ts", it)
