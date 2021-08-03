@@ -42,7 +42,6 @@ object Dagpenger {
         object Soap {
             const val client = "com.github.navikt.dp-biblioteker:soap-client:$version"
         }
-
     }
     const val Grunnbeløp = "com.github.navikt:dp-grunnbelop:2021.06.25-11.51.bdc7c826c404"
     const val Streams = "com.github.navikt:dagpenger-streams:2021.06.23-14.29.bbb62ad15d52"
