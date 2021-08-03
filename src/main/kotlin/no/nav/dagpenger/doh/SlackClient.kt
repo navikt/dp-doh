@@ -47,7 +47,8 @@ internal class SlackClient(private val accessToken: String, private val channel:
         text: String,
         threadTs: String? = null,
         broadcast: Boolean = false,
-        emoji: String = ":scream:"
+        emoji: String = ":scream:",
+        username: String? = null
     ): String? {
         return "https://slack.com/api/chat.postMessage".post(
             objectMapper.writeValueAsString(
@@ -55,8 +56,11 @@ internal class SlackClient(private val accessToken: String, private val channel:
                     "channel" to channel,
                     "text" to text,
                     "icon_emoji" to emoji,
-                    "as_user" to false
+                    "as_user" to false,
                 ).apply {
+                    username?.also {
+                        put("username", username)
+                    }
                     threadTs?.also {
                         put("thread_ts", it)
                         put("reply_broadcast", broadcast)

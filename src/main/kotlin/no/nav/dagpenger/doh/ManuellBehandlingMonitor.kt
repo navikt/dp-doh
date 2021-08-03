@@ -40,6 +40,7 @@ internal class ManuellBehandlingMonitor(
                 packet["seksjon_navn"].asText(),
                 packet["søknad_uuid"].asText(),
             ),
+            username = "dp-quiz",
             emoji = ":sadpanda:"
         )
     }

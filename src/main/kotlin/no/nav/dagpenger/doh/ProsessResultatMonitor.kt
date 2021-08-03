@@ -46,6 +46,7 @@ internal class ProsessResultatMonitor(
                 packet["søknad_uuid"].asText(),
                 packet["resultat"].asBoolean()
             ),
+            username = "dp-quiz",
             emoji = ":tada:"
         )
     }
