@@ -53,7 +53,7 @@ dependencies {
     testImplementation(kotlin("test"))
     testImplementation(Junit5.api)
     testImplementation(KoTest.runner)
-    testImplementation(Mockk.mockk)
+    testImplementation("io.mockk:mockk:1.12.0")
     testRuntimeOnly(Junit5.engine)
 
     implementation("com.slack.api:slack-api-client:1.9.0")

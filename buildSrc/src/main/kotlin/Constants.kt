@@ -193,7 +193,7 @@ object Moshi {
 }
 
 object Mockk {
-    const val version = "1.12.0"
+    const val version = "1.11.0"
     const val mockk = "io.mockk:mockk:$version"
 }
 
