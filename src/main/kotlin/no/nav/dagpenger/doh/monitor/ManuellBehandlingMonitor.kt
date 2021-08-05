@@ -35,11 +35,13 @@ internal class ManuellBehandlingMonitor(
     }
 
     override fun onPacket(packet: JsonMessage, context: MessageContext) {
-        manuellCounter.labels(packet["seksjon_navn"].asText()).inc()
+        val årsak = packet["seksjon_navn"].asText()
+        manuellCounter.labels(årsak).inc()
+
+        log.info { "Mottok manuell behandling" }
 
         slackClient?.chatPostMessage {
             val uuid = packet["søknad_uuid"].asText()
-            val årsak = packet["seksjon_navn"].asText()
 
             it.channel(slackChannelId)
                 .blocks {
