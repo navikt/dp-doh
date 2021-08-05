@@ -6,17 +6,6 @@ plugins {
     application
     kotlin("jvm") version Kotlin.version
     id(Spotless.spotless) version Spotless.version
-    id(Shadow.shadow) version Shadow.version
-}
-
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-}
-
-apply {
-    plugin(Spotless.spotless)
 }
 
 repositories {
@@ -75,6 +64,19 @@ spotless {
         target("*.gradle.kts", "buildSrc/**/*.kt*")
         ktlint(Ktlint.version)
     }
+}
+
+tasks.withType<Jar>().configureEach {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    manifest {
+        attributes(mapOf("Main-Class" to application.mainClass.get()))
+    }
+
+    from(
+        configurations.runtimeClasspath.get().map {
+            if (it.isDirectory) it else zipTree(it)
+        }
+    )
 }
 
 tasks.named("compileKotlin") {
