@@ -1,6 +1,6 @@
 name: Build and deploy
 
-on: [push]
+on: [ push ]
 
 env:
   IMAGE: docker.pkg.github.com/${{ github.repository }}/dp-doh:${{ github.sha }}
@@ -47,7 +47,7 @@ jobs:
 
   deploy-dev:
     name: Deploy to dev
-    needs: [build]
+    needs: [ build ]
     if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     steps:
@@ -67,7 +67,7 @@ jobs:
 
   deploy-prod:
     name: Deploy to Production
-    needs: [deploy-dev]
+    needs: [ build ]
     if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     steps:
