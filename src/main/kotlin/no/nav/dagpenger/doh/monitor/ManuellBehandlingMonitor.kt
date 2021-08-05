@@ -4,6 +4,7 @@ import com.slack.api.methods.MethodsClient
 import com.slack.api.methods.kotlin_extension.request.chat.blocks
 import io.prometheus.client.Counter
 import mu.KotlinLogging
+import mu.withLoggingContext
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.MessageProblems
@@ -35,42 +36,52 @@ internal class ManuellBehandlingMonitor(
     }
 
     override fun onPacket(packet: JsonMessage, context: MessageContext) {
+        val uuid = packet["søknad_uuid"].asText()
         val årsak = packet["seksjon_navn"].asText()
+
         manuellCounter.labels(årsak).inc()
 
-        log.info { "Mottok manuell behandling" }
+        withLoggingContext(
+            "søknad_uuid" to uuid
+        ) {
+            log.info { "Mottok manuell behandling" }
 
-        slackClient?.chatPostMessage {
-            val uuid = packet["søknad_uuid"].asText()
-
-            it.channel(slackChannelId)
-                .blocks {
-                    section {
-                        plainText(":office_worker: Søknad gikk til manuell behandling i Arena")
-                    }
-                    section {
-                        markdownText(
-                            listOf(
-                                "*UUID*: $uuid",
-                                "*Årsak*: $årsak",
-                            ).joinToString("\n")
-                        )
-                    }
-                    actions {
-                        button {
-                            text(":ledger: Se saksbehandlingslogg")
-                            url("kibana")
+            slackClient?.chatPostMessage {
+                it.channel(slackChannelId)
+                    .blocks {
+                        section {
+                            plainText(":office_worker: Søknad gikk til manuell behandling i Arena")
+                        }
+                        section {
+                            markdownText(
+                                listOf(
+                                    "*UUID*: $uuid",
+                                    "*Årsak*: $årsak",
+                                ).joinToString("\n")
+                            )
+                        }
+                        actions {
+                            button {
+                                text(":ledger: Se saksbehandlingslogg")
+                                url("kibana")
+                            }
                         }
                     }
-                }
-                .text(
-                    String.format(
-                        "På grunn av %s kan ikke søknaden %s automatiseres, den går til manuell behandling i Arena",
-                        årsak,
-                        uuid,
+                    .text(
+                        String.format(
+                            "På grunn av %s kan ikke søknaden %s automatiseres, den går til manuell behandling i Arena",
+                            årsak,
+                            uuid,
+                        )
                     )
-                )
-                .iconEmoji(":sadpanda:")
+                    .iconEmoji(":sadpanda:")
+            }?.let { response ->
+                if (response.isOk) {
+                    log.info { "Postet melding på Slack" }
+                } else {
+                    log.error { "Kunne ikke poste på Slack fordi ${response.error}" }
+                }
+            }
         }
     }
 
