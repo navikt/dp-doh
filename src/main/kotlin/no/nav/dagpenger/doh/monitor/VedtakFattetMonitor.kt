@@ -1,17 +1,20 @@
-package no.nav.dagpenger.doh
+package no.nav.dagpenger.doh.monitor
 
+import com.fasterxml.jackson.databind.JsonNode
 import mu.KotlinLogging
+import no.nav.dagpenger.doh.Kibana
+import no.nav.dagpenger.doh.slack.SlackClient
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.MessageProblems
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.River
+import no.nav.helse.rapids_rivers.asLocalDateTime
 
-internal class UløstOppgaveMonitor(
+internal class VedtakFattetMonitor(
     rapidsConnection: RapidsConnection,
     private val slackClient: SlackClient?
 ) : River.PacketListener {
-    private val env = System.getenv()
     companion object {
         private val log = KotlinLogging.logger { }
         private val sikkerlogg = KotlinLogging.logger("tjenestekall")
@@ -20,11 +23,10 @@ internal class UløstOppgaveMonitor(
     init {
         River(rapidsConnection).apply {
             validate {
-                it.demandValue("@event_name", "oppgave")
-                it.requireKey("søknad_uuid")
-                it.requireArray("fakta") {
-                    requireKey("svar")
-                }
+                it.demandValue("@event_name", "vedtak_endret")
+                it.demandValue("gjeldendeTilstand", "VedtakFattet")
+                it.requireKey("vedtakId")
+                it.require("@opprettet", JsonNode::asLocalDateTime)
             }
         }.register(this)
     }
@@ -32,9 +34,12 @@ internal class UløstOppgaveMonitor(
     override fun onPacket(packet: JsonMessage, context: MessageContext) {
         slackClient?.postMessage(
             text = String.format(
-                "Nå må noen løse oppgaver her! <%s|%s> venter på en saksbehandler.",
-                env["DP_QUIZ_RETTING_URL"] ?: "https://arbeid.dev.nav.no/arbeid/dagpenger/saksbehandling/oppgaver",
-                packet["søknad_uuid"].asText()
+                "Vedtak <%s|%s> har blitt fattet",
+                Kibana.createUrl(
+                    String.format("\"%s\"", packet["vedtakId"].asText()),
+                    packet["@opprettet"].asLocalDateTime().minusHours(1)
+                ),
+                packet["vedtakId"].asText()
             ),
             emoji = ":tada:"
         )

@@ -2,6 +2,7 @@ package no.nav.dagpenger.doh
 
 import io.kotest.matchers.shouldBe
 import io.prometheus.client.CollectorRegistry
+import no.nav.dagpenger.doh.monitor.AktivitetsloggMonitor
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test

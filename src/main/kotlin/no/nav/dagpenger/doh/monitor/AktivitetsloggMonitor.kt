@@ -1,4 +1,4 @@
-package no.nav.dagpenger.doh
+package no.nav.dagpenger.doh.monitor
 
 import com.fasterxml.jackson.databind.JsonNode
 import io.prometheus.client.Counter

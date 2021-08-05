@@ -1,4 +1,4 @@
-package no.nav.dagpenger.doh
+package no.nav.dagpenger.doh.slack
 
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
@@ -8,33 +8,8 @@ import java.io.IOException
 import java.io.InputStream
 import java.net.HttpURLConnection
 import java.net.URL
-import java.time.LocalDateTime
-
-internal fun SlackClient?.postMessage(slackThreadDao: SlackThreadDao, vedtaksperiodeId: String, message: String) {
-    if (this == null) return
-
-    var threadTs: String? = null
-    var broadcast = false
-    slackThreadDao.hentThreadTs(vedtaksperiodeId)?.also {
-        threadTs = it.first
-        broadcast = it.second.isBefore(LocalDateTime.now().minusDays(2))
-    }
-
-    this.postMessage(message, threadTs, broadcast)?.also {
-        if (threadTs == null) {
-            slackThreadDao.lagreThreadTs(vedtaksperiodeId, it)
-        }
-    } ?: threadTs?.let {
-        // if threadTs is !null, and postMessage didn't return a threadTs; assume there's an error
-        // with the provided threadTs and retry without.
-        this.postMessage(message)?.also {
-            slackThreadDao.lagreThreadTs(vedtaksperiodeId, it)
-        }
-    }
-}
 
 internal class SlackClient(private val accessToken: String, private val channel: String) {
-
     private companion object {
         private val tjenestekall = LoggerFactory.getLogger("tjenestekall")
         private val log = LoggerFactory.getLogger(SlackClient::class.java)
@@ -45,27 +20,17 @@ internal class SlackClient(private val accessToken: String, private val channel:
 
     fun postMessage(
         text: String,
-        threadTs: String? = null,
-        broadcast: Boolean = false,
-        emoji: String = ":scream:",
-        username: String? = null
-    ): String? {
-        return "https://slack.com/api/chat.postMessage".post(
+        emoji: String = ":scream:"
+    ) {
+        "https://slack.com/api/chat.postMessage".post(
             objectMapper.writeValueAsString(
                 mutableMapOf<String, Any>(
                     "channel" to channel,
                     "text" to text,
                     "icon_emoji" to emoji,
-                ).apply {
-                    threadTs?.also {
-                        put("thread_ts", it)
-                        put("reply_broadcast", broadcast)
-                    }
-                }
+                )
             )
-        )?.let {
-            objectMapper.readTree(it)["ts"]?.asText()
-        }
+        )
     }
 
     private fun String.post(jsonPayload: String): String? {
@@ -82,7 +47,6 @@ internal class SlackClient(private val accessToken: String, private val channel:
 
                 outputStream.use { it.bufferedWriter(Charsets.UTF_8).apply { write(jsonPayload); flush() } }
             }
-
             val responseCode = connection.responseCode
 
             if (connection.responseCode !in 200..299) {
@@ -90,7 +54,6 @@ internal class SlackClient(private val accessToken: String, private val channel:
                 tjenestekall.error("response from slack: code=$responseCode body=${connection.errorStream.readText()}")
                 return null
             }
-
             val responseBody = connection.inputStream.readText()
             log.debug("response from slack: code=$responseCode")
             tjenestekall.debug("response from slack: code=$responseCode body=$responseBody")

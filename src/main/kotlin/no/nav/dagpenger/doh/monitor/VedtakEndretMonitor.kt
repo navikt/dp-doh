@@ -1,4 +1,4 @@
-package no.nav.dagpenger.doh
+package no.nav.dagpenger.doh.monitor
 
 import io.prometheus.client.Counter
 import no.nav.helse.rapids_rivers.JsonMessage

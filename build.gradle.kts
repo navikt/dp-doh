@@ -57,6 +57,10 @@ dependencies {
     testImplementation(Mockk.mockk)
     testRuntimeOnly(Junit5.engine)
 
+    implementation("com.slack.api:slack-api-client:1.9.0")
+    implementation("com.slack.api:slack-api-model-kotlin-extension:1.9.0")
+    implementation("com.slack.api:slack-api-client-kotlin-extension:1.9.0")
+
     implementation("org.flywaydb:flyway-core:$flywayVersion")
     implementation("com.zaxxer:HikariCP:$hikariVersion")
     implementation("no.nav:vault-jdbc:$vaultJdbcVersion")

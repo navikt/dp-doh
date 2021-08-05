@@ -1,0 +1,46 @@
+package no.nav.dagpenger.doh
+
+import com.slack.api.methods.MethodsClient
+import io.mockk.mockk
+import no.nav.dagpenger.doh.monitor.ManuellBehandlingMonitor
+import no.nav.helse.rapids_rivers.testsupport.TestRapid
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Test
+import java.util.UUID
+
+internal class ManuellBehandlingMonitorTest {
+    private val slack = mockk<MethodsClient>(relaxed = true)
+    private val rapid by lazy {
+        TestRapid().apply {
+            ManuellBehandlingMonitor(this, slack, "channel")
+        }
+    }
+
+    @AfterEach
+    fun cleanUp() {
+        rapid.reset()
+    }
+
+    @Test
+    fun `skal poste søknader som går til manuell på Slack`() {
+        /*every {
+            slack.chatPostMessage { captureLambda() }
+        } answers {
+            lambda<() -> ChatPostMessageResponse>().invoke()
+        }*/
+
+        rapid.sendTestMessage(vedtakEndretJson)
+        /*verify(exactly = 1) {
+            slack.chatPostMessage { allAny() }
+        }*/
+    }
+}
+
+//language=JSON
+private val vedtakEndretJson =
+    """{
+  "@event_name": "manuell_behandling",
+  "søknad_uuid": "${UUID.randomUUID()}",
+  "seksjon_navn": "ny"
+}
+    """.trimIndent()

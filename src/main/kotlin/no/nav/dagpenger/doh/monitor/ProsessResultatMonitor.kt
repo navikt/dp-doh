@@ -1,8 +1,10 @@
-package no.nav.dagpenger.doh
+package no.nav.dagpenger.doh.monitor
 
 import com.fasterxml.jackson.databind.JsonNode
 import io.prometheus.client.Counter
 import mu.KotlinLogging
+import no.nav.dagpenger.doh.Kibana
+import no.nav.dagpenger.doh.slack.SlackClient
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.MessageProblems
@@ -29,6 +31,7 @@ internal class ProsessResultatMonitor(
                 it.demandValue("@event_name", "prosess_resultat")
                 it.requireKey("søknad_uuid", "resultat")
                 it.require("@opprettet", JsonNode::asLocalDateTime)
+                it.requireKey("fakta")
             }
         }.register(this)
     }

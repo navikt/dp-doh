@@ -1,6 +1,8 @@
-package no.nav.dagpenger.doh
+package no.nav.dagpenger.doh.monitor
 
 import com.fasterxml.jackson.databind.JsonNode
+import no.nav.dagpenger.doh.humanReadableTime
+import no.nav.dagpenger.doh.slack.SlackClient
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.MessageProblems

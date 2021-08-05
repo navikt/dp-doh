@@ -6,8 +6,14 @@ import com.natpryce.konfig.EnvironmentVariables
 import com.natpryce.konfig.Key
 import com.natpryce.konfig.overriding
 import com.natpryce.konfig.stringType
+import com.slack.api.Slack
+import com.slack.api.methods.MethodsClient
+import no.nav.dagpenger.doh.slack.SlackClient
 
 internal object Configuration {
+    val slackChannelId by lazy {
+        properties[Key("dp.slacker.channel.id", stringType)]
+    }
     private val defaultProperties = ConfigurationMap(
         mapOf(
             "KAFKA_CONSUMER_GROUP_ID" to "dp-doh-v1",
@@ -16,9 +22,7 @@ internal object Configuration {
             "HTTP_PORT" to "8080",
         )
     )
-
     private val properties = systemProperties() overriding EnvironmentVariables() overriding defaultProperties
-
     val slackAlertClient: SlackClient? by lazy {
         properties.getOrNull(Key("SLACK_ACCESS_TOKEN", stringType))?.let {
             SlackClient(
@@ -27,13 +31,17 @@ internal object Configuration {
             )
         }
     }
-
     val slackClient: SlackClient? by lazy {
         properties.getOrNull(Key("SLACK_ACCESS_TOKEN", stringType))?.let {
             SlackClient(
                 accessToken = it,
                 channel = properties[Key("DP_SLACKER_CHANNEL_ID", stringType)]
             )
+        }
+    }
+    val slack: MethodsClient? by lazy {
+        properties.getOrNull(Key("SLACK_ACCESS_TOKEN", stringType))?.let { token ->
+            Slack.getInstance().methods(token)
         }
     }
 

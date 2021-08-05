@@ -3,6 +3,8 @@ package no.nav.dagpenger.doh
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import no.nav.dagpenger.doh.monitor.VedtakFattetMonitor
+import no.nav.dagpenger.doh.slack.SlackClient
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
@@ -25,7 +27,7 @@ internal class VedtakFattetMonitorTest {
     fun `skal poste fattede vedtak på Slack`() {
         every {
             slack.postMessage(allAny())
-        } returns "ts from slack"
+        } answers {}
 
         rapid.sendTestMessage(vedtakEndretJson)
 
