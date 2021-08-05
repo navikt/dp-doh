@@ -11,7 +11,7 @@ plugins {
 
 buildscript {
     repositories {
-        jcenter()
+        mavenCentral()
     }
 }
 
@@ -20,24 +20,23 @@ apply {
 }
 
 repositories {
-    jcenter()
+    mavenCentral()
     maven(url = "https://packages.confluent.io/maven/")
     maven("https://jitpack.io")
 }
 
 application {
     applicationName = "dp-doh"
-    mainClassName = "no.nav.dagpenger.doh.AppKt"
+    mainClass.set("no.nav.dagpenger.doh.AppKt")
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
+    sourceCompatibility = JavaVersion.VERSION_16
 }
 
 tasks.withType<KotlinCompile>().all {
-    kotlinOptions.jvmTarget = JavaVersion.VERSION_1_8.toString()
+    kotlinOptions.jvmTarget = JavaVersion.VERSION_16.toString()
 }
-
 val flywayVersion = "6.2.3"
 val hikariVersion = "3.4.2"
 val vaultJdbcVersion = "1.3.1"
