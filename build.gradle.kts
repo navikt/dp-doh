@@ -50,10 +50,8 @@ dependencies {
     implementation(Kotlin.Logging.kotlinLogging)
     implementation(Ktor.serverNetty)
 
-    testImplementation(kotlin("test"))
-    testImplementation(Junit5.api)
-    testImplementation(KoTest.runner)
     testImplementation("io.mockk:mockk:1.12.0")
+    testImplementation(Junit5.api)
     testRuntimeOnly(Junit5.engine)
 
     implementation("com.slack.api:slack-api-client:1.9.0")

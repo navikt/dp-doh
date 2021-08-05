@@ -1,10 +1,10 @@
 package no.nav.dagpenger.doh
 
-import io.kotest.matchers.shouldBe
 import io.prometheus.client.CollectorRegistry
 import no.nav.dagpenger.doh.monitor.AktivitetsloggMonitor
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 internal class AktivitetsloggMonitorTest {
@@ -39,7 +39,7 @@ internal class AktivitetsloggMonitorTest {
                 "false"
             ).toTypedArray()
         ).also {
-            it shouldBe 1.0
+            assertEquals(it, 1.0)
         }
     }
 
@@ -62,7 +62,7 @@ internal class AktivitetsloggMonitorTest {
                 "true"
             ).toTypedArray()
         ).also {
-            it shouldBe 2.0
+            assertEquals(it, 2.0)
         }
     }
 }
