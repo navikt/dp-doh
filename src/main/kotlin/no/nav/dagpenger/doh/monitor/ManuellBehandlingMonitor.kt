@@ -84,7 +84,8 @@ internal class ManuellBehandlingMonitor(
                             uuid,
                         )
                     )
-                    .iconEmoji(":sadpanda:")
+                    .iconEmoji(":robot_face:")
+                    .username("dp-quiz")
             }?.let { response ->
                 if (response.isOk) {
                     log.info { "Postet melding på Slack" }
