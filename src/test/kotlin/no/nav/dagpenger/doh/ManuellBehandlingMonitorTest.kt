@@ -6,6 +6,7 @@ import no.nav.dagpenger.doh.monitor.ManuellBehandlingMonitor
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
+import java.time.LocalDateTime
 import java.util.UUID
 
 internal class ManuellBehandlingMonitorTest {
@@ -29,7 +30,7 @@ internal class ManuellBehandlingMonitorTest {
             lambda<() -> ChatPostMessageResponse>().invoke()
         }*/
 
-        rapid.sendTestMessage(vedtakEndretJson)
+        rapid.sendTestMessage(manuellBehandlingJson)
         /*verify(exactly = 1) {
             slack.chatPostMessage { allAny() }
         }*/
@@ -37,9 +38,10 @@ internal class ManuellBehandlingMonitorTest {
 }
 
 //language=JSON
-private val vedtakEndretJson =
+private val manuellBehandlingJson =
     """{
   "@event_name": "manuell_behandling",
+  "@opprettet": "${LocalDateTime.now()}",
   "søknad_uuid": "${UUID.randomUUID()}",
   "seksjon_navn": "ny"
 }

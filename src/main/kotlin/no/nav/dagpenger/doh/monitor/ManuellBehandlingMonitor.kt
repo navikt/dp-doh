@@ -5,11 +5,13 @@ import com.slack.api.methods.kotlin_extension.request.chat.blocks
 import io.prometheus.client.Counter
 import mu.KotlinLogging
 import mu.withLoggingContext
+import no.nav.dagpenger.doh.Kibana
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.MessageProblems
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.River
+import no.nav.helse.rapids_rivers.asLocalDateTime
 
 internal class ManuellBehandlingMonitor(
     rapidsConnection: RapidsConnection,
@@ -29,8 +31,11 @@ internal class ManuellBehandlingMonitor(
         River(rapidsConnection).apply {
             validate {
                 it.demandValue("@event_name", "manuell_behandling")
-                it.requireKey("søknad_uuid")
-                it.requireKey("seksjon_navn")
+                it.requireKey(
+                    "@opprettet",
+                    "søknad_uuid",
+                    "seksjon_navn"
+                )
             }
         }.register(this)
     }
@@ -47,6 +52,11 @@ internal class ManuellBehandlingMonitor(
             log.info { "Mottok manuell behandling" }
 
             slackClient?.chatPostMessage {
+                val saksbehandlingslogg = Kibana.createUrl(
+                    String.format("\"%s\"", uuid),
+                    packet["@opprettet"].asLocalDateTime().minusHours(1)
+                )
+
                 it.channel(slackChannelId)
                     .blocks {
                         section {
@@ -63,7 +73,7 @@ internal class ManuellBehandlingMonitor(
                         actions {
                             button {
                                 text(":ledger: Se saksbehandlingslogg")
-                                url("kibana")
+                                url(saksbehandlingslogg)
                             }
                         }
                     }
@@ -80,6 +90,7 @@ internal class ManuellBehandlingMonitor(
                     log.info { "Postet melding på Slack" }
                 } else {
                     log.error { "Kunne ikke poste på Slack fordi ${response.error}" }
+                    log.error { response }
                 }
             }
         }
