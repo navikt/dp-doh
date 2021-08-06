@@ -16,7 +16,7 @@ fun main() {
     RapidApplication.create(Configuration.asMap()).apply {
         AppStateMonitor(this, slackAlertClient)
         UløstOppgaveMonitor(this, slackClient)
-        ProsessResultatMonitor(this, slackClient)
+        ProsessResultatMonitor(this, slack, slackChannelId)
         ManuellBehandlingMonitor(this, slack, slackChannelId)
     }.start()
 }
