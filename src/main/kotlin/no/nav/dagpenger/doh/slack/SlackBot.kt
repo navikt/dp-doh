@@ -20,7 +20,6 @@ internal class SlackBot(
         uuid: String?,
         opprettet: LocalDateTime,
         resultat: Boolean,
-        årsak: String?
     ) {
         chatPostMessage {
             val resultatTekst = if (resultat)
@@ -35,7 +34,6 @@ internal class SlackBot(
                     markdownText(
                         listOf(
                             "*UUID*: $uuid",
-                            "*Årsak*: $årsak",
                         ).joinToString("\n")
                     )
                 }

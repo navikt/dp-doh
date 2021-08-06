@@ -40,7 +40,6 @@ internal class ProsessResultatMonitor(
             uuid = packet["søknad_uuid"].asText(),
             opprettet = packet["@opprettet"].asLocalDateTime(),
             resultat = packet["resultat"].asBoolean(),
-            årsak = packet["seksjon_navn"].asText()
         )
 
         resultatCounter.labels(packet["resultat"].asText()).inc()
