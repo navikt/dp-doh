@@ -48,7 +48,7 @@ internal class ProsessResultatMonitor(
         withLoggingContext(
             "søknad_uuid" to uuid
         ) {
-            log.info { "Mottok manuell behandling" }
+            log.info { "Mottok prosessresultat" }
 
             slackClient?.chatPostMessage {
                 val saksbehandlingslogg = Kibana.createUrl(
