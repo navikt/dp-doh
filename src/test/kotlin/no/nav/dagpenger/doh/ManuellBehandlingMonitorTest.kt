@@ -1,8 +1,8 @@
 package no.nav.dagpenger.doh
 
-import com.slack.api.methods.MethodsClient
 import io.mockk.mockk
 import no.nav.dagpenger.doh.monitor.ManuellBehandlingMonitor
+import no.nav.dagpenger.doh.slack.SlackBot
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
@@ -10,10 +10,10 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 internal class ManuellBehandlingMonitorTest {
-    private val slack = mockk<MethodsClient>(relaxed = true)
+    private val slack = mockk<SlackBot>(relaxed = true)
     private val rapid by lazy {
         TestRapid().apply {
-            ManuellBehandlingMonitor(this, slack, "channel")
+            ManuellBehandlingMonitor(this, slack)
         }
     }
 

@@ -7,7 +7,7 @@ import com.natpryce.konfig.Key
 import com.natpryce.konfig.overriding
 import com.natpryce.konfig.stringType
 import com.slack.api.Slack
-import com.slack.api.methods.MethodsClient
+import no.nav.dagpenger.doh.slack.SlackBot
 import no.nav.dagpenger.doh.slack.SlackClient
 
 internal object Configuration {
@@ -39,9 +39,9 @@ internal object Configuration {
             )
         }
     }
-    val slack: MethodsClient? by lazy {
+    val slackBot: SlackBot? by lazy {
         properties.getOrNull(Key("SLACK_ACCESS_TOKEN", stringType))?.let { token ->
-            Slack.getInstance().methods(token)
+            SlackBot(Slack.getInstance().methods(token), slackChannelId)
         }
     }
 

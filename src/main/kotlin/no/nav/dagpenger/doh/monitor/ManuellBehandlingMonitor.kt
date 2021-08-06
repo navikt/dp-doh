@@ -1,11 +1,8 @@
 package no.nav.dagpenger.doh.monitor
 
-import com.slack.api.methods.MethodsClient
-import com.slack.api.methods.kotlin_extension.request.chat.blocks
 import io.prometheus.client.Counter
 import mu.KotlinLogging
-import mu.withLoggingContext
-import no.nav.dagpenger.doh.Kibana
+import no.nav.dagpenger.doh.slack.SlackBot
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.MessageProblems
@@ -15,8 +12,7 @@ import no.nav.helse.rapids_rivers.asLocalDateTime
 
 internal class ManuellBehandlingMonitor(
     rapidsConnection: RapidsConnection,
-    private val slackClient: MethodsClient?,
-    private val slackChannelId: String
+    private val slackBot: SlackBot?,
 ) : River.PacketListener {
     companion object {
         private val log = KotlinLogging.logger { }
@@ -43,58 +39,9 @@ internal class ManuellBehandlingMonitor(
     override fun onPacket(packet: JsonMessage, context: MessageContext) {
         val uuid = packet["søknad_uuid"].asText()
         val årsak = packet["seksjon_navn"].asText()
-
+        val opprettet = packet["@opprettet"].asLocalDateTime()
+        slackBot?.postManuellBehandling(uuid, opprettet, årsak)
         manuellCounter.labels(årsak).inc()
-
-        withLoggingContext(
-            "søknad_uuid" to uuid
-        ) {
-            log.info { "Mottok manuell behandling" }
-
-            slackClient?.chatPostMessage {
-                val saksbehandlingslogg = Kibana.createUrl(
-                    String.format("\"%s\"", uuid),
-                    packet["@opprettet"].asLocalDateTime().minusHours(1)
-                )
-
-                it.channel(slackChannelId)
-                    .blocks {
-                        section {
-                            plainText(":checkered_flag: Jeg har saksbehandlet en søknad!")
-                        }
-                        section {
-                            markdownText("*Resultat:* \nManuell saksbehandling i Arena :muscle:")
-                        }
-                        section {
-                            markdownText(
-                                listOf(
-                                    "*UUID*: $uuid",
-                                    "*Årsak*: $årsak",
-                                ).joinToString("\n")
-                            )
-                        }
-                        actions {
-                            button {
-                                text(":ledger: Se saksbehandlingslogg")
-                                url(saksbehandlingslogg)
-                            }
-                        }
-                    }
-                    .text(
-                        String.format(
-                            "På grunn av %s kan ikke søknaden %s automatiseres, den går til manuell behandling i Arena",
-                            årsak,
-                            uuid,
-                        )
-                    )
-                    .iconEmoji(":robot_face:")
-                    .username("dp-quiz")
-            }?.let { response ->
-                if (!response.isOk) {
-                    log.error { "Kunne ikke poste på Slack fordi ${response.error}" }
-                }
-            }
-        }
     }
 
     override fun onError(problems: MessageProblems, context: MessageContext) {
