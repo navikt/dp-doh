@@ -28,16 +28,8 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      - name: Test with Gradle
-        run: ./gradlew test --info
-
-  build:
-    name: Build and Publish Docker image
-    if: github.ref == 'refs/heads/master'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - name: Build with Gradle
+        run: ./gradlew build --info
 
       - name: Set up Docker Buildx
         id: buildx
