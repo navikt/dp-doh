@@ -60,7 +60,10 @@ internal class ManuellBehandlingMonitor(
                 it.channel(slackChannelId)
                     .blocks {
                         section {
-                            plainText(":office_worker: Søknad gikk til manuell behandling i Arena")
+                            plainText(":checkered_flag: Jeg har saksbehandlet en søknad!")
+                        }
+                        section {
+                            markdownText("*Resultat:* \nManuell saksbehandling i Arena :muscle:")
                         }
                         section {
                             markdownText(
@@ -87,11 +90,8 @@ internal class ManuellBehandlingMonitor(
                     .iconEmoji(":robot_face:")
                     .username("dp-quiz")
             }?.let { response ->
-                if (response.isOk) {
-                    log.info { "Postet melding på Slack" }
-                } else {
+                if (!response.isOk) {
                     log.error { "Kunne ikke poste på Slack fordi ${response.error}" }
-                    log.error { response }
                 }
             }
         }
