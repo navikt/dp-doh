@@ -79,6 +79,7 @@ internal class SlackBot(
         }.let { response ->
             if (!response.isOk) {
                 log.error { "Kunne ikke poste på Slack fordi ${response.error}" }
+                log.error { response }
             }
         }
 
