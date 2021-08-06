@@ -28,15 +28,21 @@ internal class SlackBot(
             it.blocks {
                 section { plainText(":checkered_flag: Jeg har saksbehandlet en søknad!") }
                 section {
-                    markdownText("*Resultat:* $resultatTekst\n")
-                }
-                section {
                     markdownText(
                         listOf(
-                            "*UUID*: $uuid",
+                            "*Resultat:* $resultatTekst",
+                            "*UUID:* $uuid",
                         ).joinToString("\n")
                     )
+                    accessory {
+                        image(
+                            imageUrl = "https://a.slack-edge.com/production-standard-emoji-assets/13.0/apple-large/2705.png",
+                            imageHeight = 32,
+                            imageWidth = 32
+                        )
+                    }
                 }
+                divider()
                 actions {
                     button {
                         text(":ledger: Se saksbehandlingslogg")
@@ -58,16 +64,15 @@ internal class SlackBot(
                     ":male-detective:",
                     ":female-detective:"
                 ).random()
-                markdownText("*Resultat:* \nManuell saksbehandling i Arena $detective")
-            }
-            section {
                 markdownText(
                     listOf(
-                        "*UUID*: $uuid",
-                        "*Årsak*: $årsak",
+                        "*Resultat:* Manuell saksbehandling i Arena $detective",
+                        "*UUID:* $uuid",
+                        "*Årsak:* $årsak",
                     ).joinToString("\n")
                 )
             }
+            divider()
             actions {
                 button {
                     text(":ledger: Se saksbehandlingslogg")
@@ -82,7 +87,6 @@ internal class SlackBot(
 
     private fun chatPostMessage(block: (it: ChatPostMessageRequestBuilder) -> ChatPostMessageRequestBuilder) =
         slackClient.chatPostMessage {
-            log.info { "Skal poste til Slack" }
             it.channel(slackChannelId)
                 .iconEmoji(":robot_face:")
                 .username("dp-quiz")
@@ -91,8 +95,6 @@ internal class SlackBot(
             if (!response.isOk) {
                 log.error { "Kunne ikke poste på Slack fordi ${response.error}" }
                 log.error { response }
-            } else {
-                log.info { "Postet til Slack" }
             }
         }
 }
