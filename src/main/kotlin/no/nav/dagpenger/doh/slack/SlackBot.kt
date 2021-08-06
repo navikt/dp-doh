@@ -92,6 +92,7 @@ internal class SlackBot(
 
     private fun chatPostMessage(block: (it: ChatPostMessageRequestBuilder) -> ChatPostMessageRequestBuilder) =
         slackClient.chatPostMessage {
+            log.info { "Skal poste til Slack" }
             it.channel(slackChannelId)
                 .iconEmoji(":robot_face:")
                 .username("dp-quiz")
@@ -100,6 +101,8 @@ internal class SlackBot(
             if (!response.isOk) {
                 log.error { "Kunne ikke poste på Slack fordi ${response.error}" }
                 log.error { response }
+            } else {
+                log.info { "Postet til Slack" }
             }
         }
 }
