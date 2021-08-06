@@ -35,7 +35,7 @@ internal class SlackBot(
                     markdownText(
                         listOf(
                             "*UUID*: $uuid",
-                            "**: $årsak",
+                            "*Årsak*: $årsak",
                         ).joinToString("\n")
                     )
                 }
@@ -66,7 +66,7 @@ internal class SlackBot(
                 markdownText(
                     listOf(
                         "*UUID*: $uuid",
-                        "**: $årsak",
+                        "*Årsak*: $årsak",
                     ).joinToString("\n")
                 )
             }
