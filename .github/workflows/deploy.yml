@@ -6,8 +6,8 @@ env:
   IMAGE: ghcr.io/${{ github.repository }}/dp-doh:${{ github.sha }}
 
 jobs:
-  test:
-    name: Run tests
+  build:
+    name: Run tests and build Docker image
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -74,7 +74,7 @@ jobs:
 
   deploy-dev:
     name: Deploy to dev
-    needs: [ test, build ]
+    needs: [ build ]
     if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     steps:
@@ -94,7 +94,7 @@ jobs:
 
   deploy-prod:
     name: Deploy to Production
-    needs: [ test, build ]
+    needs: [ build ]
     if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     steps:
