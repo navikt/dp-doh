@@ -60,7 +60,11 @@ internal class SlackBot(
         it.blocks {
             section { plainText(":checkered_flag: Jeg har saksbehandlet en søknad!") }
             section {
-                markdownText("*Resultat:* \nManuell saksbehandling i Arena :male-detective:")
+                val detective = listOf(
+                    ":male-detective:",
+                    ":female-detective:"
+                ).random()
+                markdownText("*Resultat:* \nManuell saksbehandling i Arena $detective")
             }
             section {
                 markdownText(
