@@ -54,6 +54,7 @@ internal class SlackBotTest {
         } answers {
             ChatPostMessageResponse().apply {
                 isOk = false
+                error = "Feilmelding fra Slack"
             }
         }
         slackBot.postResultat("123", LocalDateTime.now(), false)
