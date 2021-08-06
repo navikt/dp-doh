@@ -29,7 +29,7 @@ jobs:
             ${{ runner.os }}-gradle-
 
       - name: Test with Gradle
-        run: ./gradlew test--info
+        run: ./gradlew test --info
 
   build:
     name: Build and Publish Docker image
