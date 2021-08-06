@@ -3,6 +3,7 @@ package no.nav.dagpenger.doh.slack
 import com.slack.api.methods.MethodsClient
 import com.slack.api.methods.kotlin_extension.request.chat.blocks
 import com.slack.api.methods.request.chat.ChatPostMessageRequest.ChatPostMessageRequestBuilder
+import com.slack.api.model.kotlin_extension.block.SectionBlockBuilder
 import mu.KotlinLogging
 import no.nav.dagpenger.doh.Kibana
 import java.time.LocalDateTime
@@ -26,7 +27,7 @@ internal class SlackBot(
                 "Automatisk innvilgelse" else "Automatisk avslag :no_entry_sign:"
 
             it.blocks {
-                section { plainText(":checkered_flag: Jeg har saksbehandlet en søknad!") }
+                section { ferdigSaksbehandlet() }
                 section {
                     markdownText(
                         listOf(
@@ -58,7 +59,9 @@ internal class SlackBot(
 
     internal fun postManuellBehandling(uuid: String, opprettet: LocalDateTime, årsak: String) = chatPostMessage {
         it.blocks {
-            section { plainText(":checkered_flag: Jeg har saksbehandlet en søknad!") }
+            section {
+                ferdigSaksbehandlet()
+            }
             section {
                 val detective = listOf(
                     ":male-detective:",
@@ -71,6 +74,9 @@ internal class SlackBot(
                         "*Årsak:* $årsak",
                     ).joinToString("\n")
                 )
+                accessory {
+                    image(imageUrl = "https://images-na.ssl-images-amazon.com/images/I/61tkcGZeUKL.png")
+                }
             }
             divider()
             actions {
@@ -84,6 +90,9 @@ internal class SlackBot(
             "På grunn av $årsak kan ikke søknaden $uuid automatiseres, den går til manuell behandling i Arena"
         )
     }
+
+    private fun SectionBlockBuilder.ferdigSaksbehandlet() =
+        plainText("Jeg har saksbehandlet en søknad! :checkered_flag: :checkered_flag: :checkered_flag:")
 
     private fun chatPostMessage(block: (it: ChatPostMessageRequestBuilder) -> ChatPostMessageRequestBuilder) =
         slackClient.chatPostMessage {
