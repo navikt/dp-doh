@@ -3,8 +3,6 @@ package no.nav.dagpenger.doh.slack
 import com.slack.api.methods.MethodsClient
 import com.slack.api.methods.kotlin_extension.request.chat.blocks
 import com.slack.api.methods.request.chat.ChatPostMessageRequest.ChatPostMessageRequestBuilder
-import com.slack.api.model.kotlin_extension.block.ActionsBlockBuilder
-import com.slack.api.model.kotlin_extension.block.SectionBlockBuilder
 import mu.KotlinLogging
 import no.nav.dagpenger.doh.Kibana
 import java.time.LocalDateTime
@@ -29,13 +27,23 @@ internal class SlackBot(
                 "Automatisk innvilgelse" else "Automatisk avslag :no_entry_sign:"
 
             it.blocks {
-                section { ferdigSaksbehandling() }
+                section { plainText(":checkered_flag: Jeg har saksbehandlet en søknad!") }
                 section {
                     markdownText("*Resultat:* $resultatTekst\n")
                 }
-                section(saksinformasjon(uuid, årsak))
+                section {
+                    markdownText(
+                        listOf(
+                            "*UUID*: $uuid",
+                            "**: $årsak",
+                        ).joinToString("\n")
+                    )
+                }
                 actions {
-                    saksbehandlingsloggKnapp(uuid, opprettet)
+                    button {
+                        text(":ledger: Se saksbehandlingslogg")
+                        url(Kibana.createUrl(String.format("\"%s\"", uuid), opprettet.minusHours(1)))
+                    }
                 }
             }
                 .text(
@@ -50,15 +58,23 @@ internal class SlackBot(
 
     internal fun postManuellBehandling(uuid: String?, opprettet: LocalDateTime, årsak: String?) = chatPostMessage {
         it.blocks {
-            section { ferdigSaksbehandling() }
+            section { plainText(":checkered_flag: Jeg har saksbehandlet en søknad!") }
             section {
                 markdownText("*Resultat:* \nManuell saksbehandling i Arena :muscle:")
             }
             section {
-                saksinformasjon(uuid, årsak)
+                markdownText(
+                    listOf(
+                        "*UUID*: $uuid",
+                        "**: $årsak",
+                    ).joinToString("\n")
+                )
             }
             actions {
-                saksbehandlingsloggKnapp(uuid, opprettet)
+                button {
+                    text(":ledger: Se saksbehandlingslogg")
+                    url(Kibana.createUrl(String.format("\"%s\"", uuid), opprettet.minusHours(1)))
+                }
             }
         }
         it.text(
@@ -82,22 +98,4 @@ internal class SlackBot(
                 log.error { response }
             }
         }
-
-    private fun saksinformasjon(uuid: String?, årsak: String?): SectionBlockBuilder.() -> Unit =
-        {
-            markdownText(
-                listOf(
-                    "*UUID*: $uuid",
-                    "**: $årsak",
-                ).joinToString("\n")
-            )
-        }
-
-    private fun SectionBlockBuilder.ferdigSaksbehandling() =
-        plainText(":checkered_flag: Jeg har saksbehandlet en søknad!")
-
-    private fun ActionsBlockBuilder.saksbehandlingsloggKnapp(uuid: String?, opprettet: LocalDateTime) = button {
-        text(":ledger: Se saksbehandlingslogg")
-        url(Kibana.createUrl(String.format("\"%s\"", uuid), opprettet.minusHours(1)))
-    }
 }
