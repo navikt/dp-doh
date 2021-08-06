@@ -20,7 +20,9 @@ application {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_16
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(16))
+    }
 }
 
 tasks.withType<KotlinCompile>().all {
