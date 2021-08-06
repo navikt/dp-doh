@@ -17,7 +17,7 @@ internal class SlackBot(
     }
 
     internal fun postResultat(
-        uuid: String?,
+        uuid: String,
         opprettet: LocalDateTime,
         resultat: Boolean,
     ) {
@@ -45,16 +45,12 @@ internal class SlackBot(
                 }
             }
                 .text(
-                    String.format(
-                        "Prosessen for %s har blitt ferdig med resultatet %",
-                        uuid,
-                        resultatTekst
-                    )
+                    "Prosessen for $uuid har blitt ferdig med resultatet $resultat"
                 )
         }
     }
 
-    internal fun postManuellBehandling(uuid: String?, opprettet: LocalDateTime, årsak: String?) = chatPostMessage {
+    internal fun postManuellBehandling(uuid: String, opprettet: LocalDateTime, årsak: String) = chatPostMessage {
         it.blocks {
             section { plainText(":checkered_flag: Jeg har saksbehandlet en søknad!") }
             section {
@@ -80,11 +76,7 @@ internal class SlackBot(
             }
         }
         it.text(
-            String.format(
-                "På grunn av %s kan ikke søknaden %s automatiseres, den går til manuell behandling i Arena",
-                årsak,
-                uuid,
-            )
+            "På grunn av $årsak kan ikke søknaden $uuid automatiseres, den går til manuell behandling i Arena"
         )
     }
 
