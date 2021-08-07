@@ -38,8 +38,6 @@ internal class SlackBot(
                     accessory {
                         image(
                             imageUrl = "https://a.slack-edge.com/production-standard-emoji-assets/13.0/apple-large/2705.png",
-                            imageHeight = 32,
-                            imageWidth = 32,
                             altText = "Checkmark"
                         )
                     }
