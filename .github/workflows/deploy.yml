@@ -18,7 +18,7 @@ jobs:
         with:
           java-version: '16.x'
 
-      - name: Setup gradle dependency cache
+      - name: Setup Gradle dependency cache
         uses: actions/cache@v2
         with:
           path: |
@@ -49,8 +49,8 @@ jobs:
           builder: ${{ steps.buildx.outputs.name }}
           tags: ${{ env.IMAGE }}
           push: true
-          cache-from: type=gha, scope=${{ github.workflow }}
-          cache-to: type=gha, scope=${{ github.workflow }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
       - name: Archive NAIS yaml
         if: github.ref == 'refs/heads/master'
