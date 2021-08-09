@@ -4,7 +4,6 @@ import no.nav.dagpenger.doh.Configuration.slackAlertClient
 import no.nav.dagpenger.doh.Configuration.slackBot
 import no.nav.dagpenger.doh.Configuration.slackClient
 import no.nav.dagpenger.doh.monitor.AppStateMonitor
-import no.nav.dagpenger.doh.monitor.ManuellBehandlingMonitor
 import no.nav.dagpenger.doh.monitor.ProsessResultatMonitor
 import no.nav.dagpenger.doh.monitor.UløstOppgaveMonitor
 import no.nav.helse.rapids_rivers.RapidApplication
@@ -16,6 +15,5 @@ fun main() {
         AppStateMonitor(this, slackAlertClient)
         UløstOppgaveMonitor(this, slackClient)
         ProsessResultatMonitor(this, slackBot)
-        ManuellBehandlingMonitor(this, slackBot)
     }.start()
 }
