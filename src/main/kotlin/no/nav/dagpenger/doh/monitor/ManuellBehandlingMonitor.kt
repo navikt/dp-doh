@@ -10,13 +10,9 @@ import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.River
 import no.nav.helse.rapids_rivers.asLocalDateTime
 
-/**
- * Enn så lenge går 98% til manuell så den lager mer støy enn den gir informasjon.
- * Skrur den av, også kan vi heller skru den på igjen i framtida om vi øker graden av automatiske
- */
 internal class ManuellBehandlingMonitor(
     rapidsConnection: RapidsConnection,
-    private val slackBot: SlackBot?,
+    private val slackBot: SlackBot? = null,
 ) : River.PacketListener {
     companion object {
         private val log = KotlinLogging.logger { }
