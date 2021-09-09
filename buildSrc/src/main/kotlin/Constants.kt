@@ -5,6 +5,7 @@
  *  meta sync
  *
  */
+
 object Avro {
     const val avro = "org.apache.avro:avro:1.9.2"
 }
@@ -21,8 +22,9 @@ object Cucumber {
 }
 
 object Dagpenger {
+
     object Biblioteker {
-        const val version = "2021.06.25-12.52.0e0ec3efadbf"
+        const val version = "2021.09.08-15.05.f18081ff7559"
         const val stsKlient = "com.github.navikt.dp-biblioteker:sts-klient:$version"
         const val ktorUtils = "com.github.navikt.dp-biblioteker:ktor-utils:$version"
 
@@ -41,7 +43,6 @@ object Dagpenger {
             const val client = "com.github.navikt.dp-biblioteker:soap-client:$version"
         }
     }
-
     const val Grunnbeløp = "com.github.navikt:dp-grunnbelop:2021.06.25-11.51.bdc7c826c404"
     const val Streams = "com.github.navikt:dagpenger-streams:2021.06.23-14.29.bbb62ad15d52"
     const val Events = "com.github.navikt:dagpenger-events:2021.06.23-14.38.f9ef5d423585"
@@ -49,7 +50,7 @@ object Dagpenger {
 
 object Database {
     const val Postgres = "org.postgresql:postgresql:42.2.22"
-    const val Kotlinquery = "com.github.seratch:kotliquery:1.3.1"
+    const val Kotlinquery = "com.github.seratch:kotliquery:1.6.1"
     const val Flyway = "org.flywaydb:flyway-core:7.10.0"
     const val HikariCP = "com.zaxxer:HikariCP:4.0.3"
     const val VaultJdbc = "no.nav:vault-jdbc:1.3.7"
@@ -116,7 +117,7 @@ object Konfig {
 }
 
 object Kotlin {
-    const val version = "1.5.10"
+    const val version = "1.5.30"
     const val stdlib = "org.jetbrains.kotlin:kotlin-stdlib:$version"
 
     object Coroutines {
@@ -125,7 +126,7 @@ object Kotlin {
     }
 
     object Logging {
-        const val version = "2.0.8"
+        const val version = "2.0.11"
         const val kotlinLogging = "io.github.microutils:kotlin-logging:$version"
     }
 }
@@ -151,7 +152,7 @@ object Kotlinx {
 }
 
 object Ktor {
-    const val version = "1.6.0"
+    const val version = "1.6.3"
     const val server = "io.ktor:ktor-server:$version"
     const val serverNetty = "io.ktor:ktor-server-netty:$version"
     const val auth = "io.ktor:ktor-auth:$version"
