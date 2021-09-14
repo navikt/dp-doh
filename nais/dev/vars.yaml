@@ -1,7 +1,6 @@
 app: dp-doh
 namespace: teamdagpenger
 team: teamdagpenger
-alerts_slack_channel: "#team-dagpenger-alert-non-prod"
 dp_slacker_alert_channel_id: "CSFNZC8KY"
 dp_slacker_channel_id: "C020LB2653N"
 kafka_pool: nav-dev
