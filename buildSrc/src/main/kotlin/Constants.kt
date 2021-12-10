@@ -117,7 +117,7 @@ object Konfig {
 }
 
 object Kotlin {
-    const val version = "1.5.30"
+    const val version = "1.6.0"
     const val stdlib = "org.jetbrains.kotlin:kotlin-stdlib:$version"
 
     object Coroutines {
@@ -152,7 +152,7 @@ object Kotlinx {
 }
 
 object Ktor {
-    const val version = "1.6.3"
+    const val version = "1.6.6"
     const val server = "io.ktor:ktor-server:$version"
     const val serverNetty = "io.ktor:ktor-server-netty:$version"
     const val auth = "io.ktor:ktor-auth:$version"
@@ -164,7 +164,7 @@ object Ktor {
 }
 
 object Log4j2 {
-    const val version = "2.14.1"
+    const val version = "2.15.0"
     const val api = "org.apache.logging.log4j:log4j-api:$version"
     const val core = "org.apache.logging.log4j:log4j-core:$version"
     const val slf4j = "org.apache.logging.log4j:log4j-slf4j-impl:$version"
