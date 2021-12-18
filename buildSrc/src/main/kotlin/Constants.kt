@@ -24,7 +24,7 @@ object Cucumber {
 object Dagpenger {
 
     object Biblioteker {
-        const val version = "2021.09.08-15.05.f18081ff7559"
+        const val version = "2021.12.14-13.01.6400e5680cb5"
         const val stsKlient = "com.github.navikt.dp-biblioteker:sts-klient:$version"
         const val ktorUtils = "com.github.navikt.dp-biblioteker:ktor-utils:$version"
 
@@ -164,7 +164,7 @@ object Ktor {
 }
 
 object Log4j2 {
-    const val version = "2.16.0"
+    const val version = "2.17.0"
     const val api = "org.apache.logging.log4j:log4j-api:$version"
     const val core = "org.apache.logging.log4j:log4j-core:$version"
     const val slf4j = "org.apache.logging.log4j:log4j-slf4j-impl:$version"
@@ -194,7 +194,7 @@ object Moshi {
 }
 
 object Mockk {
-    const val version = "1.11.0"
+    const val version = "1.12.1"
     const val mockk = "io.mockk:mockk:$version"
 }
 
@@ -258,7 +258,7 @@ object Wiremock {
 }
 
 object Graphql {
-    const val version = "4.1.1"
+    const val version = "5.2.0"
     const val graphql = "com.expediagroup.graphql"
     val client = library("client")
     fun library(name: String) = "com.expediagroup:graphql-kotlin-$name:$version"
