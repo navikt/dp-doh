@@ -224,7 +224,7 @@ object Slf4j {
 }
 
 object Ktlint {
-    const val version = "0.38.1"
+    const val version = "0.43.2"
 }
 
 object Spotless {
