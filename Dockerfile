@@ -1,6 +1,22 @@
-FROM openjdk:16-alpine
+FROM eclipse-temurin:17 as jre-build
 
-COPY build/libs/dp-doh.jar app.jar
+# Create a custom Java runtime
+RUN $JAVA_HOME/bin/jlink \
+         --add-modules java.base,java.xml,java.naming,java.management \
+         --strip-debug \
+         --no-man-pages \
+         --no-header-files \
+         --compress=2 \
+         --output /javaruntime
 
-USER guest
-CMD ["java", "-jar", "app.jar"]
+# Runtime
+FROM debian:buster-slim
+ENV JAVA_HOME=/opt/java/openjdk
+ENV PATH "${JAVA_HOME}/bin:${PATH}"
+COPY --from=jre-build /javaruntime $JAVA_HOME
+
+RUN mkdir /opt/app
+COPY build/libs/*.jar /opt/app/app.jar
+
+USER nobody
+CMD ["java", "-jar", "/opt/app/app.jar"]
