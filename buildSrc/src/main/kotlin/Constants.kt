@@ -238,7 +238,7 @@ object Shadow {
 }
 
 object TestContainers {
-    const val version = "1.15.2"
+    const val version = "1.16.2"
     const val postgresql = "org.testcontainers:postgresql:$version"
     const val kafka = "org.testcontainers:kafka:$version"
 }
