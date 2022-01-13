@@ -50,6 +50,7 @@ internal class InntektsMonitor(
     }
 
     override fun onPacket(packet: JsonMessage, context: MessageContext) {
+        sikkerlogg.info { "logget inntekt for ${packet.toJson()}" }
         packet["fakta"].filter { it["type"].asText() == "inntekt" }.forEach {
             val inntekt = it["svar"].asDouble()
             inntektsteller.labels(
