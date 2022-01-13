@@ -19,7 +19,7 @@ internal class InntektsMonitor(
         private val objectMapper = ObjectMapper()
         private val inntektsteller =
             Histogram.build("dp_inntekt", "Inntekt for automatisering").labelNames("inntektsgruppe", "type")
-                .linearBuckets(0.0, 50000.0, 6).register()
+                .linearBuckets(0.0, 50000.0, 12).register()
         private val gjeldendeGrunnbeløp by lazy {
             URL("https://g.nav.no/api/v1/grunnbeloep").openStream().bufferedReader().use {
                 objectMapper.readTree(it).run {
