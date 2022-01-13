@@ -1,14 +1,14 @@
 package no.nav.dagpenger.doh.monitor
 
-import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.ktor.utils.io.core.use
 import io.prometheus.client.Histogram
+import mu.KotlinLogging
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
+import no.nav.helse.rapids_rivers.MessageProblems
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.River
-import no.nav.helse.rapids_rivers.asLocalDateTime
 import java.net.URL
 
 // Logger fordeling av inntekt på vedtakene som går gjennom quiz.
@@ -17,6 +17,7 @@ internal class InntektsMonitor(
 ) : River.PacketListener {
     companion object {
         private val objectMapper = ObjectMapper()
+        private val sikkerlogg = KotlinLogging.logger("tjenestekall")
         private val inntektsteller =
             Histogram.build("dp_inntekt", "Inntekt for automatisering").labelNames("inntektsgruppe", "type")
                 .linearBuckets(0.0, 50000.0, 12).register()
@@ -32,12 +33,20 @@ internal class InntektsMonitor(
     init {
         River(rapidsConnection).apply {
             validate {
-                it.demandValue("@event_name", "prosess_resultat")
-                it.requireKey("søknad_uuid", "resultat")
-                it.require("@opprettet", JsonNode::asLocalDateTime)
+                it.demandValue("@event_name", "faktum_svar")
+                it.requireAllOrAny("@behov", listOf("InntektSiste12Mnd", "InntektSiste3År"))
                 it.requireKey("fakta")
+                it.requireKey("@løsning")
             }
         }.register(this)
+    }
+
+    override fun onError(problems: MessageProblems, context: MessageContext) {
+        sikkerlogg.info { problems.toExtendedReport() }
+    }
+
+    override fun onSevere(error: MessageProblems.MessageException, context: MessageContext) {
+        sikkerlogg.info { error.problems }
     }
 
     override fun onPacket(packet: JsonMessage, context: MessageContext) {
