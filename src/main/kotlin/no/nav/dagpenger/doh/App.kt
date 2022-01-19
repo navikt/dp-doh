@@ -5,7 +5,6 @@ import no.nav.dagpenger.doh.Configuration.slackBot
 import no.nav.dagpenger.doh.Configuration.slackClient
 import no.nav.dagpenger.doh.monitor.AppStateMonitor
 import no.nav.dagpenger.doh.monitor.BehovUtenLøsningMonitor
-import no.nav.dagpenger.doh.monitor.InntektsMonitor
 import no.nav.dagpenger.doh.monitor.ManuellBehandlingMonitor
 import no.nav.dagpenger.doh.monitor.ProsessResultatMonitor
 import no.nav.dagpenger.doh.monitor.UløstOppgaveMonitor
@@ -19,7 +18,6 @@ fun main() {
         UløstOppgaveMonitor(this, slackClient)
         ProsessResultatMonitor(this, slackBot)
         BehovUtenLøsningMonitor(this, slackClient)
-        InntektsMonitor(this)
         /**
          * Enn så lenge går 98% til manuell så den lager mer støy enn den gir informasjon.
          * Skrur Slack posting av, også kan vi heller skru den på igjen i framtida om vi øker graden av automatiske
