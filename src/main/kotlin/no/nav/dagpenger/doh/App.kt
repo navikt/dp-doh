@@ -17,7 +17,7 @@ fun main() {
         AppStateMonitor(this, slackAlertClient)
         UløstOppgaveMonitor(this, slackClient)
         ProsessResultatMonitor(this, slackBot)
-        BehovUtenLøsningMonitor(this, slackClient)
+        BehovUtenLøsningMonitor(this, slackAlertClient)
         /**
          * Enn så lenge går 98% til manuell så den lager mer støy enn den gir informasjon.
          * Skrur Slack posting av, også kan vi heller skru den på igjen i framtida om vi øker graden av automatiske
