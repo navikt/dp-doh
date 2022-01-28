@@ -30,7 +30,7 @@ internal class BehovUtenLøsningMonitor(
         River(rapidsConnection).apply {
             validate {
                 it.demandValue("@event_name", "behov_uten_fullstendig_løsning")
-                it.requireKey("@id", "behov_id", "ufullstendig_behov")
+                it.requireKey("@id", "behov_id", "ufullstendig_behov", "søknad_uuid")
                 it.requireArray("forventet")
                 it.requireArray("løsninger")
                 it.requireArray("mangler")
@@ -53,10 +53,10 @@ internal class BehovUtenLøsningMonitor(
             String.format(
                 "Behov <%s|%s> mottok aldri løsning for %s innen %s",
                 Kibana.createUrl(
-                    String.format("\"%s\"", packet["behov_id"].asText()),
+                    String.format("\"%s\"", packet["søknad_uuid"].asText()),
                     packet["behov_opprettet"].asLocalDateTime().minusHours(1)
                 ),
-                packet["behov_id"].asText(),
+                packet["søknad_uuid"].asText(),
                 packet["mangler"].joinToString(),
                 humanReadableTime(
                     ChronoUnit.SECONDS.between(
