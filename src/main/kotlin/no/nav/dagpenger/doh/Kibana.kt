@@ -1,6 +1,5 @@
 package no.nav.dagpenger.doh
 
-import com.bazaarvoice.jackson.rison.RisonFactory
 import com.fasterxml.jackson.databind.ObjectMapper
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -9,8 +8,7 @@ object Kibana {
     private const val baseUrl = "https://logs.adeo.no/app/kibana"
     private const val urlFormat = "$baseUrl#/discover?_a=%s&_g=%s"
     private const val defaultIndex = "96e648c0-980a-11e9-830a-e17bbd64b4db"
-
-    private val risonMapper = ObjectMapper(RisonFactory())
+    private val objectMapper = ObjectMapper()
 
     fun createUrl(
         query: String,
@@ -51,5 +49,5 @@ object Kibana {
     ).toRison()
 
     private fun LocalDateTime.isoLocalDateTime() = this.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
-    private fun Any.toRison() = risonMapper.writeValueAsString(this)
+    private fun Any.toRison() = objectMapper.writeValueAsString(this)
 }

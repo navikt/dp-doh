@@ -23,10 +23,6 @@ kotlin {
         (this as JavaToolchainSpec).languageVersion.set(JavaLanguageVersion.of(17))
     }
 }
-val flywayVersion = "6.2.3"
-val hikariVersion = "3.4.2"
-val vaultJdbcVersion = "1.3.1"
-val kotliqueryVersion = "1.3.1"
 
 dependencies {
     implementation(kotlin("stdlib"))
@@ -40,17 +36,9 @@ dependencies {
     testImplementation(Junit5.api)
     testRuntimeOnly(Junit5.engine)
 
-    implementation("com.slack.api:slack-api-client:1.9.0")
-    implementation("com.slack.api:slack-api-model-kotlin-extension:1.9.0")
-    implementation("com.slack.api:slack-api-client-kotlin-extension:1.9.0")
-
-    implementation("org.flywaydb:flyway-core:$flywayVersion")
-    implementation("com.zaxxer:HikariCP:$hikariVersion")
-    implementation("no.nav:vault-jdbc:$vaultJdbcVersion")
-    implementation("com.github.seratch:kotliquery:$kotliqueryVersion")
-
-    implementation("com.bazaarvoice.jackson:rison:2.9.10.2")
-    testImplementation("com.opentable.components:otj-pg-embedded:0.13.3")
+    implementation("com.slack.api:slack-api-client:1.18.0")
+    implementation("com.slack.api:slack-api-model-kotlin-extension:1.18.0")
+    implementation("com.slack.api:slack-api-client-kotlin-extension:1.18.0")
 }
 
 spotless {
