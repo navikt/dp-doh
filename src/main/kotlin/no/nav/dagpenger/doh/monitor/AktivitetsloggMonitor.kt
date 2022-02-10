@@ -9,7 +9,7 @@ import no.nav.helse.rapids_rivers.River
 
 internal class AktivitetsloggMonitor(rapidsConnection: RapidsConnection) : River.PacketListener {
     private companion object {
-        private val aktivitetCounter = Counter.build("dp_aktivitet_totals", "Antall aktiviteter")
+        private val aktivitetCounter = Counter.build("dp_aktivitet_total", "Antall aktiviteter")
             .labelNames(
                 "alvorlighetsgrad",
                 "melding",
