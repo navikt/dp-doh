@@ -48,7 +48,7 @@ internal class AktivitetsloggMonitorTest {
         rapid.sendTestMessage(vedtakEndretMedFlereFeilJson)
 
         registry.getSampleValue(
-            "dp_aktivitet_totals",
+            "dp_aktivitet_total",
             listOf(
                 "alvorlighetsgrad",
                 "melding",
