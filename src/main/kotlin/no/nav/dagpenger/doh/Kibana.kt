@@ -1,5 +1,6 @@
 package no.nav.dagpenger.doh
 
+import com.bazaarvoice.jackson.rison.RisonFactory
 import com.fasterxml.jackson.databind.ObjectMapper
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -8,7 +9,7 @@ object Kibana {
     private const val baseUrl = "https://logs.adeo.no/app/kibana"
     private const val urlFormat = "$baseUrl#/discover?_a=%s&_g=%s"
     private const val defaultIndex = "96e648c0-980a-11e9-830a-e17bbd64b4db"
-    private val objectMapper = ObjectMapper()
+    private val objectMapper = ObjectMapper(RisonFactory())
 
     fun createUrl(
         query: String,
@@ -23,6 +24,9 @@ object Kibana {
                 ?: "now",
             index
         )
+
+    // https://logs.adeo.no/app/kibana#/discover?_a={"index":"96e648c0-980a-11e9-830a-e17bbd64b4db","query":{"language":"lucene","query":"\\\"9af983d5-7740-42da-9c68-c45be9795bba\\\""}}&_g={"time":{"from":"2022-03-15T22:46:08.56525","mode":"absolute","to":"now"}}
+    // https://logs.adeo.no/app/kibana#/discover?_a=(index:'96e648c0-980a-11e9-830a-e17bbd64b4db',query:(language:lucene,query:'\"546d8fb8-8131-40da-b5d0-0717091d0099\"'))&_g=(time:(from:'2022-03-15T22:46:45.608892',mode:absolute,to:now))
 
     fun createUrl(
         query: String,

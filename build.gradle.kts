@@ -31,14 +31,15 @@ dependencies {
     implementation(Konfig.konfig)
     implementation(Kotlin.Logging.kotlinLogging)
     implementation(Ktor.serverNetty)
+    implementation("com.bazaarvoice.jackson:rison:2.9.10.2")
 
-    testImplementation("io.mockk:mockk:1.12.0")
+    testImplementation("io.mockk:mockk:1.12.3")
     testImplementation(Junit5.api)
     testRuntimeOnly(Junit5.engine)
 
-    implementation("com.slack.api:slack-api-client:1.18.0")
-    implementation("com.slack.api:slack-api-model-kotlin-extension:1.18.0")
-    implementation("com.slack.api:slack-api-client-kotlin-extension:1.18.0")
+    implementation("com.slack.api:slack-api-client:1.20.1")
+    implementation("com.slack.api:slack-api-model-kotlin-extension:1.20.1")
+    implementation("com.slack.api:slack-api-client-kotlin-extension:1.20.1")
 }
 
 spotless {
