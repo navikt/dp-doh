@@ -17,6 +17,23 @@ internal class SlackBot(
         private val sikkerlogg = KotlinLogging.logger("tjenestekall.Slack")
     }
 
+    internal fun postNyMal(navn: String, versjonId: Int) {
+        chatPostMessage {
+            it.iconEmoji(":robot_face:")
+            it.blocks {
+
+                section { plainText("Ny mal med prossesnavn $navn og versjonid $versjonId") }
+
+                actions {
+                    button {
+                        text(":ledger: Se commit logg fra dp-quiz")
+                        url("https://github.com/navikt/dp-quiz/commits/main")
+                    }
+                }
+            }
+        }
+    }
+
     internal fun postResultat(
         uuid: String,
         opprettet: LocalDateTime,

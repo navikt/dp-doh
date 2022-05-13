@@ -6,6 +6,7 @@ import no.nav.dagpenger.doh.Configuration.slackClient
 import no.nav.dagpenger.doh.monitor.AppStateMonitor
 import no.nav.dagpenger.doh.monitor.BehovUtenLøsningMonitor
 import no.nav.dagpenger.doh.monitor.ManuellBehandlingMonitor
+import no.nav.dagpenger.doh.monitor.NyQuizMalMonitor
 import no.nav.dagpenger.doh.monitor.ProsessResultatMonitor
 import no.nav.dagpenger.doh.monitor.UløstOppgaveMonitor
 import no.nav.helse.rapids_rivers.RapidApplication
@@ -17,6 +18,7 @@ fun main() {
         AppStateMonitor(this, slackAlertClient)
         UløstOppgaveMonitor(this, slackClient)
         ProsessResultatMonitor(this, slackBot)
+        NyQuizMalMonitor(this, slackBot)
         BehovUtenLøsningMonitor(this, slackAlertClient)
         /**
          * Enn så lenge går 98% til manuell så den lager mer støy enn den gir informasjon.
