@@ -8,32 +8,10 @@ import mu.KotlinLogging
 import no.nav.dagpenger.doh.Kibana
 import java.time.LocalDateTime
 
-internal class SlackBot(
-    private val slackClient: MethodsClient,
-    private val slackChannelId: String
+internal class QuizResultatBot(slackClient: MethodsClient, slackChannelId: String) : SlackBot(
+    slackClient,
+    slackChannelId
 ) {
-    companion object {
-        private val log = KotlinLogging.logger { }
-        private val sikkerlogg = KotlinLogging.logger("tjenestekall.Slack")
-    }
-
-    internal fun postNyMal(navn: String, versjonId: Int) {
-        chatPostMessage {
-            it.iconEmoji(":robot_face:")
-            it.blocks {
-
-                section { plainText("Ny mal med prossesnavn $navn og versjonid $versjonId") }
-
-                actions {
-                    button {
-                        text(":ledger: Se commit logg fra dp-quiz")
-                        url("https://github.com/navikt/dp-quiz/commits/main")
-                    }
-                }
-            }
-        }
-    }
-
     internal fun postResultat(
         uuid: String,
         opprettet: LocalDateTime,
@@ -112,8 +90,38 @@ internal class SlackBot(
 
     private fun SectionBlockBuilder.ferdigSaksbehandlet() =
         plainText("Jeg har saksbehandlet en søknad! :checkered_flag: :checkered_flag: :checkered_flag:")
+}
 
-    private fun chatPostMessage(block: (it: ChatPostMessageRequestBuilder) -> ChatPostMessageRequestBuilder) =
+internal class QuizMalBot(slackClient: MethodsClient, slackChannelId: String) : SlackBot(slackClient, slackChannelId) {
+
+    internal fun postNyMal(navn: String, versjonId: Int) {
+        chatPostMessage {
+            it.iconEmoji(":robot_face:")
+            it.blocks {
+
+                section { plainText("Ny mal med prossesnavn $navn og versjonid $versjonId") }
+
+                actions {
+                    button {
+                        text(":ledger: Se commit logg fra dp-quiz")
+                        url("https://github.com/navikt/dp-quiz/commits/main")
+                    }
+                }
+            }
+        }
+    }
+}
+
+internal abstract class SlackBot(
+    private val slackClient: MethodsClient,
+    private val slackChannelId: String
+) {
+    companion object {
+        private val log = KotlinLogging.logger { }
+        private val sikkerlogg = KotlinLogging.logger("tjenestekall.Slack")
+    }
+
+    protected fun chatPostMessage(block: (it: ChatPostMessageRequestBuilder) -> ChatPostMessageRequestBuilder) =
         slackClient.chatPostMessage {
             it.channel(slackChannelId)
                 .iconEmoji(":robot_face:")

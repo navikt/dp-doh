@@ -13,9 +13,9 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 
-internal class SlackBotTest {
+internal class QuizResultatBotTest {
     private val client = mockk<MethodsClient>()
-    private val slackBot = SlackBot(client, "test")
+    private val slackBot = QuizResultatBot(client, "test")
 
     @BeforeEach
     fun setup() {

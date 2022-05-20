@@ -2,7 +2,7 @@ package no.nav.dagpenger.doh.monitor
 
 import io.prometheus.client.Counter
 import mu.KotlinLogging
-import no.nav.dagpenger.doh.slack.SlackBot
+import no.nav.dagpenger.doh.slack.QuizResultatBot
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.MessageProblems
@@ -12,7 +12,7 @@ import no.nav.helse.rapids_rivers.asLocalDateTime
 
 internal class ManuellBehandlingMonitor(
     rapidsConnection: RapidsConnection,
-    private val slackBot: SlackBot? = null,
+    private val quizResultatBot: QuizResultatBot? = null,
 ) : River.PacketListener {
     companion object {
         private val log = KotlinLogging.logger { }
@@ -40,7 +40,7 @@ internal class ManuellBehandlingMonitor(
         val uuid = packet["søknad_uuid"].asText()
         val årsak = packet["seksjon_navn"].asText()
         val opprettet = packet["@opprettet"].asLocalDateTime()
-        slackBot?.postManuellBehandling(uuid, opprettet, årsak)
+        quizResultatBot?.postManuellBehandling(uuid, opprettet, årsak)
         manuellCounter.labels(årsak).inc()
     }
 

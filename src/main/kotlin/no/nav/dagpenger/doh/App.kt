@@ -1,7 +1,8 @@
 package no.nav.dagpenger.doh
 
+import no.nav.dagpenger.doh.Configuration.quizMalBot
+import no.nav.dagpenger.doh.Configuration.quizResultatBot
 import no.nav.dagpenger.doh.Configuration.slackAlertClient
-import no.nav.dagpenger.doh.Configuration.slackBot
 import no.nav.dagpenger.doh.Configuration.slackClient
 import no.nav.dagpenger.doh.monitor.AppStateMonitor
 import no.nav.dagpenger.doh.monitor.BehovUtenLøsningMonitor
@@ -17,8 +18,8 @@ fun main() {
     RapidApplication.create(Configuration.asMap()).apply {
         AppStateMonitor(this, slackAlertClient)
         UløstOppgaveMonitor(this, slackClient)
-        ProsessResultatMonitor(this, slackBot)
-        NyQuizMalMonitor(this, slackBot)
+        ProsessResultatMonitor(this, quizResultatBot)
+        NyQuizMalMonitor(this, quizMalBot)
         BehovUtenLøsningMonitor(this, slackAlertClient)
         /**
          * Enn så lenge går 98% til manuell så den lager mer støy enn den gir informasjon.

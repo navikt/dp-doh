@@ -3,5 +3,6 @@ namespace: teamdagpenger
 team: teamdagpenger
 dp_slacker_alert_channel_id: "CSFNZC8KY"
 dp_slacker_channel_id: "C020LB2653N"
+dp_slacker_mal_channel_id: "C02BK8Z6Q56"
 kafka_pool: nav-dev
 dp_quiz_retting_url: "https://arbeid.dev.nav.no/arbeid/dagpenger/saksbehandling/oppgaver"

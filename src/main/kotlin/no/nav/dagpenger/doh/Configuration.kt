@@ -7,13 +7,20 @@ import com.natpryce.konfig.Key
 import com.natpryce.konfig.overriding
 import com.natpryce.konfig.stringType
 import com.slack.api.Slack
-import no.nav.dagpenger.doh.slack.SlackBot
+import com.slack.api.methods.MethodsClient
+import no.nav.dagpenger.doh.slack.QuizMalBot
+import no.nav.dagpenger.doh.slack.QuizResultatBot
 import no.nav.dagpenger.doh.slack.SlackClient
 
 internal object Configuration {
-    val slackChannelId by lazy {
+    val quizResultatSlackChannelId by lazy {
         properties[Key("dp.slacker.channel.id", stringType)]
     }
+
+    val quizMalSlackChannelId by lazy {
+        properties[Key("dp.slacker.mal.channel.id", stringType)]
+    }
+
     private val defaultProperties = ConfigurationMap(
         mapOf(
             "KAFKA_CONSUMER_GROUP_ID" to "dp-doh-v1",
@@ -39,10 +46,17 @@ internal object Configuration {
             )
         }
     }
-    val slackBot: SlackBot? by lazy {
-        properties.getOrNull(Key("SLACK_ACCESS_TOKEN", stringType))?.let { token ->
-            SlackBot(Slack.getInstance().methods(token), slackChannelId)
-        }
+
+    val slackBotClient: MethodsClient? by lazy {
+        properties.getOrNull(Key("SLACK_ACCESS_TOKEN", stringType))?.let { token -> Slack.getInstance().methods(token) }
+    }
+
+    val quizResultatBot: QuizResultatBot? by lazy {
+        slackBotClient?.let { QuizResultatBot(it, quizResultatSlackChannelId) }
+    }
+
+    val quizMalBot: QuizMalBot? by lazy {
+        slackBotClient?.let { QuizMalBot(it, quizMalSlackChannelId) }
     }
 
     fun asMap(): Map<String, String> = properties.list().reversed().fold(emptyMap()) { map, pair ->
