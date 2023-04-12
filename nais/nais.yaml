@@ -44,3 +44,5 @@ spec:
     outbound:
       external:
         - host: slack.com
+        - host: logs.adeo.no
+        - host: {{ DP_QUIZ_RETTING_HOST }}

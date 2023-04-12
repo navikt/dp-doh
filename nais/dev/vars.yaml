@@ -6,3 +6,4 @@ dp_slacker_channel_id: "C020LB2653N" #dp-inquizitor-dev
 dp_slacker_mal_channel_id: "C020LB2653N" #dp-inquizitor-dev
 kafka_pool: nav-dev
 dp_quiz_retting_url: "https://arbeid.dev.nav.no/arbeid/dagpenger/saksbehandling/oppgaver"
+DP_QUIZ_RETTING_HOST: "arbeid.dev.nav.no"
