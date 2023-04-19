@@ -6,11 +6,13 @@ import com.slack.api.methods.request.chat.ChatPostMessageRequest.ChatPostMessage
 import com.slack.api.model.kotlin_extension.block.SectionBlockBuilder
 import mu.KotlinLogging
 import no.nav.dagpenger.doh.Kibana
+import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 internal class QuizResultatBot(slackClient: MethodsClient, slackChannelId: String) : SlackBot(
     slackClient,
-    slackChannelId
+    slackChannelId,
 ) {
     internal fun postResultat(
         uuid: String,
@@ -18,8 +20,11 @@ internal class QuizResultatBot(slackClient: MethodsClient, slackChannelId: Strin
         resultat: Boolean,
     ) {
         chatPostMessage {
-            val resultatTekst = if (resultat)
-                "Automatisk innvilgelse" else "Automatisk avslag :no_entry_sign:"
+            val resultatTekst = if (resultat) {
+                "Automatisk innvilgelse"
+            } else {
+                "Automatisk avslag :no_entry_sign:"
+            }
 
             it.blocks {
                 section { ferdigSaksbehandlet() }
@@ -28,12 +33,12 @@ internal class QuizResultatBot(slackClient: MethodsClient, slackChannelId: Strin
                         listOf(
                             "*Resultat:* $resultatTekst",
                             "*UUID:* $uuid",
-                        ).joinToString("\n")
+                        ).joinToString("\n"),
                     )
                     accessory {
                         image(
                             imageUrl = "https://a.slack-edge.com/production-standard-emoji-assets/13.0/apple-large/2705.png",
-                            altText = "Checkmark"
+                            altText = "Checkmark",
                         )
                     }
                 }
@@ -46,7 +51,7 @@ internal class QuizResultatBot(slackClient: MethodsClient, slackChannelId: Strin
                 }
             }
                 .text(
-                    "Prosessen for $uuid har blitt ferdig med resultatet $resultat"
+                    "Prosessen for $uuid har blitt ferdig med resultatet $resultat",
                 )
         }
     }
@@ -59,19 +64,19 @@ internal class QuizResultatBot(slackClient: MethodsClient, slackChannelId: Strin
             section {
                 val detective = listOf(
                     ":male-detective:",
-                    ":female-detective:"
+                    ":female-detective:",
                 ).random()
                 markdownText(
                     listOf(
                         "*Resultat:* Manuell saksbehandling i Arena $detective",
                         "*UUID:* $uuid",
                         "*Årsak:* $årsak",
-                    ).joinToString("\n")
+                    ).joinToString("\n"),
                 )
                 accessory {
                     image(
                         imageUrl = "https://images-na.ssl-images-amazon.com/images/I/61tkcGZeUKL.png",
-                        altText = "Sad trombone"
+                        altText = "Sad trombone",
                     )
                 }
             }
@@ -84,7 +89,7 @@ internal class QuizResultatBot(slackClient: MethodsClient, slackChannelId: Strin
             }
         }
         it.text(
-            "På grunn av $årsak kan ikke søknaden $uuid automatiseres, den går til manuell behandling i Arena"
+            "På grunn av $årsak kan ikke søknaden $uuid automatiseres, den går til manuell behandling i Arena",
         )
     }
 
@@ -98,7 +103,6 @@ internal class QuizMalBot(slackClient: MethodsClient, slackChannelId: String) : 
         chatPostMessage {
             it.iconEmoji(":robot_face:")
             it.blocks {
-
                 section { plainText("Ny mal med prossesnavn $navn og versjonid $versjonId") }
 
                 actions {
@@ -112,9 +116,24 @@ internal class QuizMalBot(slackClient: MethodsClient, slackChannelId: String) : 
     }
 }
 
+internal class VedtakBot(slackClient: MethodsClient, slackChannelId: String) : SlackBot(slackClient, slackChannelId) {
+    internal fun postVedtak(melding: String) {
+        chatPostMessage {
+            it.iconEmoji(":dagpenger:")
+            it.blocks {
+                section {
+                    plainText(
+                        melding,
+                    )
+                }
+            }
+        }
+    }
+}
+
 internal abstract class SlackBot(
     private val slackClient: MethodsClient,
-    private val slackChannelId: String
+    private val slackChannelId: String,
 ) {
     companion object {
         private val log = KotlinLogging.logger { }

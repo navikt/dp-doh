@@ -11,6 +11,7 @@ import com.slack.api.methods.MethodsClient
 import no.nav.dagpenger.doh.slack.QuizMalBot
 import no.nav.dagpenger.doh.slack.QuizResultatBot
 import no.nav.dagpenger.doh.slack.SlackClient
+import no.nav.dagpenger.doh.slack.VedtakBot
 
 internal object Configuration {
     val quizResultatSlackChannelId by lazy {
@@ -21,20 +22,24 @@ internal object Configuration {
         properties[Key("dp.slacker.mal.channel.id", stringType)]
     }
 
+    val vedtakBotSlackChannelId: String? by lazy {
+        properties.getOrNull(Key("dp.slacker.vedtak.channel.id", stringType))
+    }
+
     private val defaultProperties = ConfigurationMap(
         mapOf(
             "KAFKA_CONSUMER_GROUP_ID" to "dp-doh-v1",
             "KAFKA_RAPID_TOPIC" to "teamdagpenger.rapid.v1",
             "KAFKA_RESET_POLICY" to "latest",
             "HTTP_PORT" to "8080",
-        )
+        ),
     )
     private val properties = systemProperties() overriding EnvironmentVariables() overriding defaultProperties
     val slackAlertClient: SlackClient? by lazy {
         properties.getOrNull(Key("SLACK_ACCESS_TOKEN", stringType))?.let {
             SlackClient(
                 accessToken = it,
-                channel = properties[Key("DP_SLACKER_ALERT_CHANNEL_ID", stringType)]
+                channel = properties[Key("DP_SLACKER_ALERT_CHANNEL_ID", stringType)],
             )
         }
     }
@@ -42,7 +47,7 @@ internal object Configuration {
         properties.getOrNull(Key("SLACK_ACCESS_TOKEN", stringType))?.let {
             SlackClient(
                 accessToken = it,
-                channel = properties[Key("DP_SLACKER_CHANNEL_ID", stringType)]
+                channel = properties[Key("DP_SLACKER_CHANNEL_ID", stringType)],
             )
         }
     }
@@ -53,6 +58,10 @@ internal object Configuration {
 
     val quizResultatBot: QuizResultatBot? by lazy {
         slackBotClient?.let { QuizResultatBot(it, quizResultatSlackChannelId) }
+    }
+
+    val vedtakBot: VedtakBot? by lazy {
+        slackBotClient?.let { slackBotClient -> vedtakBotSlackChannelId?.let { VedtakBot(slackBotClient, it) } }
     }
 
     val quizMalBot: QuizMalBot? by lazy {
