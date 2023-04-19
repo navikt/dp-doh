@@ -40,6 +40,6 @@ internal class VedtakfattetMonitor(rapidsConnection: RapidsConnection, private v
         vedtakBot?.postVedtak(
             melding,
         )
-        logger.info { melding }
+        logger.info { melding + "(slackbot er konfiguert? ${vedtakBot == null})" }
     }
 }

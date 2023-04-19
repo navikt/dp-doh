@@ -24,6 +24,8 @@ kotlin {
     }
 }
 
+val slackClientVersion = "1.29.1"
+
 dependencies {
     implementation(kotlin("stdlib"))
 
@@ -36,9 +38,9 @@ dependencies {
     testImplementation(Junit5.api)
     testRuntimeOnly(Junit5.engine)
 
-    implementation("com.slack.api:slack-api-client:1.20.1")
-    implementation("com.slack.api:slack-api-model-kotlin-extension:1.20.1")
-    implementation("com.slack.api:slack-api-client-kotlin-extension:1.20.1")
+    implementation("com.slack.api:slack-api-client:$slackClientVersion")
+    implementation("com.slack.api:slack-api-model-kotlin-extension:$slackClientVersion")
+    implementation("com.slack.api:slack-api-client-kotlin-extension:$slackClientVersion")
 }
 
 spotless {

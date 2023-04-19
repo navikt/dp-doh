@@ -23,7 +23,7 @@ internal object Configuration {
     }
 
     val vedtakBotSlackChannelId: String? by lazy {
-        properties.getOrNull(Key("dp.slacker.vedtak.channel.id", stringType))
+        properties.getOrNull(Key("DP_SLACKER_VEDTAK_CHANNEL_ID", stringType))
     }
 
     private val defaultProperties = ConfigurationMap(
