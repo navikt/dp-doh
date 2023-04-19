@@ -6,9 +6,7 @@ import com.slack.api.methods.request.chat.ChatPostMessageRequest.ChatPostMessage
 import com.slack.api.model.kotlin_extension.block.SectionBlockBuilder
 import mu.KotlinLogging
 import no.nav.dagpenger.doh.Kibana
-import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 internal class QuizResultatBot(slackClient: MethodsClient, slackChannelId: String) : SlackBot(
     slackClient,

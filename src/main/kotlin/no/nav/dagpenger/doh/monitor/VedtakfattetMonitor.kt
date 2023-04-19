@@ -32,9 +32,9 @@ internal class VedtakfattetMonitor(rapidsConnection: RapidsConnection, private v
         val utfall = packet["utfall"].asText()
 
         val melding = """Vi har fattet et vedtak med utfall $utfall på virkningsdato ${
-            formatterer.format(
-                virkningsdato,
-            )
+        formatterer.format(
+            virkningsdato,
+        )
         }  (Vedtak $vedtakId for behandling $behandlingId i dev)"""
 
         vedtakBot?.postVedtak(
