@@ -27,10 +27,9 @@ kotlin {
 dependencies {
     implementation(kotlin("stdlib"))
 
-    implementation(RapidAndRivers)
+    implementation(RapidAndRiversKtor2)
     implementation(Konfig.konfig)
     implementation(Kotlin.Logging.kotlinLogging)
-    implementation(Ktor.serverNetty)
     implementation("com.bazaarvoice.jackson:rison:2.9.10.2")
 
     testImplementation("io.mockk:mockk:1.12.3")
