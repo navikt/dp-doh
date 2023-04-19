@@ -37,7 +37,7 @@ dependencies {
     testRuntimeOnly(Junit5.engine)
 
     implementation("com.slack.api:slack-api-client:1.20.1")
-    implementation("com.slack.api:slack-api-model-kotlin-extension:1.20.1")
+    implementation("com.slack.api:slack-api-model-kotlin-extension:1.29.2")
     implementation("com.slack.api:slack-api-client-kotlin-extension:1.20.1")
 }
 
