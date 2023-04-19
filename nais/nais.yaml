@@ -40,6 +40,8 @@ spec:
       value: {{dp_slacker_channel_id}}
     - name: DP_SLACKER_MAL_CHANNEL_ID
       value: {{dp_slacker_mal_channel_id}}
+    - name: DP_SLACKER_VEDTAK_CHANNEL_ID
+      value: {{dp_slacker_vedtak_channel_id}}
   accessPolicy:
     outbound:
       external:
