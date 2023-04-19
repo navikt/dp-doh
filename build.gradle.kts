@@ -32,7 +32,7 @@ dependencies {
     implementation(Kotlin.Logging.kotlinLogging)
     implementation("com.bazaarvoice.jackson:rison:2.9.10.2")
 
-    testImplementation("io.mockk:mockk:1.12.3")
+    testImplementation("io.mockk:mockk:1.13.5")
     testImplementation(Junit5.api)
     testRuntimeOnly(Junit5.engine)
 
