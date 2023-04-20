@@ -29,7 +29,7 @@ jobs:
           push_image: true # optional, default true
           tag: ${{ github.sha }}
           dockerfile: Dockerfile # optional, default Dockerfile
-          docker_context: mediator # optional, default .
+          docker_context: . # optional, default .
           identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
           project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
     outputs:
