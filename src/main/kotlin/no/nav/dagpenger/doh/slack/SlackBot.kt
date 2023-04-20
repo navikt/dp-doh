@@ -114,7 +114,7 @@ internal class QuizMalBot(slackClient: MethodsClient, slackChannelId: String) : 
     }
 }
 
-internal class VedtakBot(slackClient: MethodsClient, slackChannelId: String) : SlackBot(slackClient, slackChannelId) {
+internal class VedtakBot(slackClient: MethodsClient, slackChannelId: String) : SlackBot(slackClient, slackChannelId, username = "dp-vedtak") {
     internal fun postVedtak(melding: String) {
         chatPostMessage {
             it.iconEmoji(":dagpenger:")
@@ -132,6 +132,7 @@ internal class VedtakBot(slackClient: MethodsClient, slackChannelId: String) : S
 internal abstract class SlackBot(
     private val slackClient: MethodsClient,
     private val slackChannelId: String,
+    private val username: String = "dp-quiz"
 ) {
     companion object {
         private val log = KotlinLogging.logger { }
@@ -142,7 +143,7 @@ internal abstract class SlackBot(
         slackClient.chatPostMessage {
             it.channel(slackChannelId)
                 .iconEmoji(":robot_face:")
-                .username("dp-quiz")
+                .username(username)
             block(it)
         }.let { response ->
             if (!response.isOk) {
