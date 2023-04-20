@@ -15,7 +15,7 @@ import java.time.temporal.ChronoUnit
 
 internal class AppStateMonitor(
     rapidsConnection: RapidsConnection,
-    private val slackClient: SlackClient?
+    private val slackClient: SlackClient?,
 ) : River.PacketListener {
 
     private companion object {
@@ -53,13 +53,16 @@ internal class AppStateMonitor(
         if (appsDown.isEmpty()) return
 
         val appString = appsDown.last().let { siste ->
-            if (appsDown.size == 1) siste.printApp()
-            else appsDown.subList(0, appsDown.size - 1).joinToString { it.printApp() } + " og ${siste.printApp()}"
+            if (appsDown.size == 1) {
+                siste.printApp()
+            } else {
+                appsDown.subList(0, appsDown.size - 1).joinToString { it.printApp() } + " og ${siste.printApp()}"
+            }
         }
         val logtext = String.format(
             "%s er antatt nede fordi de ikke har svart på ping innen %s siden.",
             appString,
-            humanReadableTime(ChronoUnit.SECONDS.between(packet["threshold"].asLocalDateTime(), LocalDateTime.now()))
+            humanReadableTime(ChronoUnit.SECONDS.between(packet["threshold"].asLocalDateTime(), LocalDateTime.now())),
         )
         log.warn(logtext)
         slackClient?.postMessage(logtext)

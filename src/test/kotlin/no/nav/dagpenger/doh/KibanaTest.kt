@@ -12,12 +12,12 @@ internal class KibanaTest {
     companion object {
         var RISON: ObjectMapper = ObjectMapper(RisonFactory())
     }
+
     @Test
     fun `skal lage rison json`() {
-
         Kibana.createUrl(
             query = """\"${UUID.randomUUID()}\"""",
-            startTime = LocalDateTime.now()
+            startTime = LocalDateTime.now(),
         ).also {
             assertDoesNotThrow("Ikke rison json kombatibel") {
                 RISON.readTree(it)

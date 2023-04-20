@@ -30,14 +30,14 @@ internal class AktivitetsloggMonitorTest {
                 "alvorlighetsgrad",
                 "melding",
                 "tilstand",
-                "harFlereFeil"
+                "harFlereFeil",
             ).toTypedArray(),
             listOf(
                 "WARN",
                 "foo",
                 "ny",
-                "false"
-            ).toTypedArray()
+                "false",
+            ).toTypedArray(),
         ).also {
             assertEquals(it, 1.0)
         }
@@ -53,14 +53,14 @@ internal class AktivitetsloggMonitorTest {
                 "alvorlighetsgrad",
                 "melding",
                 "tilstand",
-                "harFlereFeil"
+                "harFlereFeil",
             ).toTypedArray(),
             listOf(
                 "ERROR",
                 "foo",
                 "ny",
-                "true"
-            ).toTypedArray()
+                "true",
+            ).toTypedArray(),
         ).also {
             assertEquals(it, 2.0)
         }

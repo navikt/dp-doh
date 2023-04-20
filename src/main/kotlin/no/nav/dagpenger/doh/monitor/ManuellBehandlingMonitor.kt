@@ -30,7 +30,7 @@ internal class ManuellBehandlingMonitor(
                 it.requireKey(
                     "@opprettet",
                     "søknad_uuid",
-                    "seksjon_navn"
+                    "seksjon_navn",
                 )
             }
         }.register(this)

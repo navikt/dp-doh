@@ -3,8 +3,8 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
     application
-    kotlin("jvm") version Kotlin.version
-    id(Spotless.spotless) version Spotless.version
+    kotlin("jvm") version "1.8.10"
+    id(Spotless.spotless) version "6.16.0"
 }
 
 repositories {
@@ -45,11 +45,11 @@ dependencies {
 
 spotless {
     kotlin {
-        ktlint(Ktlint.version)
+        ktlint("0.48.2")
     }
     kotlinGradle {
         target("*.gradle.kts", "buildSrc/**/*.kt*")
-        ktlint(Ktlint.version)
+        ktlint("0.48.2")
     }
 }
 
@@ -62,7 +62,7 @@ tasks.withType<Jar>().configureEach {
     from(
         configurations.runtimeClasspath.get().map {
             if (it.isDirectory) it else zipTree(it)
-        }
+        },
     )
 }
 

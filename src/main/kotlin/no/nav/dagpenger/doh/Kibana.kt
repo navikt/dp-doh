@@ -15,14 +15,14 @@ object Kibana {
         query: String,
         startTime: LocalDateTime,
         endTime: LocalDateTime? = null,
-        index: String = defaultIndex
+        index: String = defaultIndex,
     ) =
         createUrl(
             query,
             startTime.isoLocalDateTime(),
             endTime?.isoLocalDateTime()
                 ?: "now",
-            index
+            index,
         )
 
     // https://logs.adeo.no/app/kibana#/discover?_a={"index":"96e648c0-980a-11e9-830a-e17bbd64b4db","query":{"language":"lucene","query":"\\\"9af983d5-7740-42da-9c68-c45be9795bba\\\""}}&_g={"time":{"from":"2022-03-15T22:46:08.56525","mode":"absolute","to":"now"}}
@@ -32,7 +32,7 @@ object Kibana {
         query: String,
         startTime: String,
         endTime: String = "now",
-        index: String = defaultIndex
+        index: String = defaultIndex,
     ) =
         String.format(urlFormat, appState(index, query), globalState(startTime, endTime))
 
@@ -40,16 +40,16 @@ object Kibana {
         "index" to index,
         "query" to mapOf(
             "language" to "lucene",
-            "query" to query
-        )
+            "query" to query,
+        ),
     ).toRison()
 
     private fun globalState(startTime: String, endTime: String) = mapOf(
         "time" to mapOf(
             "from" to startTime,
             "mode" to "absolute",
-            "to" to endTime
-        )
+            "to" to endTime,
+        ),
     ).toRison()
 
     private fun LocalDateTime.isoLocalDateTime() = this.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)

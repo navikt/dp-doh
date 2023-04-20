@@ -22,7 +22,7 @@ internal class NyQuizMalMonitor(
                 it.requireKey(
                     "@opprettet",
                     "versjon_navn",
-                    "versjon_id"
+                    "versjon_id",
                 )
             }
         }.register(this)

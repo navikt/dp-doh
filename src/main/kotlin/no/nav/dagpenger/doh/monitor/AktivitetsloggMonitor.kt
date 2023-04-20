@@ -14,7 +14,7 @@ internal class AktivitetsloggMonitor(rapidsConnection: RapidsConnection) : River
                 "alvorlighetsgrad",
                 "melding",
                 "tilstand",
-                "harFlereFeil"
+                "harFlereFeil",
             )
             .register()
     }
@@ -36,8 +36,8 @@ internal class AktivitetsloggMonitor(rapidsConnection: RapidsConnection) : River
         val harFlereFeil = packet["aktivitetslogg.aktiviteter"]
             .takeIf(JsonNode::isArray)
             ?.count { it["alvorlighetsgrad"].asText() in listOf("ERROR") }.let {
-                it !== null && it > 1
-            }
+            it !== null && it > 1
+        }
 
         packet["aktivitetslogg.aktiviteter"]
             .takeIf(JsonNode::isArray)
@@ -47,7 +47,7 @@ internal class AktivitetsloggMonitor(rapidsConnection: RapidsConnection) : River
                     it["alvorlighetsgrad"].asText(),
                     it["melding"].asText(),
                     tilstand,
-                    harFlereFeil.toString()
+                    harFlereFeil.toString(),
                 ).inc()
             }
     }

@@ -16,7 +16,7 @@ import java.time.temporal.ChronoUnit
 
 internal class BehovUtenLøsningMonitor(
     rapidsConnection: RapidsConnection,
-    private val slackClient: SlackClient?
+    private val slackClient: SlackClient?,
 ) : River.PacketListener {
 
     private companion object {
@@ -54,17 +54,17 @@ internal class BehovUtenLøsningMonitor(
                 "Behov <%s|%s> mottok aldri løsning for %s innen %s",
                 Kibana.createUrl(
                     String.format("\"%s\"", packet["behov_id"].asText()),
-                    packet["behov_opprettet"].asLocalDateTime().minusHours(1)
+                    packet["behov_opprettet"].asLocalDateTime().minusHours(1),
                 ),
                 packet["behov_id"].asText(),
                 packet["mangler"].joinToString(),
                 humanReadableTime(
                     ChronoUnit.SECONDS.between(
                         packet["behov_opprettet"].asLocalDateTime(),
-                        packet["@opprettet"].asLocalDateTime()
-                    )
-                )
-            )
+                        packet["@opprettet"].asLocalDateTime(),
+                    ),
+                ),
+            ),
         )
     }
 

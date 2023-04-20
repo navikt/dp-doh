@@ -10,7 +10,7 @@ import no.nav.helse.rapids_rivers.River
 
 internal class UløstOppgaveMonitor(
     rapidsConnection: RapidsConnection,
-    private val slackClient: SlackClient?
+    private val slackClient: SlackClient?,
 ) : River.PacketListener {
     private val env = System.getenv()
     companion object {
@@ -35,9 +35,9 @@ internal class UløstOppgaveMonitor(
             text = String.format(
                 "Nå må noen løse oppgaver her! <%s|%s> venter på en saksbehandler.",
                 env["DP_QUIZ_RETTING_URL"] ?: "https://arbeid.dev.nav.no/arbeid/dagpenger/saksbehandling/oppgaver",
-                packet["søknad_uuid"].asText()
+                packet["søknad_uuid"].asText(),
             ),
-            emoji = ":tada:"
+            emoji = ":tada:",
         )
     }
 

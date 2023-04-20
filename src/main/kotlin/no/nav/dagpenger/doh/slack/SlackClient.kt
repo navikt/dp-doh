@@ -20,7 +20,7 @@ internal class SlackClient(private val accessToken: String, private val channel:
 
     fun postMessage(
         text: String,
-        emoji: String = ":scream:"
+        emoji: String = ":scream:",
     ) {
         "https://slack.com/api/chat.postMessage".post(
             objectMapper.writeValueAsString(
@@ -28,8 +28,8 @@ internal class SlackClient(private val accessToken: String, private val channel:
                     "channel" to channel,
                     "text" to text,
                     "icon_emoji" to emoji,
-                )
-            )
+                ),
+            ),
         )
     }
 
