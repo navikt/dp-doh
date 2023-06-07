@@ -8,6 +8,7 @@ import no.nav.dagpenger.doh.Configuration.vedtakBot
 import no.nav.dagpenger.doh.monitor.AppStateMonitor
 import no.nav.dagpenger.doh.monitor.BehovUtenLøsningMonitor
 import no.nav.dagpenger.doh.monitor.ManuellBehandlingMonitor
+import no.nav.dagpenger.doh.monitor.MeldingerUtenEnvelopeMonitor
 import no.nav.dagpenger.doh.monitor.NyQuizMalMonitor
 import no.nav.dagpenger.doh.monitor.ProsessResultatMonitor
 import no.nav.dagpenger.doh.monitor.UløstOppgaveMonitor
@@ -30,5 +31,6 @@ fun main() {
          * For å skru på Slack posting igjen, legg til slackBot variabelen i konstruktøren
          */
         ManuellBehandlingMonitor(this)
+        MeldingerUtenEnvelopeMonitor(this)
     }.start()
 }
