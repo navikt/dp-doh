@@ -24,7 +24,7 @@ kotlin {
     }
 }
 
-val slackClientVersion = "1.32.1"
+val slackClientVersion = "1.32.2"
 
 dependencies {
     implementation(kotlin("stdlib"))
