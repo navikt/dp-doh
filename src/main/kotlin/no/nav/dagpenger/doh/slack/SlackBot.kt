@@ -18,11 +18,12 @@ internal class QuizResultatBot(slackClient: MethodsClient, slackChannelId: Strin
         resultat: Boolean,
     ) {
         chatPostMessage {
-            val resultatTekst = if (resultat) {
-                "Automatisk innvilgelse"
-            } else {
-                "Automatisk avslag :no_entry_sign:"
-            }
+            val resultatTekst =
+                if (resultat) {
+                    "Automatisk innvilgelse"
+                } else {
+                    "Automatisk avslag :no_entry_sign:"
+                }
 
             it.blocks {
                 section { ferdigSaksbehandlet() }
@@ -54,16 +55,21 @@ internal class QuizResultatBot(slackClient: MethodsClient, slackChannelId: Strin
         }
     }
 
-    internal fun postManuellBehandling(uuid: String, opprettet: LocalDateTime, årsak: String) = chatPostMessage {
+    internal fun postManuellBehandling(
+        uuid: String,
+        opprettet: LocalDateTime,
+        årsak: String,
+    ) = chatPostMessage {
         it.blocks {
             section {
                 ferdigSaksbehandlet()
             }
             section {
-                val detective = listOf(
-                    ":male-detective:",
-                    ":female-detective:",
-                ).random()
+                val detective =
+                    listOf(
+                        ":male-detective:",
+                        ":female-detective:",
+                    ).random()
                 markdownText(
                     listOf(
                         "*Resultat:* Manuell saksbehandling i Arena $detective",
@@ -96,8 +102,10 @@ internal class QuizResultatBot(slackClient: MethodsClient, slackChannelId: Strin
 }
 
 internal class QuizMalBot(slackClient: MethodsClient, slackChannelId: String) : SlackBot(slackClient, slackChannelId) {
-
-    internal fun postNyMal(navn: String, versjonId: Int) {
+    internal fun postNyMal(
+        navn: String,
+        versjonId: Int,
+    ) {
         chatPostMessage {
             it.iconEmoji(":robot_face:")
             it.blocks {
@@ -114,7 +122,11 @@ internal class QuizMalBot(slackClient: MethodsClient, slackChannelId: String) : 
     }
 }
 
-internal class VedtakBot(slackClient: MethodsClient, slackChannelId: String) : SlackBot(slackClient, slackChannelId, username = "dp-vedtak") {
+internal class VedtakBot(slackClient: MethodsClient, slackChannelId: String) : SlackBot(
+    slackClient,
+    slackChannelId,
+    username = "dp-vedtak",
+) {
     internal fun postVedtak(melding: String) {
         chatPostMessage {
             it.iconEmoji(":dagpenger:")

@@ -15,7 +15,11 @@ internal fun humanReadableTime(time: Long): String {
     }
 }
 
-private fun MutableList<String>.addIfNotZero(value: Long, singular: String, plural: String) {
+private fun MutableList<String>.addIfNotZero(
+    value: Long,
+    singular: String,
+    plural: String,
+) {
     if (value == 0L) return
     add(String.format(if (value == 1L) singular else plural, value))
 }

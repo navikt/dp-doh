@@ -13,9 +13,10 @@ internal class SlackClient(private val accessToken: String, private val channel:
     private companion object {
         private val tjenestekall = LoggerFactory.getLogger("tjenestekall")
         private val log = LoggerFactory.getLogger(SlackClient::class.java)
-        private val objectMapper = jacksonObjectMapper()
-            .registerModule(JavaTimeModule())
-            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+        private val objectMapper =
+            jacksonObjectMapper()
+                .registerModule(JavaTimeModule())
+                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
     }
 
     fun postMessage(
@@ -36,17 +37,23 @@ internal class SlackClient(private val accessToken: String, private val channel:
     private fun String.post(jsonPayload: String): String? {
         var connection: HttpURLConnection? = null
         try {
-            connection = (URL(this).openConnection() as HttpURLConnection).apply {
-                requestMethod = "POST"
-                connectTimeout = 1000
-                readTimeout = 1000
-                doOutput = true
-                setRequestProperty("Authorization", "Bearer $accessToken")
-                setRequestProperty("Content-Type", "application/json; charset=utf-8")
-                setRequestProperty("User-Agent", "navikt/dp-doh")
+            connection =
+                (URL(this).openConnection() as HttpURLConnection).apply {
+                    requestMethod = "POST"
+                    connectTimeout = 1000
+                    readTimeout = 1000
+                    doOutput = true
+                    setRequestProperty("Authorization", "Bearer $accessToken")
+                    setRequestProperty("Content-Type", "application/json; charset=utf-8")
+                    setRequestProperty("User-Agent", "navikt/dp-doh")
 
-                outputStream.use { it.bufferedWriter(Charsets.UTF_8).apply { write(jsonPayload); flush() } }
-            }
+                    outputStream.use {
+                        it.bufferedWriter(Charsets.UTF_8).apply {
+                            write(jsonPayload)
+                            flush()
+                        }
+                    }
+                }
             val responseCode = connection.responseCode
 
             if (connection.responseCode !in 200..299) {

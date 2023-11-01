@@ -26,14 +26,15 @@ internal object Configuration {
         properties.getOrNull(Key("DP_SLACKER_VEDTAK_CHANNEL_ID", stringType))
     }
 
-    private val defaultProperties = ConfigurationMap(
-        mapOf(
-            "KAFKA_CONSUMER_GROUP_ID" to "dp-doh-v1",
-            "KAFKA_RAPID_TOPIC" to "teamdagpenger.rapid.v1",
-            "KAFKA_RESET_POLICY" to "latest",
-            "HTTP_PORT" to "8080",
-        ),
-    )
+    private val defaultProperties =
+        ConfigurationMap(
+            mapOf(
+                "KAFKA_CONSUMER_GROUP_ID" to "dp-doh-v1",
+                "KAFKA_RAPID_TOPIC" to "teamdagpenger.rapid.v1",
+                "KAFKA_RESET_POLICY" to "latest",
+                "HTTP_PORT" to "8080",
+            ),
+        )
     private val properties = systemProperties() overriding EnvironmentVariables() overriding defaultProperties
     val slackAlertClient: SlackClient? by lazy {
         properties.getOrNull(Key("SLACK_ACCESS_TOKEN", stringType))?.let {
@@ -68,7 +69,8 @@ internal object Configuration {
         slackBotClient?.let { QuizMalBot(it, quizMalSlackChannelId) }
     }
 
-    fun asMap(): Map<String, String> = properties.list().reversed().fold(emptyMap()) { map, pair ->
-        map + pair.second
-    }
+    fun asMap(): Map<String, String> =
+        properties.list().reversed().fold(emptyMap()) { map, pair ->
+            map + pair.second
+        }
 }

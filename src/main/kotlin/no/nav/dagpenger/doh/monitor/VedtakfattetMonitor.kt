@@ -25,7 +25,10 @@ internal class VedtakfattetMonitor(rapidsConnection: RapidsConnection, private v
         val logger = KotlinLogging.logger { }
     }
 
-    override fun onPacket(packet: JsonMessage, context: MessageContext) {
+    override fun onPacket(
+        packet: JsonMessage,
+        context: MessageContext,
+    ) {
         val vedtakId = packet["vedtakId"].asText()
         val behandlingId = packet["behandlingId"].asText()
         val virkningsdato = packet["virkningsdato"].asLocalDate()

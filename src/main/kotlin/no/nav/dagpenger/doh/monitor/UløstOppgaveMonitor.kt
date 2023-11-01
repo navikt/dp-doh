@@ -30,18 +30,25 @@ internal class UløstOppgaveMonitor(
         }.register(this)
     }
 
-    override fun onPacket(packet: JsonMessage, context: MessageContext) {
+    override fun onPacket(
+        packet: JsonMessage,
+        context: MessageContext,
+    ) {
         slackClient?.postMessage(
-            text = String.format(
-                "Nå må noen løse oppgaver her! <%s|%s> venter på en saksbehandler.",
-                env["DP_QUIZ_RETTING_URL"] ?: "https://arbeid.dev.nav.no/arbeid/dagpenger/saksbehandling/oppgaver",
-                packet["søknad_uuid"].asText(),
-            ),
+            text =
+                String.format(
+                    "Nå må noen løse oppgaver her! <%s|%s> venter på en saksbehandler.",
+                    env["DP_QUIZ_RETTING_URL"] ?: "https://arbeid.dev.nav.no/arbeid/dagpenger/saksbehandling/oppgaver",
+                    packet["søknad_uuid"].asText(),
+                ),
             emoji = ":tada:",
         )
     }
 
-    override fun onError(problems: MessageProblems, context: MessageContext) {
+    override fun onError(
+        problems: MessageProblems,
+        context: MessageContext,
+    ) {
         sikkerlogg.info(problems.toExtendedReport())
     }
 }

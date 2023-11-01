@@ -8,9 +8,8 @@ import java.time.LocalDateTime
 import java.util.UUID
 
 internal class KibanaTest {
-
     companion object {
-        var RISON: ObjectMapper = ObjectMapper(RisonFactory())
+        val risonMapper: ObjectMapper = ObjectMapper(RisonFactory())
     }
 
     @Test
@@ -20,7 +19,7 @@ internal class KibanaTest {
             startTime = LocalDateTime.now(),
         ).also {
             assertDoesNotThrow("Ikke rison json kombatibel") {
-                RISON.readTree(it)
+                risonMapper.readTree(it)
             }
         }
     }

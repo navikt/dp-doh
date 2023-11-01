@@ -18,10 +18,11 @@ internal class ProsessResultatMonitor(
     companion object {
         private val log = KotlinLogging.logger { }
         private val sikkerlogg = KotlinLogging.logger("tjenestekall")
-        private val resultatCounter = Counter
-            .build("dp_prosessresultat", "Resultat av automatiseringsprosessen")
-            .labelNames("resultat")
-            .register()
+        private val resultatCounter =
+            Counter
+                .build("dp_prosessresultat", "Resultat av automatiseringsprosessen")
+                .labelNames("resultat")
+                .register()
     }
 
     init {
@@ -35,7 +36,10 @@ internal class ProsessResultatMonitor(
         }.register(this)
     }
 
-    override fun onPacket(packet: JsonMessage, context: MessageContext) {
+    override fun onPacket(
+        packet: JsonMessage,
+        context: MessageContext,
+    ) {
         resultatBot?.postResultat(
             uuid = packet["søknad_uuid"].asText(),
             opprettet = packet["@opprettet"].asLocalDateTime(),
@@ -45,7 +49,10 @@ internal class ProsessResultatMonitor(
         resultatCounter.labels(packet["resultat"].asText()).inc()
     }
 
-    override fun onError(problems: MessageProblems, context: MessageContext) {
+    override fun onError(
+        problems: MessageProblems,
+        context: MessageContext,
+    ) {
         sikkerlogg.info(problems.toExtendedReport())
     }
 }

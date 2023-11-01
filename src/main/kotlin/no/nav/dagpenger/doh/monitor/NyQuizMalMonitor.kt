@@ -28,7 +28,10 @@ internal class NyQuizMalMonitor(
         }.register(this)
     }
 
-    override fun onPacket(packet: JsonMessage, context: MessageContext) {
+    override fun onPacket(
+        packet: JsonMessage,
+        context: MessageContext,
+    ) {
         val navn = packet["versjon_navn"].asText()
         val versjonId = packet["versjon_id"].asInt()
         quizMalBot?.postNyMal(navn, versjonId)

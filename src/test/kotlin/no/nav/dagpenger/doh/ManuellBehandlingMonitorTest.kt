@@ -39,10 +39,11 @@ internal class ManuellBehandlingMonitorTest {
 
 //language=JSON
 private val manuellBehandlingJson =
-    """{
-  "@event_name": "manuell_behandling",
-  "@opprettet": "${LocalDateTime.now()}",
-  "søknad_uuid": "${UUID.randomUUID()}",
-  "seksjon_navn": "ny"
-}
+    """
+    {
+      "@event_name": "manuell_behandling",
+      "@opprettet": "${LocalDateTime.now()}",
+      "søknad_uuid": "${UUID.randomUUID()}",
+      "seksjon_navn": "ny"
+    }
     """.trimIndent()

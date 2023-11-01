@@ -69,38 +69,40 @@ internal class AktivitetsloggMonitorTest {
 
 //language=JSON
 private val vedtakEndretJson =
-    """{
-  "@event_name": "vedtak_endret",
-  "gjeldendeTilstand": "ferdig",
-  "forrigeTilstand": "ny",
-  "aktivitetslogg": {
-    "aktiviteter": [
-      {
-        "alvorlighetsgrad": "WARN",
-        "melding": "foo"
+    """
+    {
+      "@event_name": "vedtak_endret",
+      "gjeldendeTilstand": "ferdig",
+      "forrigeTilstand": "ny",
+      "aktivitetslogg": {
+        "aktiviteter": [
+          {
+            "alvorlighetsgrad": "WARN",
+            "melding": "foo"
+          }
+        ]
       }
-    ]
-  }
-}
+    }
     """.trimIndent()
 
 //language=JSON
 private val vedtakEndretMedFlereFeilJson =
-    """{
-  "@event_name": "vedtak_endret",
-  "gjeldendeTilstand": "ferdig",
-  "forrigeTilstand": "ny",
-  "aktivitetslogg": {
-    "aktiviteter": [
-      {
-        "alvorlighetsgrad": "ERROR",
-        "melding": "foo"
-      },
-      {
-        "alvorlighetsgrad": "ERROR",
-        "melding": "foo"
+    """
+    {
+      "@event_name": "vedtak_endret",
+      "gjeldendeTilstand": "ferdig",
+      "forrigeTilstand": "ny",
+      "aktivitetslogg": {
+        "aktiviteter": [
+          {
+            "alvorlighetsgrad": "ERROR",
+            "melding": "foo"
+          },
+          {
+            "alvorlighetsgrad": "ERROR",
+            "melding": "foo"
+          }
+        ]
       }
-    ]
-  }
-}
+    }
     """.trimIndent()

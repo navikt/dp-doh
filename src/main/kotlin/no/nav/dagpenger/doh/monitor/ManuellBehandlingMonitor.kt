@@ -17,10 +17,11 @@ internal class ManuellBehandlingMonitor(
     companion object {
         private val log = KotlinLogging.logger { }
         private val sikkerlogg = KotlinLogging.logger("tjenestekall")
-        private val manuellCounter = Counter
-            .build("dp_manuell_behandling", "Søknader som blir sendt til manuell behandling")
-            .labelNames("grunn")
-            .register()
+        private val manuellCounter =
+            Counter
+                .build("dp_manuell_behandling", "Søknader som blir sendt til manuell behandling")
+                .labelNames("grunn")
+                .register()
     }
 
     init {
@@ -36,7 +37,10 @@ internal class ManuellBehandlingMonitor(
         }.register(this)
     }
 
-    override fun onPacket(packet: JsonMessage, context: MessageContext) {
+    override fun onPacket(
+        packet: JsonMessage,
+        context: MessageContext,
+    ) {
         val uuid = packet["søknad_uuid"].asText()
         val årsak = packet["seksjon_navn"].asText()
         val opprettet = packet["@opprettet"].asLocalDateTime()
@@ -44,7 +48,10 @@ internal class ManuellBehandlingMonitor(
         manuellCounter.labels(årsak).inc()
     }
 
-    override fun onError(problems: MessageProblems, context: MessageContext) {
+    override fun onError(
+        problems: MessageProblems,
+        context: MessageContext,
+    ) {
         sikkerlogg.info(problems.toExtendedReport())
     }
 }

@@ -18,12 +18,12 @@ internal class BehovUtenLøsningMonitor(
     rapidsConnection: RapidsConnection,
     private val slackClient: SlackClient?,
 ) : River.PacketListener {
-
     private companion object {
         private val sikkerLog = LoggerFactory.getLogger("tjenestekall")
-        private val uløsteBehovCounter = Counter.build("dp_uloste_behov", "Antall behov uten løsning")
-            .labelNames("behovType")
-            .register()
+        private val uløsteBehovCounter =
+            Counter.build("dp_uloste_behov", "Antall behov uten løsning")
+                .labelNames("behovType")
+                .register()
     }
 
     init {
@@ -40,11 +40,17 @@ internal class BehovUtenLøsningMonitor(
         }.register(this)
     }
 
-    override fun onError(problems: MessageProblems, context: MessageContext) {
+    override fun onError(
+        problems: MessageProblems,
+        context: MessageContext,
+    ) {
         sikkerLog.error("forstod ikke behov_uten_fullstendig_løsning:\n${problems.toExtendedReport()}")
     }
 
-    override fun onPacket(packet: JsonMessage, context: MessageContext) {
+    override fun onPacket(
+        packet: JsonMessage,
+        context: MessageContext,
+    ) {
         packet["mangler"].map(JsonNode::asText).forEach {
             uløsteBehovCounter.labels(it).inc()
         }

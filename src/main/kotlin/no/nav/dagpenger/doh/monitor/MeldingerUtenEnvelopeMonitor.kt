@@ -24,7 +24,10 @@ internal class MeldingerUtenEnvelopeMonitor(
         }.register(this)
     }
 
-    override fun onPacket(packet: JsonMessage, context: MessageContext) {
+    override fun onPacket(
+        packet: JsonMessage,
+        context: MessageContext,
+    ) {
         sikkerlogg.info { "Mottok pakke som ikke bruker envelope. Packet: ${packet.toJson()}" }
     }
 }
