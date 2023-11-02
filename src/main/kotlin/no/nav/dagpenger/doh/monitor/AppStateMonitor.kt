@@ -73,13 +73,11 @@ internal class AppStateMonitor(
                     val (app, sistAktivitet, _) = appsDown.first()
                     val tid = humanReadableTime(ChronoUnit.SECONDS.between(sistAktivitet, now))
                     val kibanaUrl =
-                        URLEncoder.encode(
                             Kibana.createUrl(
-                                """application: $app AND envclass:p""",
+                                URLEncoder.encode("application: $app AND envclass:p", Charset.defaultCharset()),
+
                                 sistAktivitet.minusMinutes(15),
-                            ),
-                            Charset.defaultCharset(),
-                        )
+                            )
                     """
                     | $app er antatt nede (siste aktivitet: $tid) fordi den ikke svarer tilfredsstillende på ping. Trøblete instanser i :thread:
                     |   :question: Hva betyr dette for meg? Det kan bety at appen ikke leser fra Kafka, og kan ha alvorlig feil. Det kan også bety at appen har blitt drept (enten av Noen :tm: eller av :k8s:)
@@ -94,13 +92,11 @@ internal class AppStateMonitor(
                         }
 
                     val kibanaUrl =
-                        URLEncoder.encode(
                             Kibana.createUrl(
-                                "team: teamdagpenger AND level:Error OR level:Warning AND envclass:p",
+                                URLEncoder.encode("team: teamdagpenger AND level:Error OR level:Warning AND envclass:p", Charset.defaultCharset()),
                                 LocalDateTime.now().minusMinutes(15),
-                            ),
-                            Charset.defaultCharset(),
-                        )
+                            )
+
                     """
                     | ${appsDown.size} apper er antatt nede da de ikke svarer tilfredsstillende på ping. Trøblete instanser i :thread:
                     |   $instanser
@@ -117,7 +113,11 @@ internal class AppStateMonitor(
                         val tid = humanReadableTime(ChronoUnit.SECONDS.between(sistAktivitet, now))
                         "- $instans (siste aktivitet: $tid - $sistAktivitet)"
                     }
-                log.warn(text)
+                log.info("""
+                    POSTER TIL SLACK
+                    $threadTs
+                    $text
+                """.trimIndent())
                 slackClient?.postMessage(text = text, threadTs = threadTs)
             }
         }
