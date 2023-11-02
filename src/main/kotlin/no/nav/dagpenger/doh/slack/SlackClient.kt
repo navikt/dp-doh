@@ -22,16 +22,29 @@ internal class SlackClient(private val accessToken: String, private val channel:
     fun postMessage(
         text: String,
         emoji: String = ":scream:",
-    ) {
-        "https://slack.com/api/chat.postMessage".post(
+        threadTs: String? = null,
+        broadcast: Boolean = false,
+    ): String? {
+        val slackTrådParameter =
+            if (threadTs != null) {
+                mapOf("thread_ts" to threadTs, "reply_broadcast" to broadcast)
+            } else {
+                emptyMap()
+            }
+        val parameters =
+            mapOf<String, Any>(
+                "channel" to channel,
+                "text" to text,
+                "icon_emoji" to emoji,
+            ) + slackTrådParameter
+
+        return "https://slack.com/api/chat.postMessage".post(
             objectMapper.writeValueAsString(
-                mutableMapOf<String, Any>(
-                    "channel" to channel,
-                    "text" to text,
-                    "icon_emoji" to emoji,
-                ),
+                parameters,
             ),
-        )
+        )?.let {
+            objectMapper.readTree(it)["ts"]?.asText()
+        }
     }
 
     private fun String.post(jsonPayload: String): String? {

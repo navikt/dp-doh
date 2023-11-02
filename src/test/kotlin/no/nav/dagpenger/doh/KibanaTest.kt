@@ -22,5 +22,12 @@ internal class KibanaTest {
                 risonMapper.readTree(it)
             }
         }
+
+        Kibana.createUrl(
+            query = """application: dp-speider""",
+            startTime = LocalDateTime.now().minusMinutes(30),
+        ).also {
+            println(it)
+        }
     }
 }
