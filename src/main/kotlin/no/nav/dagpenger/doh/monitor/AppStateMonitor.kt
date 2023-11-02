@@ -132,8 +132,8 @@ internal class AppStateMonitor(
                 """
                 | instanser(er) er antatt nede (eller har betydelig lag) da de(n) ikke svarer tilfredsstillende på ping.
                 |   $instanser
-                |   :question: Hva betyr dette for meg? Det kan bety at en pod sliter med å lese en bestemt partisjon, eller at en pod har problemer/er død.
-                |   :grafana: Sjekk lag https://grafana.nais.io/d/j-ZhhGJnz/kafka-viser-offset-og-messages-second-per-consumer?orgId=1&var-datasource=prod-gcp&var-consumer_group=All&var-topic=teamdagpenger.rapid.v1&viewPanel=18
+                |   - Hva betyr dette for meg? Det kan bety at en pod sliter med å lese en bestemt partisjon, eller at en pod har problemer/er død.
+                |   - Sjekk lag https://grafana.nais.io/d/j-ZhhGJnz/kafka-viser-offset-og-messages-second-per-consumer?orgId=1&var-datasource=prod-gcp&var-consumer_group=All&var-topic=teamdagpenger.rapid.v1&viewPanel=18
                 """.trimMargin()
             log.info(logtext)
             slackClient?.postMessage(logtext)
