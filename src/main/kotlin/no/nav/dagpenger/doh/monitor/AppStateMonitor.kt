@@ -80,7 +80,7 @@ internal class AppStateMonitor(
                     |   :question: Hva betyr dette for meg? Det kan bety at appen ikke leser fra Kafka, og kan ha alvorlig feil. Det kan også bety at appen har blitt drept (enten av Noen :tm: eller av :k8s:)
                     |   :elastic-logo: Kibana: $kibanaUrl
                     |   :grafana: Sjekk lag https://grafana.nais.io/d/j-ZhhGJnz/kafka-viser-offset-og-messages-second-per-consumer?orgId=1&var-datasource=prod-gcp&var-consumer_group=All&var-topic=teamdagpenger.rapid.v1&viewPanel=18
-                    """.trimIndent()
+                    """.trimMargin()
                 } else {
                     val instanser =
                         appsDown.joinToString(separator = "\n") { (app, sistAktivitet, _) ->
@@ -99,7 +99,7 @@ internal class AppStateMonitor(
                     |   :question: Hva betyr dette for meg? Det kan bety at appene ikke leser fra Kafka, og kan ha alvorlig feil. Det kan også bety at appene har blitt drept (enten av Noen :tm: eller av :k8s:)
                     |   :elastic-logo: Loggfeil i dagpenger teamet: $kibanaUrl
                     |   :grafana: Sjekk lag https://grafana.nais.io/d/j-ZhhGJnz/kafka-viser-offset-og-messages-second-per-consumer?orgId=1&var-datasource=prod-gcp&var-consumer_group=All&var-topic=teamdagpenger.rapid.v1&viewPanel=18
-                    """.trimIndent()
+                    """.trimMargin()
                 }
             log.warn(logtext)
             val threadTs = slackClient?.postMessage(logtext)
@@ -125,7 +125,7 @@ internal class AppStateMonitor(
                 |   $instanser
                 |   :question: Hva betyr dette for meg? Det kan bety at en pod sliter med å lese en bestemt partisjon, eller at en pod har problemer/er død.
                 |   :grafana: Sjekk lag https://grafana.nais.io/d/j-ZhhGJnz/kafka-viser-offset-og-messages-second-per-consumer?orgId=1&var-datasource=prod-gcp&var-consumer_group=All&var-topic=teamdagpenger.rapid.v1&viewPanel=18
-                """.trimIndent()
+                """.trimMargin()
             log.info(logtext)
             slackClient?.postMessage(logtext)
         }
