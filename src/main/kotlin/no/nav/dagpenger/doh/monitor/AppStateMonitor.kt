@@ -137,15 +137,13 @@ internal class AppStateMonitor(
     }
 
     private fun teamdagpengerKibanaUrl(): String =
-            Kibana.createUrl(
-                URLEncoder.encode(
-                    "team: teamdagpenger AND level:Error OR level:Warning AND envclass:p",
-                    Charset.defaultCharset(),
-                ),
-                LocalDateTime.now().minusMinutes(15),
-            )
-
-    }
+        Kibana.createUrl(
+            URLEncoder.encode(
+                "team: teamdagpenger AND level:Error OR level:Warning AND envclass:p",
+                Charset.defaultCharset(),
+            ),
+            LocalDateTime.now().minusMinutes(15),
+        )
 
     private fun JsonMessage.appsDown(now: LocalDateTime) =
         this["states"]
