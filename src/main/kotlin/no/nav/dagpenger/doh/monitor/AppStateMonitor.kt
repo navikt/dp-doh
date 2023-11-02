@@ -77,7 +77,7 @@ internal class AppStateMonitor(
                     val kibanaUrl = teamdagpengerKibanaUrl()
                     """
                     | $app er antatt nede (siste aktivitet: $tid) fordi den ikke svarer tilfredsstillende på ping. Trøblete instanser i :thread:
-                    |   :question: Hva betyr dette for meg? Det kan bety at appen ikke leser fra Kafka, og kan ha alvorlig feil. Det kan også bety at appen har blitt drept (enten av Noen :tm: eller av :k8s:)
+                    |   :question: Hva betyr dette for meg? Det kan bety at appen ikke leser fra Kafka, og kan ha alvorlig feil. Det kan også bety at appene har stoppet opp. 
                     |   - Sjekk logger i <$kibanaUrl|Kibana>
                     |   - Sjekk lag i <https://grafana.nais.io/d/j-ZhhGJnz/kafka-viser-offset-og-messages-second-per-consumer?orgId=1&var-datasource=prod-gcp&var-consumer_group=All&var-topic=All&viewPanel=18|Grafana>
                     """.trimMargin()
@@ -93,7 +93,7 @@ internal class AppStateMonitor(
                     """
                     | ${appsDown.size} apper er antatt nede da de ikke svarer tilfredsstillende på ping. Trøblete instanser i :thread:
                     |   $instanser
-                    |   :question: Hva betyr dette for meg? Det kan bety at appene ikke leser fra Kafka, og kan ha alvorlig feil. Det kan også bety at appene har blitt drept (enten av Noen :tm: eller av :k8s:)
+                    |   :question: Hva betyr dette for meg? Det kan bety at appene ikke leser fra Kafka, og kan ha alvorlig feil. Det kan også bety at appene har stoppet opp. 
                     |   - Loggfeil i dagpenger teamet i <$kibanaUrl|Kibana>
                     |   - Sjekk kafka lag i <https://grafana.nais.io/d/j-ZhhGJnz/kafka-viser-offset-og-messages-second-per-consumer?orgId=1&var-datasource=prod-gcp&var-consumer_group=All&var-topic=All&viewPanel=18|Grafana>
                     """.trimMargin()
