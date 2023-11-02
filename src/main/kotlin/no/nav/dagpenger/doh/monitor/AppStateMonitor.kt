@@ -78,8 +78,8 @@ internal class AppStateMonitor(
                     """
                     | $app er antatt nede (siste aktivitet: $tid) fordi den ikke svarer tilfredsstillende på ping. Trøblete instanser i :thread:
                     |   :question: Hva betyr dette for meg? Det kan bety at appen ikke leser fra Kafka, og kan ha alvorlig feil. Det kan også bety at appen har blitt drept (enten av Noen :tm: eller av :k8s:)
-                    |   :elastic-logo: Kibana: $kibanaUrl
-                    |   :grafana: Sjekk lag https://grafana.nais.io/d/j-ZhhGJnz/kafka-viser-offset-og-messages-second-per-consumer?orgId=1&var-datasource=prod-gcp&var-consumer_group=All&var-topic=teamdagpenger.rapid.v1&viewPanel=18
+                    |   :elastic-logo: Sjekk logger i <$kibanaUrl|Kibana>
+                    |   :grafana: Sjekk lag i <https://grafana.nais.io/d/j-ZhhGJnz/kafka-viser-offset-og-messages-second-per-consumer?orgId=1&var-datasource=prod-gcp&var-consumer_group=All&var-topic=teamdagpenger.rapid.v1&viewPanel=18|Grafana>
                     """.trimMargin()
                 } else {
                     val instanser =
@@ -97,8 +97,8 @@ internal class AppStateMonitor(
                     | ${appsDown.size} apper er antatt nede da de ikke svarer tilfredsstillende på ping. Trøblete instanser i :thread:
                     |   $instanser
                     |   :question: Hva betyr dette for meg? Det kan bety at appene ikke leser fra Kafka, og kan ha alvorlig feil. Det kan også bety at appene har blitt drept (enten av Noen :tm: eller av :k8s:)
-                    |   :elastic-logo: Loggfeil i dagpenger teamet: $kibanaUrl
-                    |   :grafana: Sjekk lag https://grafana.nais.io/d/j-ZhhGJnz/kafka-viser-offset-og-messages-second-per-consumer?orgId=1&var-datasource=prod-gcp&var-consumer_group=All&var-topic=teamdagpenger.rapid.v1&viewPanel=18
+                    |   :elastic-logo: Loggfeil i dagpenger teamet i <$kibanaUrl|Kibana>
+                    |   :grafana: Sjekk lag <https://grafana.nais.io/d/j-ZhhGJnz/kafka-viser-offset-og-messages-second-per-consumer?orgId=1&var-datasource=prod-gcp&var-consumer_group=All&var-topic=teamdagpenger.rapid.v1&viewPanel=18|Grafana>
                     """.trimMargin()
                 }
             log.warn(logtext)
@@ -109,6 +109,7 @@ internal class AppStateMonitor(
                         val tid = humanReadableTime(ChronoUnit.SECONDS.between(sistAktivitet, now))
                         "- $instans (siste aktivitet: $tid - $sistAktivitet)"
                     }
+                log.warn(text)
                 slackClient?.postMessage(text = text, threadTs = threadTs)
             }
         }
