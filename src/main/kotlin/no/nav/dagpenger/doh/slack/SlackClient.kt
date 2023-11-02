@@ -8,6 +8,7 @@ import java.io.IOException
 import java.io.InputStream
 import java.net.HttpURLConnection
 import java.net.URL
+import kotlin.time.Duration.Companion.seconds
 
 internal class SlackClient(private val accessToken: String, private val channel: String) {
     private companion object {
@@ -53,8 +54,8 @@ internal class SlackClient(private val accessToken: String, private val channel:
             connection =
                 (URL(this).openConnection() as HttpURLConnection).apply {
                     requestMethod = "POST"
-                    connectTimeout = 1000
-                    readTimeout = 1000
+                    connectTimeout = 3.seconds.inWholeMilliseconds.toInt()
+                    readTimeout = 5.seconds.inWholeMilliseconds.toInt()
                     doOutput = true
                     setRequestProperty("Authorization", "Bearer $accessToken")
                     setRequestProperty("Content-Type", "application/json; charset=utf-8")
