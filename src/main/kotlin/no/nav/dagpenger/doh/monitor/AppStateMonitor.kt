@@ -63,21 +63,18 @@ internal class AppStateMonitor(
         val now = LocalDateTime.now()
         if (now.toLocalTime() in natt || lastReportTime > now.minusMinutes(15)) return // don't create alerts too eagerly
         val appsDown = packet.appsDown(now)
+
         val slowInstances = packet.slowInstances(now)
 
         if (appsDown.isEmpty() && slowInstances.isEmpty()) return
 
         if (appsDown.isNotEmpty()) {
+            sikkerLogg.info("PUBLISERT PAKKE ${packet.toJson()}")
             val logtext =
                 if (appsDown.size == 1) {
                     val (app, sistAktivitet, _) = appsDown.first()
                     val tid = humanReadableTime(ChronoUnit.SECONDS.between(sistAktivitet, now))
-                    val kibanaUrl =
-                            Kibana.createUrl(
-                                URLEncoder.encode("application: $app AND envclass:p", Charset.defaultCharset()),
-
-                                sistAktivitet.minusMinutes(15),
-                            )
+                    val kibanaUrl = teamdagpengerKibanaUrl()
                     """
                     | $app er antatt nede (siste aktivitet: $tid) fordi den ikke svarer tilfredsstillende på ping. Trøblete instanser i :thread:
                     |   :question: Hva betyr dette for meg? Det kan bety at appen ikke leser fra Kafka, og kan ha alvorlig feil. Det kan også bety at appen har blitt drept (enten av Noen :tm: eller av :k8s:)
@@ -91,18 +88,14 @@ internal class AppStateMonitor(
                             "- $app (siste aktivitet: $tid - $sistAktivitet)"
                         }
 
-                    val kibanaUrl =
-                            Kibana.createUrl(
-                                URLEncoder.encode("team: teamdagpenger AND level:Error OR level:Warning AND envclass:p", Charset.defaultCharset()),
-                                LocalDateTime.now().minusMinutes(15),
-                            )
+                    val kibanaUrl = teamdagpengerKibanaUrl()
 
                     """
                     | ${appsDown.size} apper er antatt nede da de ikke svarer tilfredsstillende på ping. Trøblete instanser i :thread:
                     |   $instanser
                     |   :question: Hva betyr dette for meg? Det kan bety at appene ikke leser fra Kafka, og kan ha alvorlig feil. Det kan også bety at appene har blitt drept (enten av Noen :tm: eller av :k8s:)
                     |   - Loggfeil i dagpenger teamet i <$kibanaUrl|Kibana>
-                    |   - Sjekk lag i <https://grafana.nais.io/d/j-ZhhGJnz/kafka-viser-offset-og-messages-second-per-consumer?orgId=1&var-datasource=prod-gcp&var-consumer_group=All&var-topic=All&viewPanel=18|Grafana>
+                    |   - Sjekk kafka lag i <https://grafana.nais.io/d/j-ZhhGJnz/kafka-viser-offset-og-messages-second-per-consumer?orgId=1&var-datasource=prod-gcp&var-consumer_group=All&var-topic=All&viewPanel=18|Grafana>
                     """.trimMargin()
                 }
             log.warn(logtext)
@@ -113,11 +106,13 @@ internal class AppStateMonitor(
                         val tid = humanReadableTime(ChronoUnit.SECONDS.between(sistAktivitet, now))
                         "- $instans (siste aktivitet: $tid - $sistAktivitet)"
                     }
-                log.info("""
+                log.info(
+                    """
                     POSTER TIL SLACK
                     $threadTs
                     $text
-                """.trimIndent())
+                    """.trimIndent(),
+                )
                 slackClient?.postMessage(text = text, threadTs = threadTs)
             }
         }
@@ -132,13 +127,24 @@ internal class AppStateMonitor(
                 """
                 | instanser(er) er antatt nede (eller har betydelig lag) da de(n) ikke svarer tilfredsstillende på ping.
                 |   $instanser
-                |   - Hva betyr dette for meg? Det kan bety at en pod sliter med å lese en bestemt partisjon, eller at en pod har problemer/er død.
-                |   - Sjekk lag https://grafana.nais.io/d/j-ZhhGJnz/kafka-viser-offset-og-messages-second-per-consumer?orgId=1&var-datasource=prod-gcp&var-consumer_group=All&var-topic=teamdagpenger.rapid.v1&viewPanel=18
+                |   :question: Hva betyr dette for meg? Det kan bety at en pod sliter med å lese en bestemt partisjon, eller at en pod har problemer/er død.
+                |   - Sjekk kafka lag i <https://grafana.nais.io/d/j-ZhhGJnz/kafka-viser-offset-og-messages-second-per-consumer?orgId=1&var-datasource=prod-gcp&var-consumer_group=All&var-topic=All&viewPanel=18|Grafana>
                 """.trimMargin()
             log.info(logtext)
             slackClient?.postMessage(logtext)
         }
         lastReportTime = now
+    }
+
+    private fun teamdagpengerKibanaUrl(): String =
+            Kibana.createUrl(
+                URLEncoder.encode(
+                    "team: teamdagpenger AND level:Error OR level:Warning AND envclass:p",
+                    Charset.defaultCharset(),
+                ),
+                LocalDateTime.now().minusMinutes(15),
+            )
+
     }
 
     private fun JsonMessage.appsDown(now: LocalDateTime) =
