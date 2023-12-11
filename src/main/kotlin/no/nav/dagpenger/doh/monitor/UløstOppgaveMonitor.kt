@@ -13,6 +13,7 @@ internal class UløstOppgaveMonitor(
     private val slackClient: SlackClient?,
 ) : River.PacketListener {
     private val env = System.getenv()
+
     companion object {
         private val log = KotlinLogging.logger { }
         private val sikkerlogg = KotlinLogging.logger("tjenestekall")
