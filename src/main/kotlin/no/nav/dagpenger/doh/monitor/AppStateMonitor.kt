@@ -69,7 +69,6 @@ internal class AppStateMonitor(
         if (appsDown.isEmpty() && slowInstances.isEmpty()) return
 
         if (appsDown.isNotEmpty()) {
-            sikkerLogg.info("PUBLISERT PAKKE ${packet.toJson()}")
             val logtext =
                 if (appsDown.size == 1) {
                     val (app, sistAktivitet, _) = appsDown.first()
