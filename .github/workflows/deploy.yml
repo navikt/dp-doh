@@ -5,6 +5,10 @@ on:
     branches-ignore:
       - 'dependabot/**'
 
+permissions:
+  contents: "read"
+  id-token: "write"
+
 jobs:
   build:
     name: Build and publish Docker image
@@ -25,15 +29,11 @@ jobs:
           arguments: --configuration-cache build installDist
 
       - name: docker-build-push
-        if: github.ref == 'refs/heads/master'
         uses: nais/docker-build-push@v0
         id: docker-build-push
         with:
           team: teamdagpenger
-          push_image: true # optional, default true
           tag: ${{ github.sha }}
-          dockerfile: Dockerfile # optional, default Dockerfile
-          docker_context: . # optional, default .
           identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
           project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
     outputs:
@@ -48,11 +48,10 @@ jobs:
       - uses: actions/checkout@v4
       - uses: nais/deploy/actions/deploy@v2
         env:
-          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: dev-gcp
-          RESOURCE: nais/nais.yaml
+          RESOURCE: .nais/nais.yaml
           VAR: image=${{ needs.build.outputs.image }}
-          VARS: nais/dev/vars.yaml
+          VARS: .nais/dev/vars.yaml
           PRINT_PAYLOAD: true
 
   deploy-prod:
@@ -64,9 +63,8 @@ jobs:
       - uses: actions/checkout@v4
       - uses: nais/deploy/actions/deploy@v2
         env:
-          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
           CLUSTER: prod-gcp
-          RESOURCE: nais/nais.yaml
+          RESOURCE: .nais/nais.yaml
           VAR: image=${{ needs.build.outputs.image }}
-          VARS: nais/prod/vars.yaml
+          VARS: .nais/prod/vars.yaml
           PRINT_PAYLOAD: true
