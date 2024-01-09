@@ -1,5 +1,5 @@
 # Ignore everything
 **
 
-# Except shadow jar
-!build/libs/dp-doh.jar
+# Except install target
+!build/libs/**

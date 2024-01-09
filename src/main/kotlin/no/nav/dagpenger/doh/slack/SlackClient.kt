@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory
 import java.io.IOException
 import java.io.InputStream
 import java.net.HttpURLConnection
-import java.net.URL
+import java.net.URI
 import kotlin.time.Duration.Companion.seconds
 
 internal class SlackClient(private val accessToken: String, private val channel: String) {
@@ -52,7 +52,7 @@ internal class SlackClient(private val accessToken: String, private val channel:
         var connection: HttpURLConnection? = null
         try {
             connection =
-                (URL(this).openConnection() as HttpURLConnection).apply {
+                (URI(this).toURL().openConnection() as HttpURLConnection).apply {
                     requestMethod = "POST"
                     connectTimeout = 3.seconds.inWholeMilliseconds.toInt()
                     readTimeout = 5.seconds.inWholeMilliseconds.toInt()

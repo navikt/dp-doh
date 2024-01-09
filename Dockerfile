@@ -1,23 +1,7 @@
-FROM eclipse-temurin:17 as jre-build
+FROM cgr.dev/chainguard/jre-lts:latest
 
-# Create a custom Java runtime
-RUN $JAVA_HOME/bin/jlink \
-         --add-modules ALL-MODULE-PATH \
-         --strip-debug \
-         --no-man-pages \
-         --no-header-files \
-         --compress=2 \
-         --output /javaruntime
+ENV LANG='nb_NO.UTF-8' LANGUAGE='nb_NO:nb' LC_ALL='nb:NO.UTF-8' TZ="Europe/Oslo"
 
-# Runtime
-FROM debian:buster-slim
-ENV TZ="Europe/Oslo"
-ENV JAVA_HOME=/opt/java/openjdk
-ENV PATH "${JAVA_HOME}/bin:${PATH}"
-COPY --from=jre-build /javaruntime $JAVA_HOME
+COPY build/libs/* /app.jar
 
-RUN mkdir /opt/app
-COPY build/libs/*.jar /opt/app/app.jar
-
-USER nobody
-CMD ["java", "-jar", "/opt/app/app.jar"]
+ENTRYPOINT ["java", "-jar", "/app.jar"]
