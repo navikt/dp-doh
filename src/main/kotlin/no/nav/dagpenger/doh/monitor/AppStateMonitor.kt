@@ -64,10 +64,6 @@ internal class AppStateMonitor(
         if (now.toLocalTime() in natt || lastReportTime > now.minusMinutes(15)) return // don't create alerts too eagerly
         val appsDown = packet.appsDown(now)
 
-        val slowInstances = packet.slowInstances(now)
-
-        if (appsDown.isEmpty() && slowInstances.isEmpty()) return
-
         if (appsDown.isNotEmpty()) {
             val logtext =
                 if (appsDown.size == 1) {
@@ -115,23 +111,6 @@ internal class AppStateMonitor(
                 slackClient?.postMessage(text = text, threadTs = threadTs)
             }
         }
-
-        if (slowInstances.isNotEmpty()) {
-            val instanser =
-                slowInstances.joinToString(separator = "\n") { (instans, sistAktivitet) ->
-                    val tid = humanReadableTime(ChronoUnit.SECONDS.between(sistAktivitet, now))
-                    "- $instans (siste aktivitet: $tid - $sistAktivitet)"
-                }
-            val logtext =
-                """
-                | instanser(er) er antatt nede (eller har betydelig lag) da de(n) ikke svarer tilfredsstillende på ping.
-                |   $instanser
-                |   :question: Hva betyr dette for meg? Det kan bety at en pod sliter med å lese en bestemt partisjon, eller at en pod har problemer/er død.
-                |   - Sjekk kafka lag i <https://grafana.nais.io/d/j-ZhhGJnz/kafka-viser-offset-og-messages-second-per-consumer?orgId=1&var-datasource=prod-gcp&var-consumer_group=All&var-topic=All&viewPanel=18|Grafana>
-                """.trimMargin()
-            log.info(logtext)
-            slackClient?.postMessage(logtext)
-        }
         lastReportTime = now
     }
 
@@ -158,17 +137,5 @@ internal class AppStateMonitor(
                             Pair(instance.path("instance").asText(), instance.path("last_active_time").asLocalDateTime())
                         },
                 )
-            }
-
-    private fun JsonMessage.slowInstances(now: LocalDateTime) =
-        this["states"]
-            .filter { it["state"].asInt() == 1 } // appsDown inneholder allerede apper som er nede;
-            // her måler vi heller apper som totalt sett regnes for å være oppe, men har treige instanser
-            .flatMap { it ->
-                it["instances"]
-                    .filter { instance -> instance.path("state").asInt() == 0 }
-                    .filter { instance -> instance["last_active_time"].asLocalDateTime() < now.minusSeconds(70) }
-                    .filter { instance -> instance.path("last_active_time").asLocalDateTime() > now.minusMinutes(20) }
-                    .map { instance -> Pair(instance.path("instance").asText(), instance.path("last_active_time").asLocalDateTime()) }
             }
 }
