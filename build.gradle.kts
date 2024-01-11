@@ -12,7 +12,7 @@ application {
     mainClass.set("no.nav.dagpenger.doh.AppKt")
 }
 
-val slackClientVersion = "1.36.1"
+val slackClientVersion = "1.37.0"
 
 dependencies {
     implementation(kotlin("stdlib"))
