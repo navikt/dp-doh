@@ -117,7 +117,7 @@ internal class AppStateMonitor(
     private fun teamdagpengerKibanaUrl(): String =
         Kibana.createUrl(
             URLEncoder.encode(
-                "team: teamdagpenger AND level:Error OR level:Warning AND envclass:p",
+                "team: teamdagpenger AND (level:Error OR level:Warning) AND envclass:p",
                 Charset.defaultCharset(),
             ),
             LocalDateTime.now().minusMinutes(15),
