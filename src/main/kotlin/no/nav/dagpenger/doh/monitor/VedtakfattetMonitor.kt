@@ -1,12 +1,13 @@
 package no.nav.dagpenger.doh.monitor
 
 import mu.KotlinLogging
+import no.nav.dagpenger.doh.Kibana
 import no.nav.dagpenger.doh.slack.VedtakBot
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.River
-import no.nav.helse.rapids_rivers.asLocalDate
+import no.nav.helse.rapids_rivers.asLocalDateTime
 import java.time.format.DateTimeFormatter
 
 internal class VedtakfattetMonitor(rapidsConnection: RapidsConnection, private val vedtakBot: VedtakBot?) :
@@ -15,7 +16,8 @@ internal class VedtakfattetMonitor(rapidsConnection: RapidsConnection, private v
         River(rapidsConnection).apply {
             validate {
                 it.requireValue("@event_name", "vedtak_fattet")
-                it.requireKey("behandlingId", "vedtakId", "virkningsdato", "utfall")
+                it.requireKey("behandlingId", "utfall", "gjelderDato")
+                it.interestedIn("@opprettet")
             }
         }.register(this)
     }
@@ -29,16 +31,19 @@ internal class VedtakfattetMonitor(rapidsConnection: RapidsConnection, private v
         packet: JsonMessage,
         context: MessageContext,
     ) {
-        val vedtakId = packet["vedtakId"].asText()
         val behandlingId = packet["behandlingId"].asText()
-        val virkningsdato = packet["virkningsdato"].asLocalDate()
-        val utfall = packet["utfall"].asText()
+        val utfall =
+            when (packet["utfall"].asBoolean()) {
+                true -> "innvilget"
+                false -> "avslått"
+            }
 
-        val melding = """Vi har fattet et vedtak med utfall $utfall på virkningsdato ${
-            formatterer.format(
-                virkningsdato,
+        val kibanaUrl =
+            Kibana.createUrl(
+                String.format("\"%s\"", behandlingId),
+                packet["@opprettet"].asLocalDateTime().minusHours(1),
             )
-        }  (Vedtak $vedtakId for behandling $behandlingId i dev)"""
+        val melding = """Vi har fattet et vedtak med utfall $utfall (Følge <$kibanaUrl|lenke til Kibana>)"""
 
         vedtakBot?.postVedtak(
             melding,
