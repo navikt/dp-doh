@@ -1,6 +1,7 @@
 package no.nav.dagpenger.doh.monitor
 
 import mu.KotlinLogging
+import mu.withLoggingContext
 import no.nav.dagpenger.doh.Kibana
 import no.nav.dagpenger.doh.slack.VedtakBot
 import no.nav.helse.rapids_rivers.JsonMessage
@@ -23,7 +24,6 @@ internal class VedtakfattetMonitor(rapidsConnection: RapidsConnection, private v
     }
 
     private companion object {
-        val formatterer = DateTimeFormatter.ofPattern("dd.MM.yyyy")
         val logger = KotlinLogging.logger { }
     }
 
@@ -32,22 +32,11 @@ internal class VedtakfattetMonitor(rapidsConnection: RapidsConnection, private v
         context: MessageContext,
     ) {
         val behandlingId = packet["behandlingId"].asText()
-        val utfall =
-            when (packet["utfall"].asBoolean()) {
-                true -> "innvilget"
-                false -> "avslått"
-            }
+        withLoggingContext(mapOf("behandlingId" to behandlingId)) {
+            val utfall = packet["utfall"].asBoolean()
+            vedtakBot?.postVedtak(utfall, behandlingId, packet["@opprettet"].asLocalDateTime())
+            logger.info { "Vi har fattet vedtak med $utfall" + "(slackbot er konfiguert? ${vedtakBot != null})" }
+        }
 
-        val kibanaUrl =
-            Kibana.createUrl(
-                String.format("\"%s\"", behandlingId),
-                packet["@opprettet"].asLocalDateTime().minusHours(1),
-            )
-        val melding = """Vi har fattet et vedtak med utfall $utfall (Følge <$kibanaUrl|lenke til Kibana>)"""
-
-        vedtakBot?.postVedtak(
-            melding,
-        )
-        logger.info { melding + "(slackbot er konfiguert? ${vedtakBot != null})" }
     }
 }
