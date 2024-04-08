@@ -130,13 +130,13 @@ internal class VedtakBot(slackClient: MethodsClient, slackChannelId: String) : S
     username = "dp-behandling",
 ) {
     internal fun postVedtak(utfall: Boolean, behandlingId: String, opprettet: LocalDateTime) {
-
+        val utfallTekst = if (utfall) "Innvilget" else "Avslått"
         chatPostMessage {
             it.iconEmoji(":dagpenger:")
             it.blocks {
                 section {
                     markdownText(
-                        "Vi har fattet et vedtak med utfall: $utfall",
+                        "Vi har fattet et vedtak med utfall: $utfallTekst",
                     )
                 }
                 Blocks.divider()
