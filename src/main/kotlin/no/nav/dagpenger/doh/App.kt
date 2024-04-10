@@ -5,8 +5,8 @@ import no.nav.dagpenger.doh.Configuration.quizResultatBot
 import no.nav.dagpenger.doh.Configuration.slackAlertClient
 import no.nav.dagpenger.doh.Configuration.vedtakBot
 import no.nav.dagpenger.doh.monitor.AppStateMonitor
-import no.nav.dagpenger.doh.monitor.BehovUtenLøsningMonitor
 import no.nav.dagpenger.doh.monitor.BehandlingStatusMonitor
+import no.nav.dagpenger.doh.monitor.BehovUtenLøsningMonitor
 import no.nav.dagpenger.doh.monitor.ManuellBehandlingMonitor
 import no.nav.dagpenger.doh.monitor.MeldingerUtenEnvelopeMonitor
 import no.nav.dagpenger.doh.monitor.NyQuizMalMonitor

@@ -143,7 +143,7 @@ internal class VedtakBot(slackClient: MethodsClient, slackChannelId: String) : S
             it.iconEmoji(":dagpenger:")
             it.blocks {
                 section {
-                    text(type = "text", text = tekst, emoji = true)
+                    markdownText(tekst)
                 }
                 Blocks.divider()
                 actions {
