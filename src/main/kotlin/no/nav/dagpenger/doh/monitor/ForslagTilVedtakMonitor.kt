@@ -5,6 +5,7 @@ import mu.withLoggingContext
 import no.nav.dagpenger.doh.slack.VedtakBot
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
+import no.nav.helse.rapids_rivers.MessageProblems
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.River
 import no.nav.helse.rapids_rivers.asLocalDateTime
@@ -23,6 +24,7 @@ internal class ForslagTilVedtakMonitor(rapidsConnection: RapidsConnection, priva
 
     private companion object {
         val logger = KotlinLogging.logger { }
+        val sikkerLogger = KotlinLogging.logger("tjenestekall.ForslagTilVedtakMonitor")
     }
 
     override fun onPacket(
@@ -41,8 +43,14 @@ internal class ForslagTilVedtakMonitor(rapidsConnection: RapidsConnection, priva
         }
 
     }
+
+    override fun onError(problems: MessageProblems, context: MessageContext) {
+        sikkerLogger.info(problems.toExtendedReport())
+    }
+
     internal enum class Status {
         FORSLAG_TIL_VEDTAK,
         BEHANDLING_AVBRUTT
     }
+
 }
