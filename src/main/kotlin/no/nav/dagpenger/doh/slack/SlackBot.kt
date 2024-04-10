@@ -7,7 +7,7 @@ import com.slack.api.model.block.Blocks
 import com.slack.api.model.kotlin_extension.block.SectionBlockBuilder
 import mu.KotlinLogging
 import no.nav.dagpenger.doh.Kibana
-import no.nav.dagpenger.doh.monitor.ForslagTilVedtakMonitor
+import no.nav.dagpenger.doh.monitor.BehandlingStatusMonitor
 import java.time.LocalDateTime
 
 internal class QuizResultatBot(slackClient: MethodsClient, slackChannelId: String) : SlackBot(
@@ -130,22 +130,20 @@ internal class VedtakBot(slackClient: MethodsClient, slackChannelId: String) : S
     username = "dp-behandling",
 ) {
     internal fun postBehandlingStatus(
-        status: ForslagTilVedtakMonitor.Status,
+        status: BehandlingStatusMonitor.Status,
         behandlingId: String,
         opprettet: LocalDateTime,
     ) {
-        val tekst =
+        val tekst: String =
             when (status) {
-                ForslagTilVedtakMonitor.Status.FORSLAG_TIL_VEDTAK -> "Vi har et forslag til vedtak"
-                ForslagTilVedtakMonitor.Status.BEHANDLING_AVBRUTT -> "Behandlingen er avbrutt"
+                BehandlingStatusMonitor.Status.FORSLAG_TIL_VEDTAK -> "Vi har et forslag til vedtak :tada: "
+                BehandlingStatusMonitor.Status.BEHANDLING_AVBRUTT -> "Behandlingen er avbrutt :no_entry_sign: "
             }
         chatPostMessage {
             it.iconEmoji(":dagpenger:")
             it.blocks {
                 section {
-                    markdownText(
-                        tekst,
-                    )
+                    text(type = "text", text = tekst, emoji = true)
                 }
                 Blocks.divider()
                 actions {

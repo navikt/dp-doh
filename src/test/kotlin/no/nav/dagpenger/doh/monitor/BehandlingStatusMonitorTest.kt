@@ -6,11 +6,11 @@ import no.nav.dagpenger.doh.slack.VedtakBot
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import kotlin.test.Test
 
-class ForslagTilVedtakMonitorTest {
+class BehandlingStatusMonitorTest {
     private val vedtakBot = mockk<VedtakBot>(relaxed = true)
     private val testRapid =
         TestRapid().also {
-            ForslagTilVedtakMonitor(it, vedtakBot)
+            BehandlingStatusMonitor(it, vedtakBot)
         }
 
     @Test
@@ -21,7 +21,7 @@ class ForslagTilVedtakMonitorTest {
 
         verify(exactly = 1) {
             vedtakBot.postBehandlingStatus(
-                ForslagTilVedtakMonitor.Status.FORSLAG_TIL_VEDTAK,
+                BehandlingStatusMonitor.Status.FORSLAG_TIL_VEDTAK,
                 "018ec78d-4f15-7a02-bdf9-0e67129a0411",
                 any(),
             )
@@ -36,7 +36,7 @@ class ForslagTilVedtakMonitorTest {
 
         verify(exactly = 1) {
             vedtakBot.postBehandlingStatus(
-                ForslagTilVedtakMonitor.Status.BEHANDLING_AVBRUTT,
+                BehandlingStatusMonitor.Status.BEHANDLING_AVBRUTT,
                 "018ec78d-4f15-7a02-bdf9-0e67129a0411",
                 any(),
             )
