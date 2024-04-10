@@ -129,16 +129,16 @@ internal class VedtakBot(slackClient: MethodsClient, slackChannelId: String) : S
     slackChannelId,
     username = "dp-behandling",
 ) {
-
     internal fun postBehandlingStatus(
         status: ForslagTilVedtakMonitor.Status,
         behandlingId: String,
-        opprettet: LocalDateTime
+        opprettet: LocalDateTime,
     ) {
-        val tekst = when(status) {
-            ForslagTilVedtakMonitor.Status.FORSLAG_TIL_VEDTAK -> "Vi har et forslag til vedtak"
-            ForslagTilVedtakMonitor.Status.BEHANDLING_AVBRUTT -> "Behandlingen er avbrutt"
-        }
+        val tekst =
+            when (status) {
+                ForslagTilVedtakMonitor.Status.FORSLAG_TIL_VEDTAK -> "Vi har et forslag til vedtak"
+                ForslagTilVedtakMonitor.Status.BEHANDLING_AVBRUTT -> "Behandlingen er avbrutt"
+            }
         chatPostMessage {
             it.iconEmoji(":dagpenger:")
             it.blocks {
@@ -158,7 +158,11 @@ internal class VedtakBot(slackClient: MethodsClient, slackChannelId: String) : S
         }
     }
 
-    internal fun postVedtak(utfall: Boolean, behandlingId: String, opprettet: LocalDateTime) {
+    internal fun postVedtak(
+        utfall: Boolean,
+        behandlingId: String,
+        opprettet: LocalDateTime,
+    ) {
         val utfallTekst = if (utfall) "Innvilget" else "Avslått"
         chatPostMessage {
             it.iconEmoji(":dagpenger:")
@@ -176,8 +180,6 @@ internal class VedtakBot(slackClient: MethodsClient, slackChannelId: String) : S
                     }
                 }
             }
-
-
         }
     }
 }

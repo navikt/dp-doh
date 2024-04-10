@@ -2,14 +2,12 @@ package no.nav.dagpenger.doh.monitor
 
 import mu.KotlinLogging
 import mu.withLoggingContext
-import no.nav.dagpenger.doh.Kibana
 import no.nav.dagpenger.doh.slack.VedtakBot
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.River
 import no.nav.helse.rapids_rivers.asLocalDateTime
-import java.time.format.DateTimeFormatter
 
 internal class VedtakfattetMonitor(rapidsConnection: RapidsConnection, private val vedtakBot: VedtakBot?) :
     River.PacketListener {
@@ -37,6 +35,5 @@ internal class VedtakfattetMonitor(rapidsConnection: RapidsConnection, private v
             vedtakBot?.postVedtak(utfall, behandlingId, packet["@opprettet"].asLocalDateTime())
             logger.info { "Vi har fattet vedtak med $utfall" + "(slackbot er konfiguert? ${vedtakBot != null})" }
         }
-
     }
 }

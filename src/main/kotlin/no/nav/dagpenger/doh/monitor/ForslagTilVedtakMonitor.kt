@@ -33,24 +33,26 @@ internal class ForslagTilVedtakMonitor(rapidsConnection: RapidsConnection, priva
     ) {
         val behandlingId = packet["behandlingId"].asText()
         withLoggingContext(mapOf("behandlingId" to behandlingId)) {
-            val status = when(packet["@event_name"].asText()) {
-                "forslag_til_vedtak" -> Status.FORSLAG_TIL_VEDTAK
-                "behandling_avbrutt" -> Status.BEHANDLING_AVBRUTT
-                else -> null
-            }
+            val status =
+                when (packet["@event_name"].asText()) {
+                    "forslag_til_vedtak" -> Status.FORSLAG_TIL_VEDTAK
+                    "behandling_avbrutt" -> Status.BEHANDLING_AVBRUTT
+                    else -> null
+                }
             status?.let { vedtakBot?.postBehandlingStatus(it, behandlingId, packet["@opprettet"].asLocalDateTime()) }
             logger.info { "Vi har behandling med $status" + "(slackbot er konfiguert? ${vedtakBot != null})" }
         }
-
     }
 
-    override fun onError(problems: MessageProblems, context: MessageContext) {
+    override fun onError(
+        problems: MessageProblems,
+        context: MessageContext,
+    ) {
         sikkerLogger.info(problems.toExtendedReport())
     }
 
     internal enum class Status {
         FORSLAG_TIL_VEDTAK,
-        BEHANDLING_AVBRUTT
+        BEHANDLING_AVBRUTT,
     }
-
 }
