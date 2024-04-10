@@ -5,7 +5,6 @@ import mu.withLoggingContext
 import no.nav.dagpenger.doh.slack.VedtakBot
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
-import no.nav.helse.rapids_rivers.MessageProblems
 import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.River
 import no.nav.helse.rapids_rivers.asLocalDateTime
@@ -15,7 +14,7 @@ internal class ForslagTilVedtakMonitor(rapidsConnection: RapidsConnection, priva
     init {
         River(rapidsConnection).apply {
             validate {
-                it.demandAllOrAny("@event_name", listOf("forslag_til_vedtak", "behandling_avbrutt"))
+                it.requireAny("@event_name", listOf("forslag_til_vedtak", "behandling_avbrutt"))
                 it.requireKey("behandlingId", "gjelderDato")
                 it.interestedIn("@opprettet")
             }
@@ -42,13 +41,6 @@ internal class ForslagTilVedtakMonitor(rapidsConnection: RapidsConnection, priva
             status?.let { vedtakBot?.postBehandlingStatus(it, behandlingId, packet["@opprettet"].asLocalDateTime()) }
             logger.info { "Vi har behandling med $status" + "(slackbot er konfiguert? ${vedtakBot != null})" }
         }
-    }
-
-    override fun onError(
-        problems: MessageProblems,
-        context: MessageContext,
-    ) {
-        sikkerLogger.info(problems.toExtendedReport())
     }
 
     internal enum class Status {
