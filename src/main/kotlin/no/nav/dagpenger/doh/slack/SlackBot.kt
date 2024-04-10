@@ -4,10 +4,10 @@ import com.slack.api.methods.MethodsClient
 import com.slack.api.methods.kotlin_extension.request.chat.blocks
 import com.slack.api.methods.request.chat.ChatPostMessageRequest.ChatPostMessageRequestBuilder
 import com.slack.api.model.block.Blocks
-import com.slack.api.model.block.Blocks.divider
 import com.slack.api.model.kotlin_extension.block.SectionBlockBuilder
 import mu.KotlinLogging
 import no.nav.dagpenger.doh.Kibana
+import no.nav.dagpenger.doh.monitor.ForslagTilVedtakMonitor
 import java.time.LocalDateTime
 
 internal class QuizResultatBot(slackClient: MethodsClient, slackChannelId: String) : SlackBot(
@@ -129,6 +129,35 @@ internal class VedtakBot(slackClient: MethodsClient, slackChannelId: String) : S
     slackChannelId,
     username = "dp-behandling",
 ) {
+
+    internal fun postBehandlingStatus(
+        status: ForslagTilVedtakMonitor.Status,
+        behandlingId: String,
+        opprettet: LocalDateTime
+    ) {
+        val tekst = when(status) {
+            ForslagTilVedtakMonitor.Status.FORSLAG_TIL_VEDTAK -> "Vi har et forslag til vedtak"
+            ForslagTilVedtakMonitor.Status.BEHANDLING_AVBRUTT -> "Behandlingen er avbrutt"
+        }
+        chatPostMessage {
+            it.iconEmoji(":dagpenger:")
+            it.blocks {
+                section {
+                    markdownText(
+                        tekst,
+                    )
+                }
+                Blocks.divider()
+                actions {
+                    button {
+                        text(":ledger: Se behandlingslogg i Kibana")
+                        url(Kibana.createUrl(String.format("\"%s\"", behandlingId), opprettet.minusHours(1)))
+                    }
+                }
+            }
+        }
+    }
+
     internal fun postVedtak(utfall: Boolean, behandlingId: String, opprettet: LocalDateTime) {
         val utfallTekst = if (utfall) "Innvilget" else "Avslått"
         chatPostMessage {

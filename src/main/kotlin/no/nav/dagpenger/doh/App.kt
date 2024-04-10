@@ -6,6 +6,7 @@ import no.nav.dagpenger.doh.Configuration.slackAlertClient
 import no.nav.dagpenger.doh.Configuration.vedtakBot
 import no.nav.dagpenger.doh.monitor.AppStateMonitor
 import no.nav.dagpenger.doh.monitor.BehovUtenLøsningMonitor
+import no.nav.dagpenger.doh.monitor.ForslagTilVedtakMonitor
 import no.nav.dagpenger.doh.monitor.ManuellBehandlingMonitor
 import no.nav.dagpenger.doh.monitor.MeldingerUtenEnvelopeMonitor
 import no.nav.dagpenger.doh.monitor.NyQuizMalMonitor
@@ -22,6 +23,7 @@ fun main() {
         NyQuizMalMonitor(this, quizMalBot)
         BehovUtenLøsningMonitor(this, slackAlertClient)
         VedtakfattetMonitor(this, vedtakBot)
+        ForslagTilVedtakMonitor(this, vedtakBot)
         /**
          * Enn så lenge går 98% til manuell så den lager mer støy enn den gir informasjon.
          * Skrur Slack posting av, også kan vi heller skru den på igjen i framtida om vi øker graden av automatiske
