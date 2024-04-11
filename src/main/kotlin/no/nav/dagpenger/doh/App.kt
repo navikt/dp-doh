@@ -6,6 +6,7 @@ import no.nav.dagpenger.doh.Configuration.quizResultatBot
 import no.nav.dagpenger.doh.Configuration.slackAlertClient
 import no.nav.dagpenger.doh.Configuration.vedtakBot
 import no.nav.dagpenger.doh.monitor.AppStateMonitor
+import no.nav.dagpenger.doh.monitor.ArenasinkVedtakFeiletMonitor
 import no.nav.dagpenger.doh.monitor.ArenasinkVedtakOpprettetMonitor
 import no.nav.dagpenger.doh.monitor.BehandlingStatusMonitor
 import no.nav.dagpenger.doh.monitor.BehovUtenLøsningMonitor
@@ -27,6 +28,7 @@ fun main() {
         VedtakfattetMonitor(this, vedtakBot)
         BehandlingStatusMonitor(this, vedtakBot)
         ArenasinkVedtakOpprettetMonitor(this, arenaSinkBot)
+        ArenasinkVedtakFeiletMonitor(this, arenaSinkBot)
 
         /**
          * Enn så lenge går 98% til manuell så den lager mer støy enn den gir informasjon.
