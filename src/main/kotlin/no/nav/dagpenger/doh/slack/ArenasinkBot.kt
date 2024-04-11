@@ -24,7 +24,7 @@ internal class ArenasinkBot(slackClient: MethodsClient, slackChannelId: String) 
     ) {
         val utfallTekst = if (utfall) "Innvilget" else "Avslått"
         chatPostMessage {
-            it.iconEmoji(":rowboat:")
+            it.iconEmoji(":sink:")
             it.blocks {
                 section {
                     markdownText(
@@ -64,7 +64,7 @@ internal class ArenasinkBot(slackClient: MethodsClient, slackChannelId: String) 
         opprettet: LocalDateTime,
     ) {
         chatPostMessage {
-            it.iconEmoji(":rowboat:")
+            it.iconEmoji(":sink:")
             it.blocks {
                 section {
                     markdownText(
