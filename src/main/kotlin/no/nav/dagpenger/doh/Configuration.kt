@@ -27,6 +27,10 @@ internal object Configuration {
         properties.getOrNull(Key("DP_SLACKER_VEDTAK_CHANNEL_ID", stringType))
     }
 
+    val publiserArenaVedtak by lazy {
+        properties[Key("DP_ARENA_SINK_OPPRETTET_MELDING", stringType)].toBoolean()
+    }
+
     private val defaultProperties =
         ConfigurationMap(
             mapOf(
@@ -34,6 +38,7 @@ internal object Configuration {
                 "KAFKA_RAPID_TOPIC" to "teamdagpenger.rapid.v1",
                 "KAFKA_RESET_POLICY" to "latest",
                 "HTTP_PORT" to "8080",
+                "DP_ARENA_SINK_OPPRETTET_MELDING" to "true",
             ),
         )
     private val properties = systemProperties() overriding EnvironmentVariables() overriding defaultProperties
@@ -45,6 +50,7 @@ internal object Configuration {
             )
         }
     }
+
     val slackClient: SlackClient? by lazy {
         properties.getOrNull(Key("SLACK_ACCESS_TOKEN", stringType))?.let {
             SlackClient(

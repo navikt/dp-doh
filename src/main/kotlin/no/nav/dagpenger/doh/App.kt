@@ -1,6 +1,7 @@
 package no.nav.dagpenger.doh
 
 import no.nav.dagpenger.doh.Configuration.arenaSinkBot
+import no.nav.dagpenger.doh.Configuration.publiserArenaVedtak
 import no.nav.dagpenger.doh.Configuration.quizMalBot
 import no.nav.dagpenger.doh.Configuration.quizResultatBot
 import no.nav.dagpenger.doh.Configuration.slackAlertClient
@@ -27,7 +28,11 @@ fun main() {
         BehovUtenLøsningMonitor(this, slackAlertClient)
         VedtakfattetMonitor(this, vedtakBot)
         BehandlingStatusMonitor(this, vedtakBot)
-        ArenasinkVedtakOpprettetMonitor(this, arenaSinkBot)
+
+        if (publiserArenaVedtak) {
+            ArenasinkVedtakOpprettetMonitor(this, arenaSinkBot)
+        }
+
         ArenasinkVedtakFeiletMonitor(this, arenaSinkBot)
 
         /**
