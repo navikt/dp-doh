@@ -41,7 +41,7 @@ internal class ProsessResultatMonitor(
             resultat = packet["resultat"].asBoolean(),
         )
 
-        resultatCounter.labels(packet["resultat"].asText(), "dp-quiz").inc()
+        resultatCounter.labels(packet["resultat"].asText()).inc()
     }
 
     override fun onError(

@@ -13,6 +13,5 @@ object BehandlingMetrikker {
         Counter
             .build("dp_prosessresultat", "Resultat av automatiseringsprosessen")
             .labelNames("resultat")
-            .labelNames("kilde")
             .register()
 }

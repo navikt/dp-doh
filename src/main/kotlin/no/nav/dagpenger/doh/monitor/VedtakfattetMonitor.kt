@@ -33,7 +33,7 @@ internal class VedtakfattetMonitor(rapidsConnection: RapidsConnection, private v
         val behandlingId = packet["behandlingId"].asText()
         withLoggingContext(mapOf("behandlingId" to behandlingId)) {
             val utfall = packet["utfall"].asBoolean()
-            resultatCounter.labels(packet["utfall"].asText(), "dp-behandling").inc()
+            resultatCounter.labels(packet["utfall"].asText()).inc()
             vedtakBot?.postVedtak(utfall, behandlingId, packet["@opprettet"].asLocalDateTime())
             logger.info { "Vi har fattet vedtak med $utfall" + "(slackbot er konfiguert? ${vedtakBot != null})" }
         }
