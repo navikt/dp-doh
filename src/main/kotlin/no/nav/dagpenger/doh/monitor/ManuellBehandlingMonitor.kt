@@ -1,7 +1,7 @@
 package no.nav.dagpenger.doh.monitor
 
-import io.prometheus.client.Counter
 import mu.KotlinLogging
+import no.nav.dagpenger.doh.monitor.BehandlingMetrikker.manuellCounter
 import no.nav.dagpenger.doh.slack.QuizResultatBot
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
@@ -17,11 +17,6 @@ internal class ManuellBehandlingMonitor(
     companion object {
         private val log = KotlinLogging.logger { }
         private val sikkerlogg = KotlinLogging.logger("tjenestekall")
-        private val manuellCounter =
-            Counter
-                .build("dp_manuell_behandling", "Søknader som blir sendt til manuell behandling")
-                .labelNames("grunn")
-                .register()
     }
 
     init {

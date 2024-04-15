@@ -1,8 +1,8 @@
 package no.nav.dagpenger.doh.monitor
 
 import com.fasterxml.jackson.databind.JsonNode
-import io.prometheus.client.Counter
 import mu.KotlinLogging
+import no.nav.dagpenger.doh.monitor.BehandlingMetrikker.resultatCounter
 import no.nav.dagpenger.doh.slack.QuizResultatBot
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
@@ -18,11 +18,6 @@ internal class ProsessResultatMonitor(
     companion object {
         private val log = KotlinLogging.logger { }
         private val sikkerlogg = KotlinLogging.logger("tjenestekall")
-        private val resultatCounter =
-            Counter
-                .build("dp_prosessresultat", "Resultat av automatiseringsprosessen")
-                .labelNames("resultat")
-                .register()
     }
 
     init {
@@ -46,7 +41,7 @@ internal class ProsessResultatMonitor(
             resultat = packet["resultat"].asBoolean(),
         )
 
-        resultatCounter.labels(packet["resultat"].asText()).inc()
+        resultatCounter.labels(packet["resultat"].asText(), "dp-quiz").inc()
     }
 
     override fun onError(
