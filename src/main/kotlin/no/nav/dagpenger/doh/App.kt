@@ -12,6 +12,7 @@ import no.nav.dagpenger.doh.monitor.ArenasinkVedtakOpprettetMonitor
 import no.nav.dagpenger.doh.monitor.BehandlingStatusMonitor
 import no.nav.dagpenger.doh.monitor.BehovUtenLøsningMonitor
 import no.nav.dagpenger.doh.monitor.ManuellBehandlingMonitor
+import no.nav.dagpenger.doh.monitor.ManuellQuizBehandlingMonitor
 import no.nav.dagpenger.doh.monitor.MeldingerUtenEnvelopeMonitor
 import no.nav.dagpenger.doh.monitor.NyQuizMalMonitor
 import no.nav.dagpenger.doh.monitor.ProsessResultatMonitor
@@ -28,7 +29,7 @@ fun main() {
         BehovUtenLøsningMonitor(this, slackAlertClient)
         VedtakfattetMonitor(this, vedtakBot)
         BehandlingStatusMonitor(this, vedtakBot)
-
+        ManuellBehandlingMonitor(this, vedtakBot)
         if (publiserArenaVedtak) {
             ArenasinkVedtakOpprettetMonitor(this, arenaSinkBot)
         }
@@ -40,7 +41,7 @@ fun main() {
          * Skrur Slack posting av, også kan vi heller skru den på igjen i framtida om vi øker graden av automatiske
          * For å skru på Slack posting igjen, legg til slackBot variabelen i konstruktøren
          */
-        ManuellBehandlingMonitor(this)
+        ManuellQuizBehandlingMonitor(this)
         MeldingerUtenEnvelopeMonitor(this)
     }.start()
 }

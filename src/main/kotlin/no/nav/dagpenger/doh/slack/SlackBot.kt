@@ -180,6 +180,34 @@ internal class VedtakBot(slackClient: MethodsClient, slackChannelId: String) : S
             }
         }
     }
+
+    fun postManuellBehandling(
+        behandlingId: String?,
+        årsaker: List<String>,
+        opprettet: LocalDateTime,
+    ) {
+        chatPostMessage {
+            it.iconEmoji(":dagpenger:")
+            it.blocks {
+                section {
+                    markdownText(
+                        listOf(
+                            "*Resultat:* Manuell saksbehandling i Arena :detective:",
+                            "*BehandlingId:* $behandlingId",
+                            "*Årsaker:* ${årsaker.joinToString()}",
+                        ).joinToString("\n"),
+                    )
+                }
+                Blocks.divider()
+                actions {
+                    button {
+                        text(":ledger: Se behandlingslogg i Kibana")
+                        url(Kibana.createUrl(String.format("\"%s\"", behandlingId), opprettet.minusHours(1)))
+                    }
+                }
+            }
+        }
+    }
 }
 
 internal abstract class SlackBot(

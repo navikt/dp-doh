@@ -1,7 +1,7 @@
 package no.nav.dagpenger.doh
 
 import io.mockk.mockk
-import no.nav.dagpenger.doh.monitor.ManuellBehandlingMonitor
+import no.nav.dagpenger.doh.monitor.ManuellQuizBehandlingMonitor
 import no.nav.dagpenger.doh.slack.QuizResultatBot
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.AfterEach
@@ -9,11 +9,11 @@ import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 import java.util.UUID
 
-internal class ManuellBehandlingMonitorTest {
+internal class ManuellQuizBehandlingMonitorTest {
     private val slack = mockk<QuizResultatBot>(relaxed = true)
     private val rapid by lazy {
         TestRapid().apply {
-            ManuellBehandlingMonitor(this, slack)
+            ManuellQuizBehandlingMonitor(this, slack)
         }
     }
 
