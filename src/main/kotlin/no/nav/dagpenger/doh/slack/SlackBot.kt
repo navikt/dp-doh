@@ -183,6 +183,7 @@ internal class VedtakBot(slackClient: MethodsClient, slackChannelId: String) : S
 
     fun postManuellBehandling(
         behandlingId: String?,
+        søknadId: String,
         årsaker: List<String>,
         opprettet: LocalDateTime,
     ) {
@@ -192,8 +193,9 @@ internal class VedtakBot(slackClient: MethodsClient, slackChannelId: String) : S
                 section {
                     markdownText(
                         listOf(
-                            "*Resultat:* Manuell saksbehandling i Arena :detective:",
+                            "*Resultat:* Manuell saksbehandling i Arena 🕵",
                             "*BehandlingId:* $behandlingId",
+                             "*SøknadId:* $søknadId",
                             "*Årsaker:* ${årsaker.joinToString()}",
                         ).joinToString("\n"),
                     )

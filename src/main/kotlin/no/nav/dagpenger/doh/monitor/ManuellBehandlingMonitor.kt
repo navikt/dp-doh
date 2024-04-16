@@ -39,7 +39,8 @@ internal class ManuellBehandlingMonitor(
         val årsaker =
             packet["vurderinger"].filter { it["utfall"].asText() == "Manuell" }.map { it["begrunnelse"].asText() }
         val opprettet = packet["@opprettet"].asLocalDateTime()
-        vedtakBot?.postManuellBehandling(behandlingId, årsaker, opprettet)
+        val søknadId = packet["søknadId"].asText()
+        vedtakBot?.postManuellBehandling(behandlingId, søknadId, årsaker, opprettet)
         årsaker.forEach {
             manuellCounter.labels(it).inc()
         }

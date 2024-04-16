@@ -20,7 +20,7 @@ class ManuellBehandlingMonitorTest {
     fun `skal lytte på behov med ManuellBehandlingAvklart`() {
         val årsaker = slot<List<String>>()
         testRapid.sendTestMessage(manuellBehandlingAvklartBehov)
-        verify(exactly = 1) { vedtakBotMock.postManuellBehandling(any(), capture(årsaker), any()) }
+        verify(exactly = 1) { vedtakBotMock.postManuellBehandling(any(), søknadId, capture(årsaker), any()) }
         assertTrue { årsaker.isCaptured }
         val faktiskeÅrsaker = årsaker.captured
         assertTrue("Burde ha årsaker") { faktiskeÅrsaker.isNotEmpty() }
