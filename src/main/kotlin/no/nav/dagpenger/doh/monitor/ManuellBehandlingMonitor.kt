@@ -23,10 +23,10 @@ internal class ManuellBehandlingMonitor(
                 it.demandValue("@event_name", "behov")
                 it.demandAllOrAny("@behov", listOf("AvklaringManuellBehandling"))
                 it.requireValue("@løsning.AvklaringManuellBehandling", true)
-                it.requireArray("vurderinger")  {
-                    it.requireKey("utfall", "begrunnelse")
+                it.requireArray("vurderinger") {
+                    requireKey("utfall", "begrunnelse")
                 }
-                it.requireKey("søknadId", "behandlingId", "vurderinger", "@opprettet")
+                it.requireKey("søknadId", "behandlingId", "@opprettet")
             }
         }.register(this)
     }
