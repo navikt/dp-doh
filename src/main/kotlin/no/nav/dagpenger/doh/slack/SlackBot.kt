@@ -195,7 +195,7 @@ internal class VedtakBot(slackClient: MethodsClient, slackChannelId: String) : S
                         listOf(
                             "*Resultat:* Manuell saksbehandling i Arena 🕵",
                             "*BehandlingId:* $behandlingId",
-                             "*SøknadId:* $søknadId",
+                            "*SøknadId:* $søknadId",
                             "*Årsaker:* ${årsaker.joinToString()}",
                         ).joinToString("\n"),
                     )
