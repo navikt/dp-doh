@@ -20,7 +20,9 @@ internal abstract class SlackBot(
         trådNøkkel: String? = null,
         block: (it: ChatPostMessageRequestBuilder) -> ChatPostMessageRequestBuilder,
     ) {
-        val threadTs = trådNøkkel?.let { slackTrådRepository?.hentTråd(it) }?.threadTs
+        val threadTs = trådNøkkel?.let { nøkkel -> slackTrådRepository?.hentTråd(nøkkel).also {
+            log.info { "Hentet tråd for $nøkkel med $it" }
+        } }?.threadTs
         slackClient.chatPostMessage {
             it.channel(slackChannelId)
                 .iconEmoji(":robot_face:")
@@ -33,7 +35,11 @@ internal abstract class SlackBot(
                 log.error { "Kunne ikke poste på Slack fordi ${response.errors}" }
                 log.error { response }
             }
-            trådNøkkel?.let { slackTrådRepository?.lagreTråd(SlackTråd(it, response.ts)) }
+            trådNøkkel?.let {
+                val threadTs = response.ts
+                log.info { "Lagrer tråd for $it med $threadTs" }
+                slackTrådRepository?.lagreTråd(SlackTråd(it, response.ts)
+                ) }
         }
     }
 }
