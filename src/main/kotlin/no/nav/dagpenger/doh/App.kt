@@ -7,16 +7,16 @@ import no.nav.dagpenger.doh.Configuration.quizResultatBot
 import no.nav.dagpenger.doh.Configuration.slackAlertClient
 import no.nav.dagpenger.doh.Configuration.vedtakBot
 import no.nav.dagpenger.doh.monitor.AppStateMonitor
-import no.nav.dagpenger.doh.monitor.ArenasinkVedtakFeiletMonitor
-import no.nav.dagpenger.doh.monitor.ArenasinkVedtakOpprettetMonitor
-import no.nav.dagpenger.doh.monitor.BehandlingStatusMonitor
 import no.nav.dagpenger.doh.monitor.BehovUtenLøsningMonitor
-import no.nav.dagpenger.doh.monitor.ManuellBehandlingMonitor
-import no.nav.dagpenger.doh.monitor.ManuellQuizBehandlingMonitor
 import no.nav.dagpenger.doh.monitor.MeldingerUtenEnvelopeMonitor
-import no.nav.dagpenger.doh.monitor.NyQuizMalMonitor
-import no.nav.dagpenger.doh.monitor.ProsessResultatMonitor
-import no.nav.dagpenger.doh.monitor.VedtakfattetMonitor
+import no.nav.dagpenger.doh.monitor.behandling.ArenasinkVedtakFeiletMonitor
+import no.nav.dagpenger.doh.monitor.behandling.ArenasinkVedtakOpprettetMonitor
+import no.nav.dagpenger.doh.monitor.behandling.BehandlingStatusMonitor
+import no.nav.dagpenger.doh.monitor.behandling.ManuellBehandlingMonitor
+import no.nav.dagpenger.doh.monitor.behandling.VedtakfattetMonitor
+import no.nav.dagpenger.doh.monitor.quiz.ManuellQuizBehandlingMonitor
+import no.nav.dagpenger.doh.monitor.quiz.NyQuizMalMonitor
+import no.nav.dagpenger.doh.monitor.quiz.ProsessResultatMonitor
 import no.nav.helse.rapids_rivers.RapidApplication
 import kotlin.time.ExperimentalTime
 

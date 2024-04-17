@@ -2,6 +2,7 @@ package no.nav.dagpenger.doh.monitor
 
 import io.mockk.mockk
 import io.mockk.verify
+import no.nav.dagpenger.doh.monitor.behandling.BehandlingStatusMonitor
 import no.nav.dagpenger.doh.slack.VedtakBot
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import kotlin.test.Test
@@ -24,6 +25,7 @@ class BehandlingStatusMonitorTest {
                 BehandlingStatusMonitor.Status.FORSLAG_TIL_VEDTAK,
                 "018ec78d-4f15-7a02-bdf9-0e67129a0411",
                 any(),
+                any(),
             )
         }
     }
@@ -38,6 +40,7 @@ class BehandlingStatusMonitorTest {
             vedtakBot.postBehandlingStatus(
                 BehandlingStatusMonitor.Status.BEHANDLING_AVBRUTT,
                 "018ec78d-4f15-7a02-bdf9-0e67129a0411",
+                any(),
                 any(),
             )
         }

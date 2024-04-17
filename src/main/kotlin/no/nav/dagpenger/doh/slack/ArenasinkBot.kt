@@ -23,7 +23,7 @@ internal class ArenasinkBot(slackClient: MethodsClient, slackChannelId: String) 
         opprettet: LocalDateTime,
     ) {
         val utfallTekst = if (utfall) "Innvilget" else "Avslått"
-        chatPostMessage {
+        chatPostMessage(trådNøkkel = søknadId) {
             it.iconEmoji(":sink:")
             it.blocks {
                 section {
@@ -58,12 +58,12 @@ internal class ArenasinkBot(slackClient: MethodsClient, slackChannelId: String) 
     }
 
     fun postFeilet(
-        søknadId: String?,
-        kildeId: String?,
-        kildeSystem: String?,
+        søknadId: String,
+        kildeId: String,
+        kildeSystem: String,
         opprettet: LocalDateTime,
     ) {
-        chatPostMessage {
+        chatPostMessage(trådNøkkel = søknadId) {
             it.iconEmoji(":sink:")
             it.blocks {
                 section {

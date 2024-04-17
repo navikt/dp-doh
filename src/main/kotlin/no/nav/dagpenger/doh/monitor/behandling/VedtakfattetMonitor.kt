@@ -1,4 +1,4 @@
-package no.nav.dagpenger.doh.monitor
+package no.nav.dagpenger.doh.monitor.behandling
 
 import mu.KotlinLogging
 import mu.withLoggingContext
@@ -16,7 +16,7 @@ internal class VedtakfattetMonitor(rapidsConnection: RapidsConnection, private v
         River(rapidsConnection).apply {
             validate {
                 it.requireValue("@event_name", "vedtak_fattet")
-                it.requireKey("behandlingId", "utfall", "gjelderDato")
+                it.requireKey("behandlingId", "utfall", "gjelderDato", "søknadId")
                 it.interestedIn("@opprettet")
             }
         }.register(this)
@@ -31,10 +31,11 @@ internal class VedtakfattetMonitor(rapidsConnection: RapidsConnection, private v
         context: MessageContext,
     ) {
         val behandlingId = packet["behandlingId"].asText()
-        withLoggingContext(mapOf("behandlingId" to behandlingId)) {
+        val søknadId = packet["søknadId"].asText()
+        withLoggingContext(mapOf("behandlingId" to behandlingId, "søknadId" to søknadId)) {
             val utfall = packet["utfall"].asBoolean()
             resultatCounter.labels(packet["utfall"].asText()).inc()
-            vedtakBot?.postVedtak(utfall, behandlingId, packet["@opprettet"].asLocalDateTime())
+            vedtakBot?.postVedtak(utfall, behandlingId, søknadId, packet["@opprettet"].asLocalDateTime())
             logger.info { "Vi har fattet vedtak med $utfall" + "(slackbot er konfiguert? ${vedtakBot != null})" }
         }
     }

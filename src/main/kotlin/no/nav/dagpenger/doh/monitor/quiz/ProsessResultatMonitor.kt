@@ -1,4 +1,4 @@
-package no.nav.dagpenger.doh.monitor
+package no.nav.dagpenger.doh.monitor.quiz
 
 import com.fasterxml.jackson.databind.JsonNode
 import mu.KotlinLogging

@@ -1,4 +1,4 @@
-package no.nav.dagpenger.doh.monitor
+package no.nav.dagpenger.doh.monitor.behandling
 
 import mu.KotlinLogging
 import mu.withLoggingContext
@@ -15,7 +15,7 @@ internal class BehandlingStatusMonitor(rapidsConnection: RapidsConnection, priva
         River(rapidsConnection).apply {
             validate {
                 it.requireAny("@event_name", listOf("forslag_til_vedtak", "behandling_avbrutt"))
-                it.requireKey("behandlingId", "gjelderDato")
+                it.requireKey("behandlingId", "gjelderDato", "søknadId")
                 it.interestedIn("@opprettet")
             }
         }.register(this)
@@ -30,14 +30,15 @@ internal class BehandlingStatusMonitor(rapidsConnection: RapidsConnection, priva
         context: MessageContext,
     ) {
         val behandlingId = packet["behandlingId"].asText()
-        withLoggingContext(mapOf("behandlingId" to behandlingId)) {
+        val søknadId = packet["søknadId"].asText()
+        withLoggingContext(mapOf("behandlingId" to behandlingId, "søknadId" to søknadId)) {
             val status =
                 when (packet["@event_name"].asText()) {
                     "forslag_til_vedtak" -> Status.FORSLAG_TIL_VEDTAK
                     "behandling_avbrutt" -> Status.BEHANDLING_AVBRUTT
                     else -> null
                 }
-            status?.let { vedtakBot?.postBehandlingStatus(it, behandlingId, packet["@opprettet"].asLocalDateTime()) }
+            status?.let { vedtakBot?.postBehandlingStatus(it, behandlingId, søknadId, packet["@opprettet"].asLocalDateTime()) }
             logger.info { "Vi har behandling med $status" + "(slackbot er konfiguert? ${vedtakBot != null})" }
         }
     }

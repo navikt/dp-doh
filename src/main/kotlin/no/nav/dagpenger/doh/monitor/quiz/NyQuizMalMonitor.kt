@@ -1,4 +1,4 @@
-package no.nav.dagpenger.doh.monitor
+package no.nav.dagpenger.doh.monitor.quiz
 
 import mu.KotlinLogging
 import no.nav.dagpenger.doh.slack.QuizMalBot

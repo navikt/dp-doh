@@ -2,6 +2,7 @@ package no.nav.dagpenger.doh.monitor
 
 import io.mockk.mockk
 import io.mockk.verify
+import no.nav.dagpenger.doh.monitor.behandling.ArenasinkVedtakOpprettetMonitor
 import no.nav.dagpenger.doh.slack.ArenasinkBot
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.intellij.lang.annotations.Language

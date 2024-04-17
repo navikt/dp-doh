@@ -1,7 +1,7 @@
 package no.nav.dagpenger.doh
 
 import io.mockk.mockk
-import no.nav.dagpenger.doh.monitor.ManuellQuizBehandlingMonitor
+import no.nav.dagpenger.doh.monitor.quiz.ManuellQuizBehandlingMonitor
 import no.nav.dagpenger.doh.slack.QuizResultatBot
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.AfterEach
