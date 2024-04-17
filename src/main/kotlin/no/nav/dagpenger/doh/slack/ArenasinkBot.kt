@@ -11,11 +11,11 @@ internal class ArenasinkBot(
     slackChannelId: String,
     slackTrådRepository: SlackTrådRepository,
 ) : SlackBot(
-    slackClient,
-    slackChannelId,
-    username = "dp-arena-sink",
-    slackTrådRepository = slackTrådRepository,
-) {
+        slackClient,
+        slackChannelId,
+        username = "dp-arena-sink",
+        slackTrådRepository = slackTrådRepository,
+    ) {
     internal fun postVedtak(
         søknadId: String,
         sakId: Int,

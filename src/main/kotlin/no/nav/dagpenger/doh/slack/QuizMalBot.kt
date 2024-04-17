@@ -3,7 +3,11 @@ package no.nav.dagpenger.doh.slack
 import com.slack.api.methods.MethodsClient
 import com.slack.api.methods.kotlin_extension.request.chat.blocks
 
-internal class QuizMalBot(slackClient: MethodsClient, slackChannelId: String) : SlackBot(slackClient, slackChannelId, slackTrådRepository = null) {
+internal class QuizMalBot(slackClient: MethodsClient, slackChannelId: String) : SlackBot(
+    slackClient,
+    slackChannelId,
+    slackTrådRepository = null,
+) {
     internal fun postNyMal(
         navn: String,
         versjonId: Int,
