@@ -20,8 +20,11 @@ internal class VedtakBot(slackClient: MethodsClient, slackChannelId: String) : S
     ) {
         val tekst: String =
             when (status) {
-                BehandlingStatusMonitor.Status.FORSLAG_TIL_VEDTAK -> "Vi har et forslag til vedtak :tada: "
-                BehandlingStatusMonitor.Status.BEHANDLING_AVBRUTT -> "Behandlingen er avbrutt :no_entry_sign: "
+                BehandlingStatusMonitor.Status.FORSLAG_TIL_VEDTAK -> "Vi har et forslag til vedtak :tada:  "
+                BehandlingStatusMonitor.Status.BEHANDLING_AVBRUTT -> "Behandlingen er avbrutt :no_entry_sign:  "
+                BehandlingStatusMonitor.Status.BEHANDLING_OPPRETTET -> """
+                    Vi opprettet en behandling basert på søknad
+                    *Søknad ID:* $søknadId """.trimIndent()
             }
         chatPostMessage(trådNøkkel = søknadId) {
             it.iconEmoji(":dagpenger:")

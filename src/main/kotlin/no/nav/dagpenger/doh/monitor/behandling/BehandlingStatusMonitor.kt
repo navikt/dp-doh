@@ -14,7 +14,7 @@ internal class BehandlingStatusMonitor(rapidsConnection: RapidsConnection, priva
     init {
         River(rapidsConnection).apply {
             validate {
-                it.requireAny("@event_name", listOf("forslag_til_vedtak", "behandling_avbrutt"))
+                it.requireAny("@event_name", listOf("forslag_til_vedtak", "behandling_avbrutt", "behandling_opprettet"))
                 it.requireKey("behandlingId", "gjelderDato", "søknadId")
                 it.interestedIn("@opprettet")
             }
@@ -34,6 +34,7 @@ internal class BehandlingStatusMonitor(rapidsConnection: RapidsConnection, priva
         withLoggingContext(mapOf("behandlingId" to behandlingId, "søknadId" to søknadId)) {
             val status =
                 when (packet["@event_name"].asText()) {
+                    "behandling_opprettet" -> Status.BEHANDLING_OPPRETTET
                     "forslag_til_vedtak" -> Status.FORSLAG_TIL_VEDTAK
                     "behandling_avbrutt" -> Status.BEHANDLING_AVBRUTT
                     else -> null
@@ -46,5 +47,6 @@ internal class BehandlingStatusMonitor(rapidsConnection: RapidsConnection, priva
     internal enum class Status {
         FORSLAG_TIL_VEDTAK,
         BEHANDLING_AVBRUTT,
+        BEHANDLING_OPPRETTET,
     }
 }
