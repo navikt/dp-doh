@@ -9,6 +9,7 @@ import com.natpryce.konfig.stringType
 import com.slack.api.Slack
 import com.slack.api.methods.MethodsClient
 import no.nav.dagpenger.doh.slack.ArenasinkBot
+import no.nav.dagpenger.doh.slack.InMemorySlackTrådRepository
 import no.nav.dagpenger.doh.slack.QuizMalBot
 import no.nav.dagpenger.doh.slack.QuizResultatBot
 import no.nav.dagpenger.doh.slack.SlackClient
@@ -68,12 +69,13 @@ internal object Configuration {
         slackBotClient?.let { QuizResultatBot(it, quizResultatSlackChannelId) }
     }
 
+    private val slackTrådRepository by lazy { InMemorySlackTrådRepository() }
     val vedtakBot: VedtakBot? by lazy {
-        slackBotClient?.let { slackBotClient -> vedtakBotSlackChannelId?.let { VedtakBot(slackBotClient, it) } }
+        slackBotClient?.let { slackBotClient -> vedtakBotSlackChannelId?.let { VedtakBot(slackBotClient, it, slackTrådRepository) } }
     }
 
     val arenaSinkBot by lazy {
-        slackBotClient?.let { slackBotClient -> vedtakBotSlackChannelId?.let { ArenasinkBot(slackBotClient, it) } }
+        slackBotClient?.let { slackBotClient -> vedtakBotSlackChannelId?.let { ArenasinkBot(slackBotClient, it, slackTrådRepository) } }
     }
 
     val quizMalBot: QuizMalBot? by lazy {

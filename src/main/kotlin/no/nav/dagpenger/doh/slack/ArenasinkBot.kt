@@ -6,10 +6,15 @@ import com.slack.api.model.block.Blocks
 import no.nav.dagpenger.doh.Kibana
 import java.time.LocalDateTime
 
-internal class ArenasinkBot(slackClient: MethodsClient, slackChannelId: String) : SlackBot(
+internal class ArenasinkBot(
+    slackClient: MethodsClient,
+    slackChannelId: String,
+    slackTrådRepository: SlackTrådRepository,
+) : SlackBot(
     slackClient,
     slackChannelId,
     username = "dp-arena-sink",
+    slackTrådRepository = slackTrådRepository,
 ) {
     internal fun postVedtak(
         søknadId: String,

@@ -7,10 +7,11 @@ import no.nav.dagpenger.doh.Kibana
 import no.nav.dagpenger.doh.monitor.behandling.BehandlingStatusMonitor
 import java.time.LocalDateTime
 
-internal class VedtakBot(slackClient: MethodsClient, slackChannelId: String) : SlackBot(
+internal class VedtakBot(slackClient: MethodsClient, slackChannelId: String, slackTrådRepository: SlackTrådRepository) : SlackBot(
     slackClient,
     slackChannelId,
     username = "dp-behandling",
+    slackTrådRepository = slackTrådRepository,
 ) {
     internal fun postBehandlingStatus(
         status: BehandlingStatusMonitor.Status,

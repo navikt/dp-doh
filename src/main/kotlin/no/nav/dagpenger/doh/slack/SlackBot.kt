@@ -8,7 +8,7 @@ internal abstract class SlackBot(
     private val slackClient: MethodsClient,
     private val slackChannelId: String,
     private val username: String = "dp-quiz",
-    private val slackTrådRepository: SlackTrådRepository? = null,
+    private val slackTrådRepository: SlackTrådRepository?,
 ) {
     companion object {
         private val log = KotlinLogging.logger { }

@@ -9,6 +9,7 @@ import java.time.LocalDateTime
 internal class QuizResultatBot(slackClient: MethodsClient, slackChannelId: String) : SlackBot(
     slackClient,
     slackChannelId,
+    slackTrådRepository = null,
 ) {
     internal fun postResultat(
         uuid: String,

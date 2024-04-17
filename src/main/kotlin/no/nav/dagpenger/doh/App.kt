@@ -17,16 +17,21 @@ import no.nav.dagpenger.doh.monitor.behandling.VedtakfattetMonitor
 import no.nav.dagpenger.doh.monitor.quiz.ManuellQuizBehandlingMonitor
 import no.nav.dagpenger.doh.monitor.quiz.NyQuizMalMonitor
 import no.nav.dagpenger.doh.monitor.quiz.ProsessResultatMonitor
+import no.nav.dagpenger.doh.slack.InMemorySlackTrådRepository
 import no.nav.helse.rapids_rivers.RapidApplication
 import kotlin.time.ExperimentalTime
 
 @ExperimentalTime
 fun main() {
+
+
     RapidApplication.create(Configuration.asMap()).apply {
         AppStateMonitor(this, slackAlertClient)
         ProsessResultatMonitor(this, quizResultatBot)
         NyQuizMalMonitor(this, quizMalBot)
         BehovUtenLøsningMonitor(this, slackAlertClient)
+
+
         VedtakfattetMonitor(this, vedtakBot)
         BehandlingStatusMonitor(this, vedtakBot)
         ManuellBehandlingMonitor(this, vedtakBot)
