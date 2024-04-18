@@ -7,22 +7,29 @@ import no.nav.dagpenger.doh.Kibana
 import no.nav.dagpenger.doh.monitor.behandling.BehandlingStatusMonitor
 import java.time.LocalDateTime
 
-internal class VedtakBot(slackClient: MethodsClient, slackChannelId: String, slackTrådRepository: SlackTrådRepository) : SlackBot(
-    slackClient,
-    slackChannelId,
-    username = "dp-behandling",
-    slackTrådRepository = slackTrådRepository,
-) {
+internal class VedtakBot(slackClient: MethodsClient, slackChannelId: String, slackTrådRepository: SlackTrådRepository) :
+    SlackBot(
+        slackClient,
+        slackChannelId,
+        username = "dp-behandling",
+        slackTrådRepository = slackTrådRepository,
+    ) {
     internal fun postBehandlingStatus(
         status: BehandlingStatusMonitor.Status,
         behandlingId: String,
         søknadId: String,
         opprettet: LocalDateTime,
+        årsak: String? = null,
     ) {
         val tekst: String =
             when (status) {
-                BehandlingStatusMonitor.Status.FORSLAG_TIL_VEDTAK -> "Vi har et forslag til vedtak :tada:  "
-                BehandlingStatusMonitor.Status.BEHANDLING_AVBRUTT -> "Behandlingen er avbrutt :no_entry_sign:  "
+                BehandlingStatusMonitor.Status.FORSLAG_TIL_VEDTAK -> "Vi har et forslag til vedtak :tada:"
+                BehandlingStatusMonitor.Status.BEHANDLING_AVBRUTT ->
+                    """
+                    Behandlingen er avbrutt :no_entry_sign:
+                    ${årsak?.let { "*Årsak*: $it" }}
+                    """.trimIndent()
+
                 BehandlingStatusMonitor.Status.BEHANDLING_OPPRETTET ->
                     """
                     Vi opprettet en behandling basert på søknad

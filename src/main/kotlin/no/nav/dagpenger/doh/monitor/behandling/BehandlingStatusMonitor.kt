@@ -39,7 +39,14 @@ internal class BehandlingStatusMonitor(rapidsConnection: RapidsConnection, priva
                     "behandling_avbrutt" -> Status.BEHANDLING_AVBRUTT
                     else -> null
                 }
-            status?.let { vedtakBot?.postBehandlingStatus(it, behandlingId, søknadId, packet["@opprettet"].asLocalDateTime()) }
+            status?.let {
+                vedtakBot?.postBehandlingStatus(
+                    it,
+                    behandlingId,
+                    søknadId,
+                    packet["@opprettet"].asLocalDateTime(),
+                )
+            }
             logger.info { "Vi har behandling med $status" + "(slackbot er konfiguert? ${vedtakBot != null})" }
         }
     }

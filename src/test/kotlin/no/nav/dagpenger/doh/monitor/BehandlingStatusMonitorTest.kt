@@ -75,6 +75,7 @@ class BehandlingStatusMonitorTest {
           "behandlingId": "018ec78d-4f15-7a02-bdf9-0e67129a0411",
           "gjelderDato": "2024-04-10",
           "fagsakId": "123",
+          "årsak": "For mye inntekt",
           "søknadId": "4afce924-6cb4-4ab4-a92b-fe91e24f31bf",
           "søknad_uuid": "4afce924-6cb4-4ab4-a92b-fe91e24f31bf",
           "@id": "4461e599-e60e-41f6-b052-771d6bde0108",
