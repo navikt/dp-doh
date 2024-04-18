@@ -26,6 +26,7 @@ internal class ManuellBehandlingMonitor(
                 it.requireArray("vurderinger") {
                     requireKey("utfall", "begrunnelse")
                 }
+                it.requireValue("@final", true)
                 it.requireKey("søknadId", "behandlingId", "@opprettet")
             }
         }.register(this)
