@@ -26,6 +26,7 @@ class BehandlingStatusMonitorTest {
                 "018ec78d-4f15-7a02-bdf9-0e67129a0411",
                 any(),
                 any(),
+                null,
             )
         }
     }
@@ -42,6 +43,7 @@ class BehandlingStatusMonitorTest {
                 "018ec78d-4f15-7a02-bdf9-0e67129a0411",
                 any(),
                 any(),
+                "For mye inntekt",
             )
         }
     }

@@ -27,7 +27,7 @@ internal class VedtakBot(slackClient: MethodsClient, slackChannelId: String, sla
                 BehandlingStatusMonitor.Status.BEHANDLING_AVBRUTT ->
                     """
                     Behandlingen er avbrutt :no_entry_sign:
-                    ${årsak?.let { "*Årsak*: $it" }}
+                    ${årsak?.let { "*Årsak*: $it" }} ?: ""
                     """.trimIndent()
 
                 BehandlingStatusMonitor.Status.BEHANDLING_OPPRETTET ->

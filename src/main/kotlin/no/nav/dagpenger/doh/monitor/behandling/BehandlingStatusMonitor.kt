@@ -16,7 +16,7 @@ internal class BehandlingStatusMonitor(rapidsConnection: RapidsConnection, priva
             validate {
                 it.requireAny("@event_name", listOf("forslag_til_vedtak", "behandling_avbrutt", "behandling_opprettet"))
                 it.requireKey("behandlingId", "gjelderDato", "søknadId")
-                it.interestedIn("@opprettet")
+                it.interestedIn("@opprettet", "årsak")
             }
         }.register(this)
     }
@@ -45,6 +45,7 @@ internal class BehandlingStatusMonitor(rapidsConnection: RapidsConnection, priva
                     behandlingId,
                     søknadId,
                     packet["@opprettet"].asLocalDateTime(),
+                    packet["årsak"].takeUnless { årsak -> årsak.isMissingNode }?.asText(),
                 )
             }
             logger.info { "Vi har behandling med $status" + "(slackbot er konfiguert? ${vedtakBot != null})" }
