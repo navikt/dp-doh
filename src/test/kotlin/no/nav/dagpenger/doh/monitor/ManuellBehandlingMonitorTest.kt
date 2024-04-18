@@ -42,6 +42,7 @@ class ManuellBehandlingMonitorTest {
           "@løsning": {
             "AvklaringManuellBehandling": true
           },
+          "@final": true,
           "søknadId": "60c76d22-14d9-4b3d-999d-e50ab4fa4f36",
           "@opprettet": "2024-04-16T08:47:57.947819347",
           "@event_name": "behov",
