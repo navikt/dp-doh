@@ -23,23 +23,29 @@ internal class VedtakBot(slackClient: MethodsClient, slackChannelId: String, sla
     ) {
         val tekst: String =
             when (status) {
-                BehandlingStatusMonitor.Status.FORSLAG_TIL_VEDTAK -> "Vi har et forslag til vedtak :tada:"
+                BehandlingStatusMonitor.Status.BEHANDLING_OPPRETTET ->
+                    """
+                    Vi opprettet en behandling basert på søknad
+                    *Søknad ID:* $søknadId """.trimIndent()
                 BehandlingStatusMonitor.Status.BEHANDLING_AVBRUTT ->
                     """
                     Behandlingen er avbrutt :no_entry_sign:
                     ${årsak?.let { "*Årsak*: $it" } ?: ""} 
                     """.trimIndent()
-
-                BehandlingStatusMonitor.Status.BEHANDLING_OPPRETTET ->
-                    """
-                    Vi opprettet en behandling basert på søknad
-                    *Søknad ID:* $søknadId """.trimIndent()
+                BehandlingStatusMonitor.Status.FORSLAG_TIL_VEDTAK -> "Vi har et forslag til vedtak :tada:"
             }
         val emoji =
             when (status) {
-                BehandlingStatusMonitor.Status.FORSLAG_TIL_VEDTAK -> ":tada:"
-                BehandlingStatusMonitor.Status.BEHANDLING_AVBRUTT -> ":no_entry_sign:"
                 BehandlingStatusMonitor.Status.BEHANDLING_OPPRETTET -> ":dagpenger:"
+                BehandlingStatusMonitor.Status.BEHANDLING_AVBRUTT -> ":no_entry_sign:"
+                BehandlingStatusMonitor.Status.FORSLAG_TIL_VEDTAK -> ":tada:"
+            }
+        val visKnapp =
+            when (status) {
+                BehandlingStatusMonitor.Status.BEHANDLING_OPPRETTET -> true
+                BehandlingStatusMonitor.Status.BEHANDLING_AVBRUTT,
+                BehandlingStatusMonitor.Status.FORSLAG_TIL_VEDTAK,
+                -> false
             }
         val broadcast = status == BehandlingStatusMonitor.Status.FORSLAG_TIL_VEDTAK
         chatPostMessage(trådNøkkel = søknadId, replyBroadCast = broadcast) {
@@ -49,11 +55,18 @@ internal class VedtakBot(slackClient: MethodsClient, slackChannelId: String, sla
                 section {
                     markdownText(tekst)
                 }
-                Blocks.divider()
-                actions {
-                    button {
-                        text(":ledger: Se behandlingslogg i Kibana")
-                        url(Kibana.createUrl(String.format("\"%s\"", behandlingId), opprettet.minusHours(1)))
+                if (visKnapp) {
+                    Blocks.divider()
+                    actions {
+                        button {
+                            text(":ledger: Se behandlingslogg i Kibana")
+                            url(
+                                Kibana.createUrl(
+                                    String.format("\"%s\"", behandlingId),
+                                    opprettet.minusHours(1),
+                                ),
+                            )
+                        }
                     }
                 }
             }
