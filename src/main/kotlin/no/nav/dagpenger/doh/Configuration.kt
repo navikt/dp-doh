@@ -52,15 +52,6 @@ internal object Configuration {
         }
     }
 
-    val slackClient: SlackClient? by lazy {
-        properties.getOrNull(Key("SLACK_ACCESS_TOKEN", stringType))?.let {
-            SlackClient(
-                accessToken = it,
-                channel = properties[Key("DP_SLACKER_CHANNEL_ID", stringType)],
-            )
-        }
-    }
-
     val slackBotClient: MethodsClient? by lazy {
         properties.getOrNull(Key("SLACK_ACCESS_TOKEN", stringType))?.let { token -> Slack.getInstance().methods(token) }
     }
