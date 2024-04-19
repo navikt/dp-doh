@@ -35,9 +35,16 @@ internal class VedtakBot(slackClient: MethodsClient, slackChannelId: String, sla
                     Vi opprettet en behandling basert på søknad
                     *Søknad ID:* $søknadId """.trimIndent()
             }
+        val emoji =
+            when (status) {
+                BehandlingStatusMonitor.Status.FORSLAG_TIL_VEDTAK -> ":tada:"
+                BehandlingStatusMonitor.Status.BEHANDLING_AVBRUTT -> ":no_entry_sign:"
+                BehandlingStatusMonitor.Status.BEHANDLING_OPPRETTET -> ":dagpenger:"
+            }
         val broadcast = status == BehandlingStatusMonitor.Status.FORSLAG_TIL_VEDTAK
         chatPostMessage(trådNøkkel = søknadId, replyBroadCast = broadcast) {
             it.iconEmoji(":dagpenger:")
+            it.iconEmoji(emoji)
             it.blocks {
                 section {
                     markdownText(tekst)
