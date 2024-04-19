@@ -3,6 +3,7 @@ package no.nav.dagpenger.doh.slack
 import com.slack.api.methods.MethodsClient
 import com.slack.api.methods.kotlin_extension.request.chat.blocks
 import com.slack.api.model.block.Blocks
+import com.slack.api.model.kotlin_extension.block.dsl.LayoutBlockDsl
 import no.nav.dagpenger.doh.Kibana
 import no.nav.dagpenger.doh.monitor.behandling.BehandlingStatusMonitor
 import java.time.LocalDateTime
@@ -27,19 +28,59 @@ internal class VedtakBot(slackClient: MethodsClient, slackChannelId: String, sla
                     """
                     Vi opprettet en behandling basert på søknad
                     *Søknad ID:* $søknadId """.trimIndent()
+
                 BehandlingStatusMonitor.Status.BEHANDLING_AVBRUTT ->
                     """
                     Behandlingen er avbrutt :no_entry_sign:
                     ${årsak?.let { "*Årsak*: $it" } ?: ""} 
                     """.trimIndent()
+
                 BehandlingStatusMonitor.Status.FORSLAG_TIL_VEDTAK -> "Vi har et forslag til vedtak :tada:"
             }
+        val broadcast = status == BehandlingStatusMonitor.Status.FORSLAG_TIL_VEDTAK
+        chatPostMessage(trådNøkkel = søknadId, replyBroadCast = broadcast) {
+            it.iconEmoji(emoji(status))
+            it.blocks {
+                section {
+                    markdownText(tekst)
+                }
+                behandlingsloggKnapp(status, behandlingId, opprettet)
+            }
+        }
+    }
+
+    private fun emoji(status: BehandlingStatusMonitor.Status): String {
         val emoji =
             when (status) {
                 BehandlingStatusMonitor.Status.BEHANDLING_OPPRETTET -> ":dagpenger:"
                 BehandlingStatusMonitor.Status.BEHANDLING_AVBRUTT -> ":no_entry_sign:"
                 BehandlingStatusMonitor.Status.FORSLAG_TIL_VEDTAK -> ":tada:"
             }
+        return emoji
+    }
+
+    private fun LayoutBlockDsl.behandlingsloggKnapp(
+        status: BehandlingStatusMonitor.Status,
+        behandlingId: String,
+        opprettet: LocalDateTime,
+    ) {
+        if (!skalBehandlingsloggVises(status)) return
+
+        Blocks.divider()
+        actions {
+            button {
+                text(":ledger: Se behandlingslogg i Kibana")
+                url(
+                    Kibana.createUrl(
+                        String.format("\"%s\"", behandlingId),
+                        opprettet.minusHours(1),
+                    ),
+                )
+            }
+        }
+    }
+
+    private fun skalBehandlingsloggVises(status: BehandlingStatusMonitor.Status): Boolean {
         val visKnapp =
             when (status) {
                 BehandlingStatusMonitor.Status.BEHANDLING_OPPRETTET -> true
@@ -47,30 +88,7 @@ internal class VedtakBot(slackClient: MethodsClient, slackChannelId: String, sla
                 BehandlingStatusMonitor.Status.FORSLAG_TIL_VEDTAK,
                 -> false
             }
-        val broadcast = status == BehandlingStatusMonitor.Status.FORSLAG_TIL_VEDTAK
-        chatPostMessage(trådNøkkel = søknadId, replyBroadCast = broadcast) {
-            it.iconEmoji(":dagpenger:")
-            it.iconEmoji(emoji)
-            it.blocks {
-                section {
-                    markdownText(tekst)
-                }
-                if (visKnapp) {
-                    Blocks.divider()
-                    actions {
-                        button {
-                            text(":ledger: Se behandlingslogg i Kibana")
-                            url(
-                                Kibana.createUrl(
-                                    String.format("\"%s\"", behandlingId),
-                                    opprettet.minusHours(1),
-                                ),
-                            )
-                        }
-                    }
-                }
-            }
-        }
+        return visKnapp
     }
 
     internal fun postVedtak(
