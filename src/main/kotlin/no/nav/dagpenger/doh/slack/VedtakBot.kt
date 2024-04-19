@@ -35,7 +35,8 @@ internal class VedtakBot(slackClient: MethodsClient, slackChannelId: String, sla
                     Vi opprettet en behandling basert på søknad
                     *Søknad ID:* $søknadId """.trimIndent()
             }
-        chatPostMessage(trådNøkkel = søknadId) {
+        val broadcast = status == BehandlingStatusMonitor.Status.FORSLAG_TIL_VEDTAK
+        chatPostMessage(trådNøkkel = søknadId, replyBroadCast = broadcast) {
             it.iconEmoji(":dagpenger:")
             it.blocks {
                 section {
