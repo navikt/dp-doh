@@ -98,7 +98,7 @@ internal class VedtakBot(slackClient: MethodsClient, slackChannelId: String, sla
         opprettet: LocalDateTime,
     ) {
         val utfallTekst = if (utfall) "Innvilget" else "Avslått"
-        chatPostMessage(trådNøkkel = søknadId) {
+        chatPostMessage(trådNøkkel = søknadId, replyBroadCast = true) {
             it.iconEmoji(":dagpenger:")
             it.blocks {
                 section {
