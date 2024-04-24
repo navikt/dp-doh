@@ -2,6 +2,7 @@ package no.nav.dagpenger.doh.monitor.behandling
 
 import mu.KotlinLogging
 import mu.withLoggingContext
+import no.nav.dagpenger.doh.monitor.BehandlingMetrikker.behandlingStatusCounter
 import no.nav.dagpenger.doh.slack.VedtakBot
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
@@ -49,6 +50,8 @@ internal class BehandlingStatusMonitor(rapidsConnection: RapidsConnection, priva
                 )
             }
             logger.info { "Vi har behandling med $status" + "(slackbot er konfiguert? ${vedtakBot != null})" }
+
+            behandlingStatusCounter.labels(status.toString()).inc()
         }
     }
 

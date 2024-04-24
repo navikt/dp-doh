@@ -14,4 +14,10 @@ object BehandlingMetrikker {
             .build("dp_prosessresultat", "Resultat av automatiseringsprosessen")
             .labelNames("resultat")
             .register()
+
+    val behandlingStatusCounter =
+        Counter
+            .build("dp_behandling_status", "Søknader og status")
+            .labelNames("status")
+            .register()
 }
