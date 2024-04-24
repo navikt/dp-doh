@@ -51,7 +51,7 @@ internal class BehandlingStatusMonitor(rapidsConnection: RapidsConnection, priva
             }
             logger.info { "Vi har behandling med $status" + "(slackbot er konfiguert? ${vedtakBot != null})" }
 
-            behandlingStatusCounter.labels(status.toString()).inc()
+            behandlingStatusCounter.labels(status.toString().lowercase()).inc()
         }
     }
 

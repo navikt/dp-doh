@@ -2,6 +2,7 @@ package no.nav.dagpenger.doh.monitor.behandling
 
 import mu.KotlinLogging
 import mu.withLoggingContext
+import no.nav.dagpenger.doh.monitor.BehandlingMetrikker.behandlingStatusCounter
 import no.nav.dagpenger.doh.monitor.BehandlingMetrikker.resultatCounter
 import no.nav.dagpenger.doh.slack.VedtakBot
 import no.nav.helse.rapids_rivers.JsonMessage
@@ -35,6 +36,8 @@ internal class VedtakfattetMonitor(rapidsConnection: RapidsConnection, private v
         withLoggingContext(mapOf("behandlingId" to behandlingId, "søknadId" to søknadId)) {
             val utfall = packet["utfall"].asBoolean()
             resultatCounter.labels(packet["utfall"].asText()).inc()
+            // TODO: Lag bedre counters med resultat og sånt
+            behandlingStatusCounter.labels("vedtak_fattet").inc()
             vedtakBot?.postVedtak(utfall, behandlingId, søknadId, packet["@opprettet"].asLocalDateTime())
             logger.info { "Vi har fattet vedtak med $utfall" + "(slackbot er konfiguert? ${vedtakBot != null})" }
         }
