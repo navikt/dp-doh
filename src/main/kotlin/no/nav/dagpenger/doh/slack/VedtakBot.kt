@@ -41,7 +41,7 @@ internal class VedtakBot(
 
                 BehandlingStatusMonitor.Status.FORSLAG_TIL_VEDTAK ->
                     """Vi har et forslag til vedtak :tada:
-                    |*Avklaringer*: ${avklaringer.joinToString()},
+                    |*Avklaringer*: ${avklaringer.joinToString()}
                     """.trimMargin()
             }
         val broadcast = status == BehandlingStatusMonitor.Status.FORSLAG_TIL_VEDTAK
