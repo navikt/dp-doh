@@ -8,8 +8,11 @@ import no.nav.dagpenger.doh.Kibana
 import no.nav.dagpenger.doh.monitor.behandling.BehandlingStatusMonitor
 import java.time.LocalDateTime
 
-internal class VedtakBot(slackClient: MethodsClient, slackChannelId: String, slackTrådRepository: SlackTrådRepository) :
-    SlackBot(
+internal class VedtakBot(
+    slackClient: MethodsClient,
+    slackChannelId: String,
+    slackTrådRepository: SlackTrådRepository,
+) : SlackBot(
         slackClient,
         slackChannelId,
         username = "dp-behandling",
@@ -21,6 +24,7 @@ internal class VedtakBot(slackClient: MethodsClient, slackChannelId: String, sla
         søknadId: String,
         opprettet: LocalDateTime,
         årsak: String? = null,
+        avklaringer: List<String>,
     ) {
         val tekst: String =
             when (status) {
@@ -35,7 +39,10 @@ internal class VedtakBot(slackClient: MethodsClient, slackChannelId: String, sla
                     ${årsak?.let { "*Årsak*: $it" } ?: ""} 
                     """.trimIndent()
 
-                BehandlingStatusMonitor.Status.FORSLAG_TIL_VEDTAK -> "Vi har et forslag til vedtak :tada:"
+                BehandlingStatusMonitor.Status.FORSLAG_TIL_VEDTAK ->
+                    """Vi har et forslag til vedtak :tada:
+                    |*Avklaringer*: ${avklaringer.joinToString()}",
+                    """.trimMargin()
             }
         val broadcast = status == BehandlingStatusMonitor.Status.FORSLAG_TIL_VEDTAK
         chatPostMessage(trådNøkkel = søknadId, replyBroadCast = broadcast) {

@@ -1,10 +1,12 @@
 package no.nav.dagpenger.doh.monitor
 
 import io.mockk.mockk
+import io.mockk.slot
 import io.mockk.verify
 import no.nav.dagpenger.doh.monitor.behandling.BehandlingStatusMonitor
 import no.nav.dagpenger.doh.slack.VedtakBot
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
+import org.junit.jupiter.api.Assertions.assertEquals
 import kotlin.test.Test
 
 class BehandlingStatusMonitorTest {
@@ -20,6 +22,7 @@ class BehandlingStatusMonitorTest {
             forslagTilVedtakMessage,
         )
 
+        val avklaringer = slot<List<String>>()
         verify(exactly = 1) {
             vedtakBot.postBehandlingStatus(
                 BehandlingStatusMonitor.Status.FORSLAG_TIL_VEDTAK,
@@ -27,8 +30,10 @@ class BehandlingStatusMonitorTest {
                 any(),
                 any(),
                 null,
+                capture(avklaringer),
             )
         }
+        assertEquals(avklaringer.captured.size, 6)
     }
 
     @Test
@@ -44,6 +49,7 @@ class BehandlingStatusMonitorTest {
                 any(),
                 any(),
                 "For mye inntekt",
+                emptyList(),
             )
         }
     }
@@ -62,7 +68,39 @@ class BehandlingStatusMonitorTest {
           "søknadId": "4afce924-6cb4-4ab4-a92b-fe91e24f31bf",
           "søknad_uuid": "4afce924-6cb4-4ab4-a92b-fe91e24f31bf",
           "@id": "4461e599-e60e-41f6-b052-771d6bde0108",
-          "@opprettet": "2024-04-10T12:28:31.533933"
+          "@opprettet": "2024-04-10T12:28:31.533933",
+          "avklaringer": [
+            {
+              "type": "SvangerskapsrelaterteSykepenger",
+              "utfall": "Manuell",
+              "begrunnelse": "Personen har sykepenger som kan være svangerskapsrelaterte"
+            },
+            {
+              "type": "EØSArbeid",
+              "utfall": "Manuell",
+              "begrunnelse": "Personen har oppgitt arbeid fra EØS"
+            },
+            {
+              "type": "JobbetUtenforNorge",
+              "utfall": "Manuell",
+              "begrunnelse": "Personen har oppgitt arbeid utenfor Norge"
+            },
+            {
+              "type": "InntektNesteKalendermåned",
+              "utfall": "Manuell",
+              "begrunnelse": "Personen har inntekter som tilhører neste inntektsperiode"
+            },
+            {
+              "type": "HattLukkedeSakerSiste8Uker",
+              "utfall": "Manuell",
+              "begrunnelse": "Personen har lukkede saker i Arena siste 8 uker"
+            },
+            {
+              "type": "MuligGjenopptak",
+              "utfall": "Manuell",
+              "begrunnelse": " Personen har åpne saker i Arena som kan være gjenopptak "
+            }
+          ]
         }
         """.trimIndent()
 

@@ -10,16 +10,22 @@ import no.nav.helse.rapids_rivers.RapidsConnection
 import no.nav.helse.rapids_rivers.River
 import no.nav.helse.rapids_rivers.asLocalDateTime
 
-internal class BehandlingStatusMonitor(rapidsConnection: RapidsConnection, private val vedtakBot: VedtakBot?) :
-    River.PacketListener {
+internal class BehandlingStatusMonitor(
+    rapidsConnection: RapidsConnection,
+    private val vedtakBot: VedtakBot?,
+) : River.PacketListener {
     init {
-        River(rapidsConnection).apply {
-            validate {
-                it.requireAny("@event_name", listOf("forslag_til_vedtak", "behandling_avbrutt", "behandling_opprettet"))
-                it.requireKey("behandlingId", "gjelderDato", "søknadId")
-                it.interestedIn("@opprettet", "årsak")
-            }
-        }.register(this)
+        River(rapidsConnection)
+            .apply {
+                validate {
+                    it.requireAny(
+                        "@event_name",
+                        listOf("forslag_til_vedtak", "behandling_avbrutt", "behandling_opprettet"),
+                    )
+                    it.requireKey("behandlingId", "gjelderDato", "søknadId")
+                    it.interestedIn("@opprettet", "årsak", "avklaringer")
+                }
+            }.register(this)
     }
 
     private companion object {
@@ -47,6 +53,9 @@ internal class BehandlingStatusMonitor(rapidsConnection: RapidsConnection, priva
                     søknadId,
                     packet["@opprettet"].asLocalDateTime(),
                     packet["årsak"].takeUnless { årsak -> årsak.isMissingNode }?.asText(),
+                    packet["avklaringer"].map { avklaring ->
+                        avklaring["type"].asText()
+                    },
                 )
             }
             logger.info { "Vi har behandling med $status" + "(slackbot er konfiguert? ${vedtakBot != null})" }

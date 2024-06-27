@@ -12,7 +12,6 @@ import no.nav.dagpenger.doh.monitor.MeldingerUtenEnvelopeMonitor
 import no.nav.dagpenger.doh.monitor.behandling.ArenasinkVedtakFeiletMonitor
 import no.nav.dagpenger.doh.monitor.behandling.ArenasinkVedtakOpprettetMonitor
 import no.nav.dagpenger.doh.monitor.behandling.BehandlingStatusMonitor
-import no.nav.dagpenger.doh.monitor.behandling.ManuellBehandlingMonitor
 import no.nav.dagpenger.doh.monitor.behandling.VedtakfattetMonitor
 import no.nav.dagpenger.doh.monitor.quiz.ManuellQuizBehandlingMonitor
 import no.nav.dagpenger.doh.monitor.quiz.NyQuizMalMonitor
@@ -22,27 +21,28 @@ import kotlin.time.ExperimentalTime
 
 @ExperimentalTime
 fun main() {
-    RapidApplication.create(Configuration.asMap()).apply {
-        AppStateMonitor(this, slackAlertClient)
-        ProsessResultatMonitor(this, quizResultatBot)
-        NyQuizMalMonitor(this, quizMalBot)
-        BehovUtenLøsningMonitor(this, slackAlertClient)
+    RapidApplication
+        .create(Configuration.asMap())
+        .apply {
+            AppStateMonitor(this, slackAlertClient)
+            ProsessResultatMonitor(this, quizResultatBot)
+            NyQuizMalMonitor(this, quizMalBot)
+            BehovUtenLøsningMonitor(this, slackAlertClient)
 
-        VedtakfattetMonitor(this, vedtakBot)
-        BehandlingStatusMonitor(this, vedtakBot)
-        ManuellBehandlingMonitor(this, vedtakBot)
-        if (publiserArenaVedtak) {
-            ArenasinkVedtakOpprettetMonitor(this, arenaSinkBot)
-        }
+            VedtakfattetMonitor(this, vedtakBot)
+            BehandlingStatusMonitor(this, vedtakBot)
+            if (publiserArenaVedtak) {
+                ArenasinkVedtakOpprettetMonitor(this, arenaSinkBot)
+            }
 
-        ArenasinkVedtakFeiletMonitor(this, arenaSinkBot)
+            ArenasinkVedtakFeiletMonitor(this, arenaSinkBot)
 
-        /**
-         * Enn så lenge går 98% til manuell så den lager mer støy enn den gir informasjon.
-         * Skrur Slack posting av, også kan vi heller skru den på igjen i framtida om vi øker graden av automatiske
-         * For å skru på Slack posting igjen, legg til slackBot variabelen i konstruktøren
-         */
-        ManuellQuizBehandlingMonitor(this)
-        MeldingerUtenEnvelopeMonitor(this)
-    }.start()
+            /**
+             * Enn så lenge går 98% til manuell så den lager mer støy enn den gir informasjon.
+             * Skrur Slack posting av, også kan vi heller skru den på igjen i framtida om vi øker graden av automatiske
+             * For å skru på Slack posting igjen, legg til slackBot variabelen i konstruktøren
+             */
+            ManuellQuizBehandlingMonitor(this)
+            MeldingerUtenEnvelopeMonitor(this)
+        }.start()
 }
