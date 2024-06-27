@@ -30,14 +30,16 @@ internal class VedtakBot(
             when (status) {
                 BehandlingStatusMonitor.Status.BEHANDLING_OPPRETTET ->
                     """
-                    Vi opprettet en behandling basert på søknad
-                    *Søknad ID:* $søknadId """.trimIndent()
+                    |Vi opprettet en behandling basert på søknad
+                    |*Søknad ID:* $søknadId 
+                    |*Behandling ID:* $behandlingId
+                    """.trimMargin()
 
                 BehandlingStatusMonitor.Status.BEHANDLING_AVBRUTT ->
                     """
-                    Behandlingen er avbrutt :no_entry_sign:
-                    ${årsak?.let { "*Årsak*: $it" } ?: ""} 
-                    """.trimIndent()
+                    |Behandlingen er avbrutt :no_entry_sign:
+                    |${årsak?.let { "*Årsak*: $it" } ?: ""} 
+                    """.trimMargin()
 
                 BehandlingStatusMonitor.Status.FORSLAG_TIL_VEDTAK ->
                     """Vi har et forslag til vedtak :tada:
