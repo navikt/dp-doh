@@ -20,4 +20,10 @@ object BehandlingMetrikker {
             .build("dp_behandling_status", "Søknader og status")
             .labelNames("status")
             .register()
+
+    val behandlingVedtakCounter =
+        Counter
+            .build("dp_behandling_vedtak", "Behandlinger som fører til fattet vedtak")
+            .labelNames("utfall", "automatisk")
+            .register()
 }
