@@ -3,6 +3,7 @@ package no.nav.dagpenger.doh.slack
 import com.slack.api.methods.MethodsClient
 import com.slack.api.methods.kotlin_extension.request.chat.blocks
 import com.slack.api.model.block.Blocks
+import com.slack.api.model.block.composition.BlockCompositions.markdownText
 import com.slack.api.model.kotlin_extension.block.dsl.LayoutBlockDsl
 import no.nav.dagpenger.doh.Kibana
 import no.nav.dagpenger.doh.monitor.behandling.BehandlingStatusMonitor
@@ -25,29 +26,34 @@ internal class VedtakBot(
         opprettet: LocalDateTime,
         årsak: String? = null,
         avklaringer: List<String>,
+        utfall: Boolean? = null,
     ) {
         val tekst: String =
             when (status) {
-                BehandlingStatusMonitor.Status.BEHANDLING_OPPRETTET ->
-                    """
-                    |Vi opprettet en behandling basert på søknad
-                    |*Søknad ID:* $søknadId 
-                    |*Behandling ID:* $behandlingId
-                    """.trimMargin()
-
                 BehandlingStatusMonitor.Status.BEHANDLING_AVBRUTT ->
                     """
-                    |Behandlingen er avbrutt :no_entry_sign:
+                    |Behandlingen er avbrutt 
+                    |*Søknad ID:* $søknadId 
+                    |*Behandling ID:* $behandlingId
                     |${årsak?.let { "*Årsak*: $it" } ?: ""} 
                     """.trimMargin()
 
                 BehandlingStatusMonitor.Status.FORSLAG_TIL_VEDTAK ->
-                    """Vi har et forslag til vedtak :tada:
+                    """Vi har et forslag til vedtak 
+                    |*Søknad ID:* $søknadId 
+                    |*Behandling ID:* $behandlingId
+                    |*Utfall:* ${if (utfall == null) "Innvilget :tada:" else "Avslag :no_entry_sign:"}
                     |*Avklaringer*: ${avklaringer.joinToString()}
                     """.trimMargin()
+
+                BehandlingStatusMonitor.Status.VEDTAK_FATTET ->
+                    """Vi har fattet et vedtak 
+                    |*Søknad ID:* $søknadId 
+                    |*Behandling ID:* $behandlingId
+                    |*Utfall:* ${if (utfall == null) "Innvilget :tada:" else "Avslag :no_entry_sign:"}
+                    """.trimMargin()
             }
-        val broadcast = status == BehandlingStatusMonitor.Status.FORSLAG_TIL_VEDTAK
-        chatPostMessage(trådNøkkel = søknadId, replyBroadCast = broadcast) {
+        chatPostMessage(trådNøkkel = søknadId) {
             it.iconEmoji(emoji(status))
             it.blocks {
                 section {
@@ -61,9 +67,9 @@ internal class VedtakBot(
     private fun emoji(status: BehandlingStatusMonitor.Status): String {
         val emoji =
             when (status) {
-                BehandlingStatusMonitor.Status.BEHANDLING_OPPRETTET -> ":dagpenger:"
                 BehandlingStatusMonitor.Status.BEHANDLING_AVBRUTT -> ":no_entry_sign:"
                 BehandlingStatusMonitor.Status.FORSLAG_TIL_VEDTAK -> ":tada:"
+                BehandlingStatusMonitor.Status.VEDTAK_FATTET -> ":checked:"
             }
         return emoji
     }
@@ -92,67 +98,11 @@ internal class VedtakBot(
     private fun skalBehandlingsloggVises(status: BehandlingStatusMonitor.Status): Boolean {
         val visKnapp =
             when (status) {
-                BehandlingStatusMonitor.Status.BEHANDLING_OPPRETTET -> true
                 BehandlingStatusMonitor.Status.BEHANDLING_AVBRUTT,
                 BehandlingStatusMonitor.Status.FORSLAG_TIL_VEDTAK,
-                -> false
+                BehandlingStatusMonitor.Status.VEDTAK_FATTET,
+                -> true
             }
         return visKnapp
-    }
-
-    internal fun postVedtak(
-        utfall: Boolean,
-        behandlingId: String,
-        søknadId: String,
-        opprettet: LocalDateTime,
-    ) {
-        val utfallTekst = if (utfall) "Innvilget" else "Avslått"
-        chatPostMessage(trådNøkkel = søknadId, replyBroadCast = true) {
-            it.iconEmoji(":dagpenger:")
-            it.blocks {
-                section {
-                    markdownText(
-                        "Vi har fattet et vedtak med utfall: $utfallTekst",
-                    )
-                }
-                Blocks.divider()
-                actions {
-                    button {
-                        text(":ledger: Se behandlingslogg i Kibana")
-                        url(Kibana.createUrl(String.format("\"%s\"", behandlingId), opprettet.minusHours(1)))
-                    }
-                }
-            }
-        }
-    }
-
-    fun postManuellBehandling(
-        behandlingId: String?,
-        søknadId: String,
-        årsaker: List<String>,
-        opprettet: LocalDateTime,
-    ) {
-        chatPostMessage(trådNøkkel = søknadId) {
-            it.iconEmoji(":dagpenger:")
-            it.blocks {
-                section {
-                    markdownText(
-                        listOf(
-                            "*Resultat:* Manuell saksbehandling i Arena 🕵",
-                            "*BehandlingId:* $behandlingId",
-                            "*SøknadId:* $søknadId",
-                            "*Årsaker:* ${årsaker.joinToString()}",
-                        ).joinToString("\n"),
-                    )
-                }
-                Blocks.divider()
-                actions {
-                    button {
-                        text(":ledger: Se behandlingslogg i Kibana")
-                        url(Kibana.createUrl(String.format("\"%s\"", behandlingId), opprettet.minusHours(1)))
-                    }
-                }
-            }
-        }
     }
 }

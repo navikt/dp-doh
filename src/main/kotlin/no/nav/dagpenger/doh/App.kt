@@ -12,7 +12,6 @@ import no.nav.dagpenger.doh.monitor.MeldingerUtenEnvelopeMonitor
 import no.nav.dagpenger.doh.monitor.behandling.ArenasinkVedtakFeiletMonitor
 import no.nav.dagpenger.doh.monitor.behandling.ArenasinkVedtakOpprettetMonitor
 import no.nav.dagpenger.doh.monitor.behandling.BehandlingStatusMonitor
-import no.nav.dagpenger.doh.monitor.behandling.VedtakfattetMonitor
 import no.nav.dagpenger.doh.monitor.quiz.ManuellQuizBehandlingMonitor
 import no.nav.dagpenger.doh.monitor.quiz.NyQuizMalMonitor
 import no.nav.dagpenger.doh.monitor.quiz.ProsessResultatMonitor
@@ -29,7 +28,6 @@ fun main() {
             NyQuizMalMonitor(this, quizMalBot)
             BehovUtenLøsningMonitor(this, slackAlertClient)
 
-            VedtakfattetMonitor(this, vedtakBot)
             BehandlingStatusMonitor(this, vedtakBot)
             if (publiserArenaVedtak) {
                 ArenasinkVedtakOpprettetMonitor(this, arenaSinkBot)

@@ -20,10 +20,10 @@ internal class BehandlingStatusMonitor(
                 validate {
                     it.requireAny(
                         "@event_name",
-                        listOf("forslag_til_vedtak", "behandling_avbrutt", "behandling_opprettet"),
+                        listOf("forslag_til_vedtak", "behandling_avbrutt", "vedtak_fattet"),
                     )
                     it.requireKey("behandlingId", "gjelderDato", "søknadId")
-                    it.interestedIn("@opprettet", "årsak", "avklaringer")
+                    it.interestedIn("@opprettet", "årsak", "avklaringer", "utfall")
                 }
             }.register(this)
     }
@@ -41,9 +41,9 @@ internal class BehandlingStatusMonitor(
         withLoggingContext(mapOf("behandlingId" to behandlingId, "søknadId" to søknadId)) {
             val status =
                 when (packet["@event_name"].asText()) {
-                    "behandling_opprettet" -> Status.BEHANDLING_OPPRETTET
-                    "forslag_til_vedtak" -> Status.FORSLAG_TIL_VEDTAK
                     "behandling_avbrutt" -> Status.BEHANDLING_AVBRUTT
+                    "forslag_til_vedtak" -> Status.FORSLAG_TIL_VEDTAK
+                    "vedtak_fattet" -> Status.VEDTAK_FATTET
                     else -> null
                 }
             status?.let {
@@ -56,6 +56,7 @@ internal class BehandlingStatusMonitor(
                     packet["avklaringer"].map { avklaring ->
                         avklaring["type"].asText()
                     },
+                    packet["utfall"].takeIf { utfall -> utfall.isBoolean }?.asBoolean(),
                 )
             }
             logger.info { "Vi har behandling med $status" + "(slackbot er konfiguert? ${vedtakBot != null})" }
@@ -65,8 +66,8 @@ internal class BehandlingStatusMonitor(
     }
 
     internal enum class Status {
-        FORSLAG_TIL_VEDTAK,
         BEHANDLING_AVBRUTT,
-        BEHANDLING_OPPRETTET,
+        FORSLAG_TIL_VEDTAK,
+        VEDTAK_FATTET,
     }
 }

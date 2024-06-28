@@ -17,6 +17,25 @@ class BehandlingStatusMonitorTest {
         }
 
     @Test
+    fun `vedtak fattet`() {
+        testRapid.sendTestMessage(
+            vedtakFattetMelding,
+        )
+
+        verify(exactly = 1) {
+            vedtakBot.postBehandlingStatus(
+                BehandlingStatusMonitor.Status.VEDTAK_FATTET,
+                "018ec78d-4f15-7a02-bdf9-0e67129a0411",
+                any(),
+                any(),
+                null,
+                emptyList(),
+                false,
+            )
+        }
+    }
+
+    @Test
     fun `forslag til vedtak`() {
         testRapid.sendTestMessage(
             forslagTilVedtakMessage,
@@ -31,6 +50,7 @@ class BehandlingStatusMonitorTest {
                 any(),
                 null,
                 capture(avklaringer),
+                false,
             )
         }
         assertEquals(avklaringer.captured.size, 6)
@@ -50,9 +70,28 @@ class BehandlingStatusMonitorTest {
                 any(),
                 "For mye inntekt",
                 emptyList(),
+                null,
             )
         }
     }
+
+    // language=JSON
+    private val vedtakFattetMelding =
+        """
+        {
+          "@event_name": "vedtak_fattet",
+          "utfall": false ,
+          "harAvklart": "Krav på dagpenger",
+          "ident": "12345678901",
+          "behandlingId": "018ec78d-4f15-7a02-bdf9-0e67129a0411",
+          "gjelderDato": "2024-04-10",
+          "fagsakId": "123",
+          "søknadId": "4afce924-6cb4-4ab4-a92b-fe91e24f31bf",
+          "søknad_uuid": "4afce924-6cb4-4ab4-a92b-fe91e24f31bf",
+          "@id": "4461e599-e60e-41f6-b052-771d6bde0108",
+          "@opprettet": "2024-04-10T12:28:31.533933"
+        }
+        """.trimIndent()
 
     // language=JSON
     private val forslagTilVedtakMessage =
@@ -109,7 +148,6 @@ class BehandlingStatusMonitorTest {
         """
         {
           "@event_name": "behandling_avbrutt",
-          "utfall": false,
           "harAvklart": "Krav på dagpenger",
           "ident": "12345678901",
           "behandlingId": "018ec78d-4f15-7a02-bdf9-0e67129a0411",
