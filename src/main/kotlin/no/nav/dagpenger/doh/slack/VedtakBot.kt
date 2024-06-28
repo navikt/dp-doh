@@ -42,7 +42,7 @@ internal class VedtakBot(
                     """Vi har et forslag til vedtak 
                     |*Søknad ID:* $søknadId 
                     |*Behandling ID:* $behandlingId
-                    |*Utfall:* ${if (utfall == null) "Innvilget :tada:" else "Avslag :no_entry_sign:"}
+                    |*Utfall:* ${if (utfall == null) "Innvilget :tada:" else "Avslag :x:"}
                     |*Avklaringer*: ${avklaringer.joinToString()}
                     """.trimMargin()
 
@@ -50,7 +50,7 @@ internal class VedtakBot(
                     """Vi har fattet et vedtak 
                     |*Søknad ID:* $søknadId 
                     |*Behandling ID:* $behandlingId
-                    |*Utfall:* ${if (utfall == null) "Innvilget :tada:" else "Avslag :no_entry_sign:"}
+                    |*Utfall:* ${if (utfall == null) "Innvilget :tada:" else "Avslag :x:"}
                     """.trimMargin()
             }
         chatPostMessage(trådNøkkel = søknadId) {
