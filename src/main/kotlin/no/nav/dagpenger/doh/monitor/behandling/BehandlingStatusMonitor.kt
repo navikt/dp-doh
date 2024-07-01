@@ -21,7 +21,8 @@ internal class BehandlingStatusMonitor(
                 validate {
                     it.requireAny(
                         "@event_name",
-                        listOf("forslag_til_vedtak", "behandling_avbrutt", "vedtak_fattet"),
+                        listOf("forslag_til_vedtak", "vedtak_fattet"),
+                        // TODO: Prøver uten disse hendelsene, slett om de ikke savnes "behandling_avbrutt"),
                     )
                     it.requireKey("behandlingId", "gjelderDato", "søknadId")
                     it.interestedIn("@opprettet", "årsak", "avklaringer", "utfall", "automatisk")
