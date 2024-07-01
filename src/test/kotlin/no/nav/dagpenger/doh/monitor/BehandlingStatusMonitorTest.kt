@@ -18,6 +18,13 @@ class BehandlingStatusMonitorTest {
         }
 
     @Test
+    fun `behandling opprettet`() {
+        testRapid.sendTestMessage(behandlingOpprettet)
+
+        assertEquals(Metrikker.behandlingStatus("behandling_opprettet"), 1.0)
+    }
+
+    @Test
     fun `vedtak fattet`() {
         testRapid.sendTestMessage(
             vedtakFattetMelding,
@@ -82,6 +89,22 @@ class BehandlingStatusMonitorTest {
 
         assertEquals(Metrikker.behandlingAvbrutt("For mye inntekt"), 1.0)
     }
+
+    // language=JSON
+    private val behandlingOpprettet =
+        """
+        {
+          "@event_name": "behandling_opprettet",
+          "ident": "12345678901",
+          "behandlingId": "018ec78d-4f15-7a02-bdf9-0e67129a0411",
+          "gjelderDato": "2024-04-10",
+          "fagsakId": "123",
+          "søknadId": "4afce924-6cb4-4ab4-a92b-fe91e24f31bf",
+          "søknad_uuid": "4afce924-6cb4-4ab4-a92b-fe91e24f31bf",
+          "@id": "4461e599-e60e-41f6-b052-771d6bde0108",
+          "@opprettet": "2024-04-10T12:28:31.533933"
+        }
+        """.trimIndent()
 
     // language=JSON
     private val vedtakFattetMelding =

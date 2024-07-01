@@ -45,16 +45,17 @@ internal class BehandlingStatusMonitor(
             "behandlingId" to behandlingId,
             "søknadId" to søknadId,
         ) {
+            val eventName = packet["@event_name"].asText()
+            logger.info { "Vi har behandling med $eventName" + "(slackbot er konfiguert? ${vedtakBot != null})" }
+            behandlingStatusCounter.labels(eventName.lowercase()).inc()
+
             val status =
-                when (packet["@event_name"].asText()) {
+                when (eventName) {
                     "behandling_avbrutt" -> Status.BEHANDLING_AVBRUTT
                     "forslag_til_vedtak" -> Status.FORSLAG_TIL_VEDTAK
                     "vedtak_fattet" -> Status.VEDTAK_FATTET
                     "behandling_opprettet" -> return // Vi vil bare telle, ikke poste Slack-melding
                     else -> return
-                }.also {
-                    logger.info { "Vi har behandling med $it" + "(slackbot er konfiguert? ${vedtakBot != null})" }
-                    behandlingStatusCounter.labels(it.toString().lowercase()).inc()
                 }
 
             val utfall = packet["utfall"].takeIf { utfall -> utfall.isBoolean }?.asBoolean()
