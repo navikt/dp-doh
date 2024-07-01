@@ -25,13 +25,14 @@ class BehandlingStatusMonitorTest {
 
         verify(exactly = 1) {
             vedtakBot.postBehandlingStatus(
-                BehandlingStatusMonitor.Status.VEDTAK_FATTET,
-                "018ec78d-4f15-7a02-bdf9-0e67129a0411",
-                any(),
-                any(),
-                null,
-                emptyList(),
-                false,
+                status = BehandlingStatusMonitor.Status.VEDTAK_FATTET,
+                behandlingId = "018ec78d-4f15-7a02-bdf9-0e67129a0411",
+                søknadId = any(),
+                opprettet = any(),
+                årsak = null,
+                avklaringer = emptyList(),
+                utfall = false,
+                automatisk = true,
             )
         }
 

@@ -27,6 +27,7 @@ internal class VedtakBot(
         årsak: String? = null,
         avklaringer: List<String>,
         utfall: Boolean? = null,
+        automatisk: Boolean? = null,
     ) {
         val tekst: String =
             when (status) {
@@ -50,6 +51,7 @@ internal class VedtakBot(
                     """Vi har fattet et vedtak 
                     |*Søknad ID:* $søknadId 
                     |*Behandling ID:* $behandlingId
+                    |*Behandling*: ${if (automatisk == true) "Automatisk" else "Manuell"}
                     |*Utfall:* ${if (utfall == null) "Innvilget :tada:" else "Avslag :x:"}
                     """.trimMargin()
             }

@@ -68,6 +68,7 @@ internal class BehandlingStatusMonitor(
                     avklaring["type"].asText()
                 },
                 utfall,
+                automatisk,
             )
 
             if (status == Status.VEDTAK_FATTET && utfall != null && automatisk != null) {
