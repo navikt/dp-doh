@@ -3,6 +3,7 @@ package no.nav.dagpenger.doh.monitor
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
+import io.prometheus.client.CollectorRegistry
 import no.nav.dagpenger.doh.monitor.behandling.BehandlingStatusMonitor
 import no.nav.dagpenger.doh.slack.VedtakBot
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
@@ -33,6 +34,8 @@ class BehandlingStatusMonitorTest {
                 false,
             )
         }
+
+        assertEquals(Metrikker.behandlingVedtak(utfall = false, automatisering = true), 1.0)
     }
 
     @Test
@@ -54,6 +57,8 @@ class BehandlingStatusMonitorTest {
             )
         }
         assertEquals(avklaringer.captured.size, 6)
+
+        assertEquals(Metrikker.behandlingStatus("forslag_til_vedtak"), 1.0)
     }
 
     @Test
@@ -89,6 +94,7 @@ class BehandlingStatusMonitorTest {
           "søknadId": "4afce924-6cb4-4ab4-a92b-fe91e24f31bf",
           "søknad_uuid": "4afce924-6cb4-4ab4-a92b-fe91e24f31bf",
           "@id": "4461e599-e60e-41f6-b052-771d6bde0108",
+          "automatisk": true,
           "@opprettet": "2024-04-10T12:28:31.533933"
         }
         """.trimIndent()
@@ -160,4 +166,34 @@ class BehandlingStatusMonitorTest {
           "@opprettet": "2024-04-10T12:28:31.533933"
         }
         """.trimIndent()
+
+    private object Metrikker {
+        fun behandlingStatus(status: String): Double =
+            CollectorRegistry.defaultRegistry.getSampleValue(
+                "dp_behandling_status_total",
+                "status" to status,
+            )
+
+        fun behandlingVedtak(
+            utfall: Boolean,
+            automatisering: Boolean,
+        ): Double =
+            CollectorRegistry.defaultRegistry.getSampleValue(
+                "dp_behandling_vedtak_total",
+                "utfall" to utfall.toString(),
+                "automatisk" to if (automatisering) "Automatisk" else "Manuell",
+            )
+
+        private fun CollectorRegistry.getSampleValue(
+            name: String,
+            vararg labels: Pair<String, String>,
+        ): Double {
+            val labelsMap = labels.toMap()
+            return getSampleValue(
+                name,
+                labelsMap.keys.toTypedArray<String>(),
+                labelsMap.values.toTypedArray<String>(),
+            )
+        }
+    }
 }
