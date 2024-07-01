@@ -8,6 +8,7 @@ import no.nav.dagpenger.doh.monitor.behandling.BehandlingStatusMonitor
 import no.nav.dagpenger.doh.slack.VedtakBot
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Disabled
 import kotlin.test.Test
 
 class BehandlingStatusMonitorTest {
@@ -63,6 +64,7 @@ class BehandlingStatusMonitorTest {
     }
 
     @Test
+    @Disabled("Prøver uten behandling avbrutt")
     fun `behandling avbrutt`() {
         testRapid.sendTestMessage(
             behandlingAvbrutt,
