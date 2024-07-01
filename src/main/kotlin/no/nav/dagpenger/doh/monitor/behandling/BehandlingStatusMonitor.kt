@@ -22,7 +22,7 @@ internal class BehandlingStatusMonitor(
                 validate {
                     it.requireAny(
                         "@event_name",
-                        listOf("forslag_til_vedtak", "vedtak_fattet", "behandling_avbrutt"),
+                        listOf("behandling_opprettet", "forslag_til_vedtak", "vedtak_fattet", "behandling_avbrutt"),
                     )
                     it.requireKey("behandlingId", "gjelderDato", "søknadId")
                     it.interestedIn("@opprettet", "årsak", "avklaringer", "utfall", "automatisk")
@@ -50,6 +50,7 @@ internal class BehandlingStatusMonitor(
                     "behandling_avbrutt" -> Status.BEHANDLING_AVBRUTT
                     "forslag_til_vedtak" -> Status.FORSLAG_TIL_VEDTAK
                     "vedtak_fattet" -> Status.VEDTAK_FATTET
+                    "behandling_opprettet" -> return // Vi vil bare telle, ikke poste Slack-melding
                     else -> return
                 }.also {
                     logger.info { "Vi har behandling med $it" + "(slackbot er konfiguert? ${vedtakBot != null})" }
