@@ -8,7 +8,6 @@ import no.nav.dagpenger.doh.monitor.behandling.BehandlingStatusMonitor
 import no.nav.dagpenger.doh.slack.VedtakBot
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Disabled
 import kotlin.test.Test
 
 class BehandlingStatusMonitorTest {
@@ -64,13 +63,12 @@ class BehandlingStatusMonitorTest {
     }
 
     @Test
-    @Disabled("Prøver uten behandling avbrutt")
     fun `behandling avbrutt`() {
         testRapid.sendTestMessage(
             behandlingAvbrutt,
         )
 
-        verify(exactly = 1) {
+        verify(exactly = 0) {
             vedtakBot.postBehandlingStatus(
                 BehandlingStatusMonitor.Status.BEHANDLING_AVBRUTT,
                 "018ec78d-4f15-7a02-bdf9-0e67129a0411",
@@ -81,6 +79,8 @@ class BehandlingStatusMonitorTest {
                 null,
             )
         }
+
+        assertEquals(Metrikker.behandlingAvbrutt("For mye inntekt"), 1.0)
     }
 
     // language=JSON
@@ -175,6 +175,12 @@ class BehandlingStatusMonitorTest {
             CollectorRegistry.defaultRegistry.getSampleValue(
                 "dp_behandling_status_total",
                 "status" to status,
+            )
+
+        fun behandlingAvbrutt(årsak: String): Double =
+            CollectorRegistry.defaultRegistry.getSampleValue(
+                "dp_behandling_avbrutt_total",
+                "aarsak" to årsak,
             )
 
         fun behandlingVedtak(

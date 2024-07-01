@@ -2,6 +2,7 @@ package no.nav.dagpenger.doh.monitor.behandling
 
 import mu.KotlinLogging
 import mu.withLoggingContext
+import no.nav.dagpenger.doh.monitor.BehandlingMetrikker.behandlingAvbruttCounter
 import no.nav.dagpenger.doh.monitor.BehandlingMetrikker.behandlingStatusCounter
 import no.nav.dagpenger.doh.monitor.BehandlingMetrikker.behandlingVedtakCounter
 import no.nav.dagpenger.doh.slack.VedtakBot
@@ -21,8 +22,7 @@ internal class BehandlingStatusMonitor(
                 validate {
                     it.requireAny(
                         "@event_name",
-                        listOf("forslag_til_vedtak", "vedtak_fattet"),
-                        // TODO: Prøver uten disse hendelsene, slett om de ikke savnes "behandling_avbrutt"),
+                        listOf("forslag_til_vedtak", "vedtak_fattet", "behandling_avbrutt"),
                     )
                     it.requireKey("behandlingId", "gjelderDato", "søknadId")
                     it.interestedIn("@opprettet", "årsak", "avklaringer", "utfall", "automatisk")
@@ -58,13 +58,18 @@ internal class BehandlingStatusMonitor(
 
             val utfall = packet["utfall"].takeIf { utfall -> utfall.isBoolean }?.asBoolean()
             val automatisk = packet["automatisk"].takeIf { automatisk -> automatisk.isBoolean }?.asBoolean()
+            val årsak = packet["årsak"].takeUnless { årsak -> årsak.isMissingNode }?.asText()
 
+            if (status == Status.BEHANDLING_AVBRUTT) {
+                behandlingAvbruttCounter.labels(årsak ?: "Ukjent").inc()
+                return
+            }
             vedtakBot?.postBehandlingStatus(
                 status,
                 behandlingId,
                 søknadId,
                 packet["@opprettet"].asLocalDateTime(),
-                packet["årsak"].takeUnless { årsak -> årsak.isMissingNode }?.asText(),
+                årsak,
                 packet["avklaringer"].map { avklaring ->
                     avklaring["type"].asText()
                 },
