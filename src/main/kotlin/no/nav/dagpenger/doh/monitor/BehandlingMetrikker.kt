@@ -53,11 +53,12 @@ object BehandlingMetrikker {
                 1.dager,
                 2.dager,
                 5.dager,
-                10.dager,
-                30.dager,
-                60.dager,
+                1.uker,
+                2.uker,
+                4.uker,
             ).register()
 }
 
 private val Int.timer get() = (this * 60 * 60).toDouble()
-private val Int.dager get() = (this * 60 * 60 * 24).toDouble()
+private val Int.dager get() = (this.timer * 24)
+private val Int.uker get() = (this * 7).dager
