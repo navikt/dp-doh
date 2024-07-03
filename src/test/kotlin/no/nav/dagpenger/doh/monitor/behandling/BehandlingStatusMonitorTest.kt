@@ -1,10 +1,9 @@
-package no.nav.dagpenger.doh.monitor
+package no.nav.dagpenger.doh.monitor.behandling
 
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
 import io.prometheus.client.CollectorRegistry
-import no.nav.dagpenger.doh.monitor.behandling.BehandlingStatusMonitor
 import no.nav.dagpenger.doh.slack.VedtakBot
 import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Assertions.assertEquals
