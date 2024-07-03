@@ -1,6 +1,7 @@
 package no.nav.dagpenger.doh.monitor
 
 import io.prometheus.client.Counter
+import io.prometheus.client.Histogram
 
 object BehandlingMetrikker {
     val manuellCounter =
@@ -32,4 +33,31 @@ object BehandlingMetrikker {
             .build("dp_behandling_avbrutt", "Behandlinger som har blitt avbrutt")
             .labelNames("aarsak")
             .register()
+
+    val tidBruktITilstand =
+        Histogram
+            .build("dp_behandling_tid_i_tilstand_sekund", "Antall sekund brukt i hver tilstand")
+            .labelNames("forrigeTilstand", "gjeldendeTilstand")
+            .buckets(
+                1.0,
+                5.0,
+                10.0,
+                30.0,
+                60.0,
+                // Halvtime:
+                60.0 * 30,
+                1.timer,
+                2.timer,
+                6.timer,
+                12.timer,
+                1.dager,
+                2.dager,
+                5.dager,
+                10.dager,
+                30.dager,
+                60.dager,
+            ).register()
 }
+
+private val Int.timer get() = (this * 60 * 60).toDouble()
+private val Int.dager get() = (this * 60 * 60 * 24).toDouble()

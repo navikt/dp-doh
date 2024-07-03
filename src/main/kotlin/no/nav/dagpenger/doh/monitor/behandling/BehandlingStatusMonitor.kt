@@ -66,17 +66,19 @@ internal class BehandlingStatusMonitor(
                 behandlingAvbruttCounter.labels(årsak ?: "Ukjent").inc()
                 return
             }
+
             vedtakBot?.postBehandlingStatus(
-                status,
-                behandlingId,
-                søknadId,
-                packet["@opprettet"].asLocalDateTime(),
-                årsak,
-                packet["avklaringer"].map { avklaring ->
-                    avklaring["type"].asText()
-                },
-                utfall,
-                automatisk,
+                status = status,
+                behandlingId = behandlingId,
+                søknadId = søknadId,
+                opprettet = packet["@opprettet"].asLocalDateTime(),
+                årsak = årsak,
+                avklaringer =
+                    packet["avklaringer"].map { avklaring ->
+                        avklaring["type"].asText()
+                    },
+                utfall = utfall,
+                automatisk = automatisk,
             )
 
             if (status == Status.VEDTAK_FATTET && utfall != null && automatisk != null) {
