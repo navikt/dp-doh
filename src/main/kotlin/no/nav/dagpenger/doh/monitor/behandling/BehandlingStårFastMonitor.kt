@@ -38,7 +38,7 @@ internal class BehandlingStårFastMonitor(
         // Finn alle behandlinger som står fast
         logger.info { "Sjekker alle eksisterende behandlinger" }
         behandlinger.hengende { overvåket ->
-            logger.info { "Behandlingen ${overvåket.behandlingId} står fast i ${overvåket.gjeldendeTilstand}" }
+            logger.warn { "Behandlingen ${overvåket.behandlingId} står fast i ${overvåket.gjeldendeTilstand}" }
 
             context.publish(BehandlingStårFast(overvåket.behandlingId).toJson())
         }
@@ -63,7 +63,7 @@ internal class BehandlingStårFastMonitor(
 }
 
 private class Behandlinger private constructor(
-    val behandlinger: MutableList<Overvåkning>,
+    val behandlinger: MutableList<Behandling>,
 ) {
     constructor() : this(mutableListOf())
 
@@ -74,7 +74,7 @@ private class Behandlinger private constructor(
     ) {
         // Kan stå i denne tilstanden uendelig
         if (forventetFerdig == LocalDateTime.MAX) {
-            logger.info { "Behandlingen gikk videre til $gjeldendeTilstand" }
+            logger.info { "Behandlingen $behandlingId videre til $gjeldendeTilstand" }
             behandlinger.removeIf { it.behandlingId == behandlingId }
             return
         }
@@ -82,29 +82,34 @@ private class Behandlinger private constructor(
         // Allerede utdatert ved innlesning
         if (forventetFerdig.isBefore(LocalDateTime.now())) {
             // Her bør vi kanskje ikke publisere, for det kan hende det er vi som henger etter
-            logger.info { "Behandlingen står allerede fast i $gjeldendeTilstand" }
+            logger.warn { "Behandlingen $behandlingId står allerede fast i $gjeldendeTilstand" }
+            behandlinger.removeIf { it.behandlingId == behandlingId }
             return
         }
 
         // Ikke sett før, start overvåkning
         if (behandlinger.find { it.behandlingId == behandlingId } == null) {
-            logger.info { "Aldri sett denne behandlingen, begynner å følge med nå" }
+            logger.info { "Aldri sett behandling $behandlingId, begynner å følge med nå" }
         }
 
         // Oppdater neste gang vi forventer denne å være ferdig
-        behandlinger.add(Overvåkning(behandlingId, gjeldendeTilstand, forventetFerdig))
+        behandlinger.add(Behandling(behandlingId, gjeldendeTilstand, forventetFerdig))
     }
 
     fun hengende(
         now: LocalDateTime = LocalDateTime.now(),
-        block: (Overvåkning) -> Unit,
+        block: (Behandling) -> Unit,
     ) = behandlinger
         .filter { it.forventetFerdig.isBefore(now) }
         .forEach {
             block(it)
             behandlinger.remove(it)
         }.also {
-            logger.info { "Overvåker ${behandlinger.size} behandlinger" }
+            logger.info {
+                "Overvåker ${behandlinger.size} behandlinger. Eldste behandling forventes ferdig innen ${
+                    behandlinger.minOf { it.forventetFerdig }
+                }"
+            }
         }
 
     private companion object {
@@ -112,7 +117,7 @@ private class Behandlinger private constructor(
     }
 }
 
-private data class Overvåkning(
+private data class Behandling(
     val behandlingId: UUID,
     val gjeldendeTilstand: String,
     val forventetFerdig: LocalDateTime,
