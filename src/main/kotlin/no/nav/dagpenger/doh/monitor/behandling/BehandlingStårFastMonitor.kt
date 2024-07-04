@@ -47,7 +47,7 @@ internal class BehandlingStårFastMonitor(
         behandlinger.hengende { hengendeBehandling ->
             logger.warn { "Behandlingen ${hengendeBehandling.behandlingId} står fast i ${hengendeBehandling.gjeldendeTilstand}" }
 
-            context.publish(BehandlingStårFast(hengendeBehandling).toJson())
+            context.publish(hengendeBehandling.ident, BehandlingStårFast(hengendeBehandling).toJson())
         }
     }
 
