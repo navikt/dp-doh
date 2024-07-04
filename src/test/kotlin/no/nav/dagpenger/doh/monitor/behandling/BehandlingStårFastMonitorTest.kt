@@ -23,10 +23,10 @@ class BehandlingStårFastMonitorTest {
         val behandlingId = UUID.randomUUID()
         rapid.sendTestMessage(tilstandEndretEvent(LocalDateTime.now().plusSeconds(1), behandlingId))
         runBlocking { delay(1000) }
-        rapid.sendTestMessage(tilstandEndretEvent(LocalDateTime.now().plusHours(1), behandlingId))
+        rapid.sendTestMessage(tilstandEndretEvent(LocalDateTime.now().plusHours(1)))
         rapid.sendTestMessage(tilstandEndretEvent(LocalDateTime.now().plusHours(1), behandlingId))
 
-        assertEquals(rapid.inspektør.size, 1)
+        assertEquals(1, rapid.inspektør.size)
     }
 
     @Test
@@ -36,12 +36,15 @@ class BehandlingStårFastMonitorTest {
         val behandlingId3 = UUID.randomUUID()
         rapid.sendTestMessage(tilstandEndretEvent(LocalDateTime.now().plusSeconds(1), behandlingId1))
         rapid.sendTestMessage(tilstandEndretEvent(LocalDateTime.now().plusSeconds(1), behandlingId2))
+
+        // Denne kommer seg videre, og skal ikke varsles om
         rapid.sendTestMessage(tilstandEndretEvent(LocalDateTime.now().plusSeconds(1), behandlingId3))
         rapid.sendTestMessage(tilstandEndretEvent(LocalDateTime.now().plusSeconds(5), behandlingId3))
+
         runBlocking { delay(1000) }
         rapid.sendTestMessage(tilstandEndretEvent(LocalDateTime.now().plusHours(1)))
 
-        assertEquals(rapid.inspektør.size, 3)
+        assertEquals(2, rapid.inspektør.size)
     }
 
     @Language("JSON")

@@ -1,6 +1,7 @@
 package no.nav.dagpenger.doh.monitor.behandling
 
 import mu.KotlinLogging
+import no.nav.dagpenger.doh.monitor.behandling.Behandling.Companion.eldste
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
 import no.nav.helse.rapids_rivers.RapidsConnection
@@ -90,10 +91,9 @@ private class Behandlinger private constructor(
             return
         }
 
-        // Ikke sett før, start overvåkning
-        if (behandlinger.find { it.behandlingId == behandlingId } == null) {
-            logger.info { "Aldri sett behandling $behandlingId, begynner å følge med nå" }
-        }
+        // Fjern forrige tilstand fra overvåkningen
+        logger.info { "Aldri sett behandling $behandlingId, begynner å følge med nå" }
+        behandlinger.removeIf { it.behandlingId == behandlingId }
 
         // Oppdater neste gang vi forventer denne å være ferdig
         behandlinger.add(Behandling(behandlingId, ident, gjeldendeTilstand, forventetFerdig))
@@ -103,14 +103,15 @@ private class Behandlinger private constructor(
         now: LocalDateTime = LocalDateTime.now(),
         block: (Behandling) -> Unit,
     ) = behandlinger
-        .filter { it.forventetFerdig.isBefore(now) }
+        .filter { it.erUtdatert(now) }
         .forEach {
             block(it)
-            behandlinger.remove(it)
+            it.utsett()
+            logger.info { "Utsetter forventetFerdig for behandling ${it.behandlingId}" }
         }.also {
             logger.info {
                 "Overvåker ${behandlinger.size} behandlinger. Eldste behandling forventes ferdig innen ${
-                    behandlinger.minOf { it.forventetFerdig }
+                    behandlinger.eldste()
                 }"
             }
         }
@@ -120,9 +121,19 @@ private class Behandlinger private constructor(
     }
 }
 
-private data class Behandling(
+private class Behandling(
     val behandlingId: UUID,
     val ident: String,
     val gjeldendeTilstand: String,
-    val forventetFerdig: LocalDateTime,
-)
+    private var forventetFerdig: LocalDateTime,
+) {
+    companion object {
+        fun List<Behandling>.eldste() = minOf { it.forventetFerdig }
+    }
+
+    fun erUtdatert(now: LocalDateTime) = forventetFerdig.isBefore(now)
+
+    fun utsett() {
+        forventetFerdig = forventetFerdig.plusMinutes(10)
+    }
+}
