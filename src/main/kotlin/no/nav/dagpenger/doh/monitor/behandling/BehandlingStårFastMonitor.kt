@@ -92,7 +92,7 @@ private class Behandlinger private constructor(
         }
 
         // Fjern forrige tilstand fra overvåkningen
-        logger.info { "Aldri sett behandling $behandlingId, begynner å følge med nå" }
+        logger.info { "Overvåker $behandlingId i $gjeldendeTilstand med frist til $forventetFerdig" }
         behandlinger.removeIf { it.behandlingId == behandlingId }
 
         // Oppdater neste gang vi forventer denne å være ferdig
