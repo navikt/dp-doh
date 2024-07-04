@@ -19,7 +19,7 @@ internal class BehandlingStårFastMonitor(
             .apply {
                 validate {
                     it.demandValue("@event_name", "behandling_endret_tilstand")
-                    it.requireKey("gjeldendeTilstand", "forventetFerdig")
+                    it.requireKey("gjeldendeTilstand", "forventetFerdig", "ident")
                     it.interestedIn("behandlingId")
                 }
             }.register(this)
@@ -30,17 +30,18 @@ internal class BehandlingStårFastMonitor(
         context: MessageContext,
     ) {
         val behandlingId = packet["behandlingId"].asText().let { UUID.fromString(it) }
+        val ident = packet["ident"].asText()
         val gjeldendeTilstand = packet["gjeldendeTilstand"].asText()
         val forventetFerdig = packet["forventetFerdig"].asLocalDateTime()
 
-        behandlinger.registrer(behandlingId, gjeldendeTilstand, forventetFerdig)
+        behandlinger.registrer(behandlingId, ident, gjeldendeTilstand, forventetFerdig)
 
         // Finn alle behandlinger som står fast
         logger.info { "Sjekker alle eksisterende behandlinger" }
-        behandlinger.hengende { overvåket ->
-            logger.warn { "Behandlingen ${overvåket.behandlingId} står fast i ${overvåket.gjeldendeTilstand}" }
+        behandlinger.hengende { hengendeBehandling ->
+            logger.warn { "Behandlingen ${hengendeBehandling.behandlingId} står fast i ${hengendeBehandling.gjeldendeTilstand}" }
 
-            context.publish(BehandlingStårFast(overvåket.behandlingId).toJson())
+            context.publish(BehandlingStårFast(hengendeBehandling).toJson())
         }
     }
 
@@ -49,14 +50,15 @@ internal class BehandlingStårFastMonitor(
     }
 
     private data class BehandlingStårFast(
-        val behandlingId: UUID,
+        val behandling: Behandling,
     ) {
         fun toJson() =
             JsonMessage
                 .newMessage(
                     mapOf(
                         "@event_name" to "behandling_står_fast",
-                        "behandlingId" to behandlingId.toString(),
+                        "ident" to behandling.ident,
+                        "behandlingId" to behandling.behandlingId.toString(),
                     ),
                 ).toJson()
     }
@@ -69,6 +71,7 @@ private class Behandlinger private constructor(
 
     fun registrer(
         behandlingId: UUID,
+        ident: String,
         gjeldendeTilstand: String,
         forventetFerdig: LocalDateTime,
     ) {
@@ -93,7 +96,7 @@ private class Behandlinger private constructor(
         }
 
         // Oppdater neste gang vi forventer denne å være ferdig
-        behandlinger.add(Behandling(behandlingId, gjeldendeTilstand, forventetFerdig))
+        behandlinger.add(Behandling(behandlingId, ident, gjeldendeTilstand, forventetFerdig))
     }
 
     fun hengende(
@@ -119,6 +122,7 @@ private class Behandlinger private constructor(
 
 private data class Behandling(
     val behandlingId: UUID,
+    val ident: String,
     val gjeldendeTilstand: String,
     val forventetFerdig: LocalDateTime,
 )
