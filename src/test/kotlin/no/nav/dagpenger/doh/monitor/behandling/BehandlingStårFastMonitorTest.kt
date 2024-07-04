@@ -42,9 +42,12 @@ class BehandlingStårFastMonitorTest {
         rapid.sendTestMessage(tilstandEndretEvent(LocalDateTime.now().plusSeconds(5), behandlingId3))
 
         runBlocking { delay(1000) }
-        rapid.sendTestMessage(tilstandEndretEvent(LocalDateTime.now().plusHours(1)))
-
+        rapid.sendTestMessage(tilstandEndretEvent(LocalDateTime.now().plusHours(1), behandlingId3))
         assertEquals(2, rapid.inspektør.size)
+
+        rapid.sendTestMessage(tilstandEndretEvent(LocalDateTime.MAX, behandlingId1))
+        rapid.sendTestMessage(tilstandEndretEvent(LocalDateTime.MAX, behandlingId2))
+        rapid.sendTestMessage(tilstandEndretEvent(LocalDateTime.MAX, behandlingId3))
     }
 
     @Language("JSON")

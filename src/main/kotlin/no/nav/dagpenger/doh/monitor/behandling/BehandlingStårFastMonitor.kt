@@ -1,6 +1,7 @@
 package no.nav.dagpenger.doh.monitor.behandling
 
 import mu.KotlinLogging
+import mu.withLoggingContext
 import no.nav.dagpenger.doh.monitor.behandling.Behandling.Companion.eldste
 import no.nav.helse.rapids_rivers.JsonMessage
 import no.nav.helse.rapids_rivers.MessageContext
@@ -35,7 +36,11 @@ internal class BehandlingStårFastMonitor(
         val gjeldendeTilstand = packet["gjeldendeTilstand"].asText()
         val forventetFerdig = packet["forventetFerdig"].asLocalDateTime()
 
-        behandlinger.registrer(behandlingId, ident, gjeldendeTilstand, forventetFerdig)
+        withLoggingContext(
+            "behandlingId" to behandlingId.toString(),
+        ) {
+            behandlinger.registrer(behandlingId, ident, gjeldendeTilstand, forventetFerdig)
+        }
 
         // Finn alle behandlinger som står fast
         logger.info { "Sjekker alle eksisterende behandlinger" }
@@ -110,9 +115,12 @@ private class Behandlinger private constructor(
             logger.info { "Utsetter forventetFerdig for behandling ${it.behandlingId}" }
         }.also {
             logger.info {
-                "Overvåker ${behandlinger.size} behandlinger. Eldste behandling forventes ferdig innen ${
-                    behandlinger.eldste()
-                }"
+                "Overvåker ${behandlinger.size} behandlinger." +
+                    if (behandlinger.isNotEmpty()) {
+                        " Eldste behandling forventes ferdig innen ${behandlinger.eldste()}"
+                    } else {
+                        ""
+                    }
             }
         }
 
