@@ -134,6 +134,6 @@ private class Behandling(
     fun erUtdatert(now: LocalDateTime) = forventetFerdig.isBefore(now)
 
     fun utsett() {
-        forventetFerdig = forventetFerdig.plusMinutes(10)
+        forventetFerdig = forventetFerdig.plusMinutes(35)
     }
 }
