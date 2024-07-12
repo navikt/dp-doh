@@ -13,6 +13,7 @@ import no.nav.helse.rapids_rivers.asLocalDateTime
 import org.slf4j.LoggerFactory
 import java.net.URLEncoder
 import java.nio.charset.Charset
+import java.time.Duration
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.temporal.ChronoUnit
@@ -21,6 +22,7 @@ import java.time.temporal.ChronoUnit
 internal class AppStateMonitor(
     rapidsConnection: RapidsConnection,
     private val slackClient: SlackClient?,
+    private val nedetidFørAlarm: Duration = Duration.ofMinutes(5),
 ) : River.PacketListener {
     private companion object {
         private val log = LoggerFactory.getLogger(AppStateMonitor::class.java)
@@ -29,21 +31,21 @@ internal class AppStateMonitor(
     }
 
     init {
-        River(rapidsConnection).apply {
-            validate { it.demandValue("@event_name", "app_status") }
-            validate {
-                it.requireArray("states") {
-                    requireKey("app", "state")
-                    require("last_active_time", JsonNode::asLocalDateTime)
-                    requireArray("instances") {
-                        requireKey("instance", "state")
+        River(rapidsConnection)
+            .apply {
+                validate { it.demandValue("@event_name", "app_status") }
+                validate {
+                    it.requireArray("states") {
+                        requireKey("app", "state")
                         require("last_active_time", JsonNode::asLocalDateTime)
+                        requireArray("instances") {
+                            requireKey("instance", "state")
+                            require("last_active_time", JsonNode::asLocalDateTime)
+                        }
                     }
                 }
-            }
-            validate { it.require("threshold", JsonNode::asLocalDateTime) }
-            validate { it.require("@opprettet", JsonNode::asLocalDateTime) }
-        }.register(this)
+                validate { it.require("@opprettet", JsonNode::asLocalDateTime) }
+            }.register(this)
     }
 
     private var lastReportTime = LocalDateTime.MIN
@@ -61,8 +63,9 @@ internal class AppStateMonitor(
         context: MessageContext,
     ) {
         val now = LocalDateTime.now()
-        if (now.toLocalTime() in natt || lastReportTime > now.minusMinutes(15)) return // don't create alerts too eagerly
-        val appsDown = packet.appsDown(now)
+        if (now.toLocalTime() in natt) return
+
+        val appsDown = packet.apperSomHarVærtNede()
 
         if (appsDown.isNotEmpty()) {
             val logtext =
@@ -123,19 +126,26 @@ internal class AppStateMonitor(
             LocalDateTime.now().minusMinutes(15),
         )
 
-    private fun JsonMessage.appsDown(now: LocalDateTime) =
-        this["states"]
+    private fun JsonMessage.apperSomHarVærtNede(): List<Triple<String, LocalDateTime, List<Pair<String, LocalDateTime>>>> {
+        val opprettet = this["@opprettet"].asLocalDateTime()
+        val grenseForVarsel: LocalDateTime = opprettet.minus(nedetidFørAlarm)
+        return this["states"]
             .filter { it["state"].asInt() == 0 }
-            .filter { it["last_active_time"].asLocalDateTime() < now.minusMinutes(2) }
-            .map {
+            .filter {
+                it["last_active_time"].asLocalDateTime().isBefore(grenseForVarsel)
+            }.map {
                 Triple(
                     it["app"].asText(),
                     it["last_active_time"].asLocalDateTime(),
                     it["instances"]
                         .filter { instance -> instance.path("state").asInt() == 0 }
                         .map { instance ->
-                            Pair(instance.path("instance").asText(), instance.path("last_active_time").asLocalDateTime())
+                            Pair(
+                                instance.path("instance").asText(),
+                                instance.path("last_active_time").asLocalDateTime(),
+                            )
                         },
                 )
             }
+    }
 }

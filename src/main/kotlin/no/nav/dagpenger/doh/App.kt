@@ -18,6 +18,7 @@ import no.nav.dagpenger.doh.monitor.quiz.ManuellQuizBehandlingMonitor
 import no.nav.dagpenger.doh.monitor.quiz.NyQuizMalMonitor
 import no.nav.dagpenger.doh.monitor.quiz.ProsessResultatMonitor
 import no.nav.helse.rapids_rivers.RapidApplication
+import java.time.Duration
 import kotlin.time.ExperimentalTime
 
 @ExperimentalTime
@@ -25,7 +26,7 @@ fun main() {
     RapidApplication
         .create(Configuration.asMap())
         .apply {
-            AppStateMonitor(this, slackAlertClient)
+            AppStateMonitor(this, slackAlertClient, Duration.ofMinutes(5))
             ProsessResultatMonitor(this, quizResultatBot)
             NyQuizMalMonitor(this, quizMalBot)
             BehovUtenLøsningMonitor(this, slackAlertClient)
