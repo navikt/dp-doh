@@ -25,9 +25,7 @@ fun main() {
     RapidApplication
         .create(Configuration.asMap())
         .apply {
-            // APIet til Slack fører til at appen kræsjer, og gir veldig mange falske positive
-            // TODO: Legg tilbake slackAlertClient som argument her
-            AppStateMonitor(this, null)
+            AppStateMonitor(this, slackAlertClient)
             ProsessResultatMonitor(this, quizResultatBot)
             NyQuizMalMonitor(this, quizMalBot)
             BehovUtenLøsningMonitor(this, slackAlertClient)
