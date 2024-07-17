@@ -48,6 +48,8 @@ spec:
       value: {{dp_slacker_vedtak_channel_id}}
     - name: DP_ARENA_SINK_OPPRETTET_MELDING
       value: "{{dp_arena_sink_opprettet_melding}}"
+    - name: JDK_JAVA_OPTIONS
+      value: "-Djavax.net.debug=ssl,handshake"
   accessPolicy:
     outbound:
       external:
