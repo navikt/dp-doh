@@ -54,12 +54,16 @@ spec:
     outbound:
       external:
         - host: slack.com
-        - ipv4: 3.68.124.95
-        - ipv4: 52.29.238.212
-        - ipv4: 3.68.175.98
+        - ipv4: 18.134.215.41
         - ipv4: 18.159.197.225
+        - ipv4: 18.168.172.238
+        - ipv4: 18.169.120.191
+        - ipv4: 18.169.61.189
         - ipv4: 3.68.124.168
+        - ipv4: 3.68.124.95
         - ipv4: 3.68.170.153
+        - ipv4: 3.68.175.98
+        - ipv4: 52.29.238.212
 
         - host: logs.adeo.no
         - host: {{ DP_QUIZ_RETTING_HOST }}
