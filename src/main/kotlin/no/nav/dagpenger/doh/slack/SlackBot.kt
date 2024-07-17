@@ -3,6 +3,8 @@ package no.nav.dagpenger.doh.slack
 import com.slack.api.methods.MethodsClient
 import com.slack.api.methods.request.chat.ChatPostMessageRequest.ChatPostMessageRequestBuilder
 import mu.KotlinLogging
+import java.net.InetAddress
+import javax.net.ssl.SSLHandshakeException
 
 internal abstract class SlackBot(
     private val slackClient: MethodsClient,
@@ -21,29 +23,40 @@ internal abstract class SlackBot(
         block: (it: ChatPostMessageRequestBuilder) -> ChatPostMessageRequestBuilder,
     ) {
         val threadTs =
-            trådNøkkel?.let { nøkkel ->
-                slackTrådRepository?.hentTråd(nøkkel).also {
-                    log.info { "Hentet tråd for $nøkkel med $it" }
+            trådNøkkel
+                ?.let { nøkkel ->
+                    slackTrådRepository?.hentTråd(nøkkel).also {
+                        log.info { "Hentet tråd for $nøkkel med $it" }
+                    }
+                }?.threadTs
+        try {
+            slackClient
+                .chatPostMessage {
+                    it
+                        .channel(slackChannelId)
+                        .iconEmoji(":robot_face:")
+                        .username(username)
+                        .replyBroadcast(replyBroadCast)
+                    threadTs?.let { ts -> it.threadTs(ts) }
+                    block(it)
+                }.let { response ->
+                    if (!response.isOk) {
+                        log.error { "Kunne ikke poste på Slack fordi ${response.errors}" }
+                        log.error { response }
+                    }
+                    trådNøkkel?.let {
+                        val threadTs = response.ts
+                        log.info { "Lagrer tråd for $it med $threadTs" }
+                        slackTrådRepository?.lagreTråd(
+                            SlackTråd(it, response.ts),
+                        )
+                    }
                 }
-            }?.threadTs
-        slackClient.chatPostMessage {
-            it.channel(slackChannelId)
-                .iconEmoji(":robot_face:")
-                .username(username)
-                .replyBroadcast(replyBroadCast)
-            threadTs?.let { ts -> it.threadTs(ts) }
-            block(it)
-        }.let { response ->
-            if (!response.isOk) {
-                log.error { "Kunne ikke poste på Slack fordi ${response.errors}" }
-                log.error { response }
-            }
-            trådNøkkel?.let {
-                val threadTs = response.ts
-                log.info { "Lagrer tråd for $it med $threadTs" }
-                slackTrådRepository?.lagreTråd(
-                    SlackTråd(it, response.ts),
-                )
+        } catch (e: SSLHandshakeException) {
+            log.error(e) {
+                val ips = InetAddress.getAllByName("slack.com")
+                val ip = ips.joinToString { it.hostAddress }
+                "SSL handshake feilet. Slack.com resolvet til: $ip"
             }
         }
     }
