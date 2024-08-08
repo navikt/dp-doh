@@ -45,7 +45,7 @@ jobs:
     needs: [ build ]
     runs-on: ubuntu-latest
     steps:
-      - uses: dagpenger/actions/attest-sign@master
+      - uses: navikt/dagpenger/actions/attest-sign@master
         with:
           digest: ${{ needs.build.outputs.digest }}
           identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
