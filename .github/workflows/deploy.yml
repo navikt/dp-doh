@@ -36,8 +36,19 @@ jobs:
           tag: ${{ github.sha }}
           identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
           project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
+          salsa: false
     outputs:
       image: ${{ steps.docker-build-push.outputs.image }}
+
+  salsa:
+    needs: [ build ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate SBOM, attest and sign image
+        id: attest-sign
+        uses: nais/attest-sign@v1
+        with:
+          image_ref: ${{ needs.build.outputs.image }}
 
   deploy-dev:
     name: Deploy to dev
