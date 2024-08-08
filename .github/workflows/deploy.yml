@@ -52,7 +52,7 @@ jobs:
           identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
           project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
           team: teamdagpenger
-      - id: prepare
+      - name: Lag image referanse med digest
         run: |
           IMAGE_WITH_TAG="${{ needs.build.outputs.image }}"
           IMAGE="${IMAGE_WITH_TAG%%:*}"
