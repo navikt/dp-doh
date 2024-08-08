@@ -22,11 +22,10 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 19
+          java-version: 17
 
-      - uses: gradle/gradle-build-action@v3
-        with:
-          arguments: --configuration-cache build
+      - uses: gradle/actions/setup-gradle@v3
+      - run: ./gradlew --configuration-cache build
 
       - name: docker-build-push
         uses: nais/docker-build-push@v0
@@ -44,11 +43,16 @@ jobs:
     needs: [ build ]
     runs-on: ubuntu-latest
     steps:
+      - id: prepare
+        run: |
+          IMAGE_WITH_TAG="${{ needs.build.outputs.image }}"
+          IMAGE="${IMAGE_WITH_TAG%%:*}"
+          echo "IMAGE_WITH_DIGEST="${IMAGE}@${{ steps.build_push.outputs.digest }}" >> $GITHUB_ENV
       - name: Generate SBOM, attest and sign image
         id: attest-sign
         uses: nais/attest-sign@v1
         with:
-          image_ref: ${{ needs.build.outputs.image }}
+          image_ref: ${{ steps.prepare.outputs.image_with_digest }}
 
   deploy-dev:
     name: Deploy to dev
