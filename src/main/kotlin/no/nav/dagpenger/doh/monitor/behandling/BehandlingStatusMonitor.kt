@@ -24,6 +24,7 @@ internal class BehandlingStatusMonitor(
                         "@event_name",
                         listOf("behandling_opprettet", "forslag_til_vedtak", "vedtak_fattet", "behandling_avbrutt"),
                     )
+                    it.requireKey("meldingOmVedtakProdusent") // Unngå å telle republiseringer fra dp-saksbehandling
                     it.requireKey("behandlingId", "gjelderDato", "søknadId")
                     it.interestedIn("@opprettet", "årsak", "avklaringer", "utfall", "automatisk")
                 }
