@@ -36,8 +36,6 @@ spec:
   envFrom:
     - secret: credential-slack
   env:
-    - name: DP_QUIZ_RETTING_URL
-      value: {{dp_quiz_retting_url}}
     - name: DP_SLACKER_ALERT_CHANNEL_ID
       value: {{dp_slacker_alert_channel_id}}
     - name: DP_SLACKER_CHANNEL_ID
@@ -64,4 +62,3 @@ spec:
         - ipv4: 52.29.238.212
 
         - host: logs.adeo.no
-        - host: {{ DP_QUIZ_RETTING_HOST }}

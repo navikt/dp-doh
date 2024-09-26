@@ -6,7 +6,5 @@ dp_slacker_channel_id: "C02140D4USC" # dp-inquizitor-prod
 dp_slacker_mal_channel_id: "C02BK8Z6Q56" # team-dagpenger-soknad
 dp_slacker_vedtak_channel_id: "C02140D4USC" # dp-inquizitor-prod
 kafka_pool: nav-prod
-dp_quiz_retting_url: "https://dp-saksbehandling.intern.nav.no/arbeid/dagpenger/saksbehandling"
-DP_QUIZ_RETTING_HOST: "dp-saksbehandling.intern.nav.no"
 
 dp_arena_sink_opprettet_melding: false
