@@ -26,7 +26,7 @@ internal class BehandlingStatusMonitor(
                     )
                     it.rejectKey("meldingOmVedtakProdusent") // Unngå å telle republiseringer fra dp-saksbehandling
                     it.requireKey("behandlingId", "søknadId")
-                    it.interestedIn("@opprettet", "årsak", "avklaringer", "utfall", "automatisk")
+                    it.interestedIn("@opprettet", "årsak", "avklaringer", "fastsatt", "utfall", "automatisk")
                 }
             }.register(this)
     }
@@ -59,7 +59,11 @@ internal class BehandlingStatusMonitor(
                     else -> return
                 }
 
-            val utfall = packet["utfall"].takeIf { utfall -> utfall.isBoolean }?.asBoolean()
+            val utfall =
+                when (status) {
+                    Status.VEDTAK_FATTET -> packet["fastsatt"]["utfall"].takeIf { fastsatt -> fastsatt.isBoolean }?.asBoolean()
+                    else -> packet["utfall"].takeIf { fastsatt -> fastsatt.isBoolean }?.asBoolean()
+                }
             val automatisk = packet["automatisk"].takeIf { automatisk -> automatisk.isBoolean }?.asBoolean()
             val årsak = packet["årsak"].takeUnless { årsak -> årsak.isMissingNode }?.asText()
 
