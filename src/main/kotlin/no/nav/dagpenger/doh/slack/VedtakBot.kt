@@ -3,7 +3,6 @@ package no.nav.dagpenger.doh.slack
 import com.slack.api.methods.MethodsClient
 import com.slack.api.methods.kotlin_extension.request.chat.blocks
 import com.slack.api.model.block.Blocks
-import com.slack.api.model.block.composition.BlockCompositions.markdownText
 import com.slack.api.model.kotlin_extension.block.dsl.LayoutBlockDsl
 import no.nav.dagpenger.doh.Kibana
 import no.nav.dagpenger.doh.monitor.behandling.BehandlingStatusMonitor
@@ -43,7 +42,7 @@ internal class VedtakBot(
                     """Vi har et forslag til vedtak 
                     |*Søknad ID:* $søknadId 
                     |*Behandling ID:* $behandlingId
-                    |*Utfall:* ${if (utfall == null) "Innvilget :tada:" else "Avslag :x:"}
+                    |*Utfall:* ${tolk(utfall)}
                     |*Avklaringer*: ${avklaringer.joinToString()}
                     """.trimMargin()
 
@@ -52,7 +51,7 @@ internal class VedtakBot(
                     |*Søknad ID:* $søknadId 
                     |*Behandling ID:* $behandlingId
                     |*Behandling*: ${if (automatisk == true) "Automatisk" else "Manuell"}
-                    |*Utfall:* ${if (utfall == null) "Innvilget :tada:" else "Avslag :x:"}
+                    |*Utfall:* ${tolk(utfall)}
                     """.trimMargin()
             }
         chatPostMessage(trådNøkkel = søknadId) {
@@ -65,6 +64,13 @@ internal class VedtakBot(
             }
         }
     }
+
+    private fun tolk(utfall: Boolean?): String =
+        when (utfall) {
+            true -> "Innvilget :tada:"
+            false -> "Avslag :x:"
+            else -> "Uavklart (vi klarer ikke å finne utfallet!)"
+        }
 
     private fun emoji(status: BehandlingStatusMonitor.Status): String {
         val emoji =

@@ -24,11 +24,8 @@ class BehandlingStatusMonitorTest {
     }
 
     @Test
-    fun `vedtak fattet`() {
-        val vedtakFattet =
-            requireNotNull(this.javaClass.getResource("/dp-behandling/vedtak_fattet.json")?.readText()) {
-                "Fant ikke dp-behandling/vedtak_fattet.json"
-            }
+    fun `vedtak fattet med avslag`() {
+        val vedtakFattet = les("/dp-behandling/vedtak_fattet_avslag.json")
 
         testRapid.sendTestMessage(
             vedtakFattet,
@@ -48,6 +45,30 @@ class BehandlingStatusMonitorTest {
         }
 
         assertEquals(Metrikker.behandlingVedtak(utfall = false, automatisering = true), 1.0)
+    }
+
+    @Test
+    fun `vedtak fattet med innvilgelse`() {
+        val vedtakFattet = les("/dp-behandling/vedtak_fattet_innvilgelse.json")
+
+        testRapid.sendTestMessage(
+            vedtakFattet,
+        )
+
+        verify(exactly = 1) {
+            vedtakBot.postBehandlingStatus(
+                status = BehandlingStatusMonitor.Status.VEDTAK_FATTET,
+                behandlingId = "01924774-13c6-7411-a408-20e95689a030",
+                søknadId = "4afce924-6cb4-4ab4-a92b-fe91e24f31bf",
+                opprettet = any(),
+                årsak = null,
+                avklaringer = emptyList(),
+                utfall = true,
+                automatisk = false,
+            )
+        }
+
+        assertEquals(Metrikker.behandlingVedtak(utfall = true, automatisering = false), 1.0)
     }
 
     @Test
@@ -93,6 +114,11 @@ class BehandlingStatusMonitorTest {
 
         assertEquals(Metrikker.behandlingAvbrutt("For mye inntekt"), 1.0)
     }
+
+    private fun les(navn: String): String =
+        requireNotNull(this.javaClass.getResource(navn)?.readText()) {
+            "Fant ikke $navn"
+        }
 
     // language=JSON
     private val behandlingOpprettet =
