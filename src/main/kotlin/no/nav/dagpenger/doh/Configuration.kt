@@ -11,7 +11,6 @@ import com.slack.api.methods.MethodsClient
 import no.nav.dagpenger.doh.slack.ArenasinkBot
 import no.nav.dagpenger.doh.slack.InMemorySlackTrådRepository
 import no.nav.dagpenger.doh.slack.QuizMalBot
-import no.nav.dagpenger.doh.slack.QuizResultatBot
 import no.nav.dagpenger.doh.slack.SlackClient
 import no.nav.dagpenger.doh.slack.VedtakBot
 
@@ -54,10 +53,6 @@ internal object Configuration {
 
     val slackBotClient: MethodsClient? by lazy {
         properties.getOrNull(Key("SLACK_ACCESS_TOKEN", stringType))?.let { token -> Slack.getInstance().methods(token) }
-    }
-
-    val quizResultatBot: QuizResultatBot? by lazy {
-        slackBotClient?.let { QuizResultatBot(it, quizResultatSlackChannelId) }
     }
 
     private val slackTrådRepository by lazy { InMemorySlackTrådRepository() }
