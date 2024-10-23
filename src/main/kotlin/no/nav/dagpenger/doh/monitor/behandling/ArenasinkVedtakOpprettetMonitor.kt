@@ -12,16 +12,16 @@ import no.nav.helse.rapids_rivers.asLocalDateTime
 internal class ArenasinkVedtakOpprettetMonitor(
     rapidsConnection: RapidsConnection,
     private val arenasinkBot: ArenasinkBot?,
-) :
-    River.PacketListener {
+) : River.PacketListener {
     init {
-        River(rapidsConnection).apply {
-            validate {
-                it.requireValue("@event_name", "arenasink_vedtak_opprettet")
-                it.requireKey("søknadId", "sakId", "vedtakId", "vedtakstatus", "rettighet", "utfall", "kilde")
-                it.interestedIn("@opprettet")
-            }
-        }.register(this)
+        River(rapidsConnection)
+            .apply {
+                validate {
+                    it.requireValue("@event_name", "arenasink_vedtak_opprettet")
+                    it.requireKey("søknadId", "sakId", "vedtakId", "vedtakstatus", "rettighet", "utfall", "kilde")
+                    it.interestedIn("@opprettet")
+                }
+            }.register(this)
     }
 
     private companion object {
@@ -40,15 +40,15 @@ internal class ArenasinkVedtakOpprettetMonitor(
         ) {
             val utfall = packet["utfall"].asBoolean()
             arenasinkBot?.postVedtak(
-                packet["søknadId"].asText(),
-                packet["sakId"].asInt(),
-                packet["vedtakId"].asInt(),
-                packet["vedtakstatus"].asText(),
-                packet["rettighet"].asText(),
-                utfall,
-                kildeId,
-                packet["kilde"]["system"].asText(),
-                packet["@opprettet"].asLocalDateTime(),
+                søknadId = packet["søknadId"].asText(),
+                sakId = packet["sakId"].asInt(),
+                vedtakId = packet["vedtakId"].asInt(),
+                status = packet["vedtakstatus"].asText(),
+                rettighet = packet["rettighet"].asText(),
+                utfall = utfall,
+                kildeId = kildeId,
+                kildeSystem = packet["kilde"]["system"].asText(),
+                opprettet = packet["@opprettet"].asLocalDateTime(),
             )
             logger.info { "Vi har fattet vedtak med $utfall" + "(slackbot er konfiguert? ${arenasinkBot != null})" }
         }

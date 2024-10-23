@@ -54,7 +54,7 @@ internal class VedtakBot(
                     |*Utfall:* ${tolk(utfall)}
                     """.trimMargin()
             }
-        chatPostMessage(trådNøkkel = søknadId) {
+        chatPostMessage(trådNøkkel = behandlingId) {
             it.iconEmoji(emoji(status))
             it.blocks {
                 section {

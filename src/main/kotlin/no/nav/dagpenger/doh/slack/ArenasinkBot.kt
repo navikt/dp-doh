@@ -28,7 +28,7 @@ internal class ArenasinkBot(
         opprettet: LocalDateTime,
     ) {
         val utfallTekst = if (utfall) "Innvilget" else "Avslått"
-        chatPostMessage(trådNøkkel = søknadId) {
+        chatPostMessage(trådNøkkel = kildeId) {
             it.iconEmoji(":sink:")
             it.blocks {
                 section {
@@ -63,12 +63,11 @@ internal class ArenasinkBot(
     }
 
     fun postFeilet(
-        søknadId: String,
         kildeId: String,
         kildeSystem: String,
         opprettet: LocalDateTime,
     ) {
-        chatPostMessage(trådNøkkel = søknadId) {
+        chatPostMessage(trådNøkkel = kildeId) {
             it.iconEmoji(":sink:")
             it.blocks {
                 section {
@@ -80,9 +79,8 @@ internal class ArenasinkBot(
                 section {
                     markdownText(
                         """
-                        *Søknad ID:* $søknadId
-                        *Kilde ID:* $kildeId
-                        *Kilde System:* $kildeSystem
+                                                *Behandling ID:* $kildeId    
+                        ´                       *Kilde System:* $kildeSystem
                         """.trimIndent(),
                     )
                 }

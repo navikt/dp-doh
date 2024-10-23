@@ -12,16 +12,16 @@ import no.nav.helse.rapids_rivers.asLocalDateTime
 internal class ArenasinkVedtakFeiletMonitor(
     rapidsConnection: RapidsConnection,
     private val arenasinkBot: ArenasinkBot?,
-) :
-    River.PacketListener {
+) : River.PacketListener {
     init {
-        River(rapidsConnection).apply {
-            validate {
-                it.requireValue("@event_name", "arenasink_vedtak_feilet")
-                it.requireKey("søknadId", "kilde")
-                it.interestedIn("@opprettet")
-            }
-        }.register(this)
+        River(rapidsConnection)
+            .apply {
+                validate {
+                    it.requireValue("@event_name", "arenasink_vedtak_feilet")
+                    it.requireKey("kilde")
+                    it.interestedIn("@opprettet")
+                }
+            }.register(this)
     }
 
     private companion object {
@@ -32,17 +32,14 @@ internal class ArenasinkVedtakFeiletMonitor(
         packet: JsonMessage,
         context: MessageContext,
     ) {
-        val søknadId = packet["søknadId"].asText()
         val kildeId = packet["kilde"]["id"].asText()
         withLoggingContext(
-            "søknadId" to søknadId,
             "kildeId" to kildeId,
         ) {
             arenasinkBot?.postFeilet(
-                packet["søknadId"].asText(),
-                kildeId,
-                packet["kilde"]["system"].asText(),
-                packet["@opprettet"].asLocalDateTime(),
+                kildeId = kildeId,
+                kildeSystem = packet["kilde"]["system"].asText(),
+                opprettet = packet["@opprettet"].asLocalDateTime(),
             )
             logger.info { "Vi klarte ikke fatte vedtak i Arena" + "(slackbot er konfiguert? ${arenasinkBot != null})" }
         }
