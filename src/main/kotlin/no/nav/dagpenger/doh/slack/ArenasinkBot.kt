@@ -65,6 +65,7 @@ internal class ArenasinkBot(
     fun postFeilet(
         kildeId: String,
         kildeSystem: String,
+        feiltype: String,
         opprettet: LocalDateTime,
     ) {
         chatPostMessage(trådNøkkel = kildeId) {
@@ -79,8 +80,9 @@ internal class ArenasinkBot(
                 section {
                     markdownText(
                         """
-                                                *Behandling ID:* $kildeId    
-                        ´                       *Kilde System:* $kildeSystem
+                        *Behandling ID:* $kildeId    
+                        *Kilde System:* $kildeSystem
+                        *Feiltype:* $feiltype
                         """.trimIndent(),
                     )
                 }

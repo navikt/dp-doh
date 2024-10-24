@@ -24,6 +24,7 @@ class ArenasinkVedtakFeiletMonitorTest {
                 kildeId = any(),
                 kildeSystem = "dp-behandling",
                 opprettet = any(),
+                feiltype = "Ukjent feil",
             )
         }
     }
@@ -38,6 +39,8 @@ class ArenasinkVedtakFeiletMonitorTest {
             "id": "018ec828-d704-775b-b300-15ef4ac047d3",
             "system": "dp-behandling"
           },
+          "feiltype" : "Ukjent feil",
+          "feilmelding" : "Feilmelding",
           "@id": "79d3a8a8-72ff-4573-9c85-3c693a2e4320",
           "@opprettet": "2024-04-10T21:13:39.140035",
           "system_read_count": 0,
