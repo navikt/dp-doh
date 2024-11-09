@@ -1,11 +1,11 @@
 package no.nav.dagpenger.doh.monitor.quiz
 
+import com.github.navikt.tbd_libs.rapids_and_rivers.JsonMessage
+import com.github.navikt.tbd_libs.rapids_and_rivers.River
+import com.github.navikt.tbd_libs.rapids_and_rivers_api.MessageContext
+import com.github.navikt.tbd_libs.rapids_and_rivers_api.RapidsConnection
 import mu.KotlinLogging
 import no.nav.dagpenger.doh.slack.QuizMalBot
-import no.nav.helse.rapids_rivers.JsonMessage
-import no.nav.helse.rapids_rivers.MessageContext
-import no.nav.helse.rapids_rivers.RapidsConnection
-import no.nav.helse.rapids_rivers.River
 
 internal class NyQuizMalMonitor(
     rapidsConnection: RapidsConnection,
@@ -16,16 +16,17 @@ internal class NyQuizMalMonitor(
     }
 
     init {
-        River(rapidsConnection).apply {
-            validate {
-                it.demandValue("@event_name", "ny_quiz_mal")
-                it.requireKey(
-                    "@opprettet",
-                    "versjon_navn",
-                    "versjon_id",
-                )
-            }
-        }.register(this)
+        River(rapidsConnection)
+            .apply {
+                validate {
+                    it.demandValue("@event_name", "ny_quiz_mal")
+                    it.requireKey(
+                        "@opprettet",
+                        "versjon_navn",
+                        "versjon_id",
+                    )
+                }
+            }.register(this)
     }
 
     override fun onPacket(

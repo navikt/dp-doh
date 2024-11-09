@@ -1,16 +1,16 @@
 package no.nav.dagpenger.doh.monitor
 
 import com.fasterxml.jackson.databind.JsonNode
+import com.github.navikt.tbd_libs.rapids_and_rivers.JsonMessage
+import com.github.navikt.tbd_libs.rapids_and_rivers.River
+import com.github.navikt.tbd_libs.rapids_and_rivers.asLocalDateTime
+import com.github.navikt.tbd_libs.rapids_and_rivers_api.MessageContext
+import com.github.navikt.tbd_libs.rapids_and_rivers_api.MessageProblems
+import com.github.navikt.tbd_libs.rapids_and_rivers_api.RapidsConnection
 import io.prometheus.client.Counter
 import no.nav.dagpenger.doh.Kibana
 import no.nav.dagpenger.doh.humanReadableTime
 import no.nav.dagpenger.doh.slack.SlackClient
-import no.nav.helse.rapids_rivers.JsonMessage
-import no.nav.helse.rapids_rivers.MessageContext
-import no.nav.helse.rapids_rivers.MessageProblems
-import no.nav.helse.rapids_rivers.RapidsConnection
-import no.nav.helse.rapids_rivers.River
-import no.nav.helse.rapids_rivers.asLocalDateTime
 import org.slf4j.LoggerFactory
 import java.time.temporal.ChronoUnit
 
@@ -21,23 +21,25 @@ internal class BehovUtenLøsningMonitor(
     private companion object {
         private val sikkerLog = LoggerFactory.getLogger("tjenestekall")
         private val uløsteBehovCounter =
-            Counter.build("dp_uloste_behov", "Antall behov uten løsning")
+            Counter
+                .build("dp_uloste_behov", "Antall behov uten løsning")
                 .labelNames("behovType")
                 .register()
     }
 
     init {
-        River(rapidsConnection).apply {
-            validate {
-                it.demandValue("@event_name", "behov_uten_fullstendig_løsning")
-                it.requireKey("@id", "behov_id", "ufullstendig_behov")
-                it.requireArray("forventet")
-                it.requireArray("løsninger")
-                it.requireArray("mangler")
-                it.require("@opprettet", JsonNode::asLocalDateTime)
-                it.require("behov_opprettet", JsonNode::asLocalDateTime)
-            }
-        }.register(this)
+        River(rapidsConnection)
+            .apply {
+                validate {
+                    it.demandValue("@event_name", "behov_uten_fullstendig_løsning")
+                    it.requireKey("@id", "behov_id", "ufullstendig_behov")
+                    it.requireArray("forventet")
+                    it.requireArray("løsninger")
+                    it.requireArray("mangler")
+                    it.require("@opprettet", JsonNode::asLocalDateTime)
+                    it.require("behov_opprettet", JsonNode::asLocalDateTime)
+                }
+            }.register(this)
     }
 
     override fun onError(

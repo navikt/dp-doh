@@ -1,11 +1,11 @@
 package no.nav.dagpenger.doh.monitor.behandling
 
+import com.github.navikt.tbd_libs.rapids_and_rivers.test_support.TestRapid
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
 import io.prometheus.client.CollectorRegistry
 import no.nav.dagpenger.doh.slack.VedtakBot
-import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.Assertions.assertEquals
 import kotlin.test.Test
 

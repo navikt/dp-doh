@@ -1,10 +1,10 @@
 package no.nav.dagpenger.doh.monitor
 
+import com.github.navikt.tbd_libs.rapids_and_rivers.JsonMessage
+import com.github.navikt.tbd_libs.rapids_and_rivers.River
+import com.github.navikt.tbd_libs.rapids_and_rivers_api.MessageContext
+import com.github.navikt.tbd_libs.rapids_and_rivers_api.RapidsConnection
 import mu.KotlinLogging
-import no.nav.helse.rapids_rivers.JsonMessage
-import no.nav.helse.rapids_rivers.MessageContext
-import no.nav.helse.rapids_rivers.RapidsConnection
-import no.nav.helse.rapids_rivers.River
 
 internal class MeldingerUtenEnvelopeMonitor(
     rapidsConnection: RapidsConnection,
@@ -14,14 +14,15 @@ internal class MeldingerUtenEnvelopeMonitor(
     }
 
     init {
-        River(rapidsConnection).apply {
-            validate {
-                it.forbid(
-                    "@id",
-                    "@opprettet",
-                )
-            }
-        }.register(this)
+        River(rapidsConnection)
+            .apply {
+                validate {
+                    it.forbid(
+                        "@id",
+                        "@opprettet",
+                    )
+                }
+            }.register(this)
     }
 
     override fun onPacket(

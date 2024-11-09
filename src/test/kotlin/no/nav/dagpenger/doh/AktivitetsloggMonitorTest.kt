@@ -1,8 +1,8 @@
 package no.nav.dagpenger.doh
 
+import com.github.navikt.tbd_libs.rapids_and_rivers.test_support.TestRapid
 import io.prometheus.client.CollectorRegistry
 import no.nav.dagpenger.doh.monitor.AktivitetsloggMonitor
-import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -24,46 +24,48 @@ internal class AktivitetsloggMonitorTest {
     fun `skal måle tilstandsendringer`() {
         rapid.sendTestMessage(vedtakEndretJson)
 
-        registry.getSampleValue(
-            "dp_aktivitet_total",
-            listOf(
-                "alvorlighetsgrad",
-                "melding",
-                "tilstand",
-                "harFlereFeil",
-            ).toTypedArray(),
-            listOf(
-                "WARN",
-                "foo",
-                "ny",
-                "false",
-            ).toTypedArray(),
-        ).also {
-            assertEquals(it, 1.0)
-        }
+        registry
+            .getSampleValue(
+                "dp_aktivitet_total",
+                listOf(
+                    "alvorlighetsgrad",
+                    "melding",
+                    "tilstand",
+                    "harFlereFeil",
+                ).toTypedArray(),
+                listOf(
+                    "WARN",
+                    "foo",
+                    "ny",
+                    "false",
+                ).toTypedArray(),
+            ).also {
+                assertEquals(it, 1.0)
+            }
     }
 
     @Test
     fun `skal telle om det er flere feil ved tilstandsendringer`() {
         rapid.sendTestMessage(vedtakEndretMedFlereFeilJson)
 
-        registry.getSampleValue(
-            "dp_aktivitet_total",
-            listOf(
-                "alvorlighetsgrad",
-                "melding",
-                "tilstand",
-                "harFlereFeil",
-            ).toTypedArray(),
-            listOf(
-                "ERROR",
-                "foo",
-                "ny",
-                "true",
-            ).toTypedArray(),
-        ).also {
-            assertEquals(it, 2.0)
-        }
+        registry
+            .getSampleValue(
+                "dp_aktivitet_total",
+                listOf(
+                    "alvorlighetsgrad",
+                    "melding",
+                    "tilstand",
+                    "harFlereFeil",
+                ).toTypedArray(),
+                listOf(
+                    "ERROR",
+                    "foo",
+                    "ny",
+                    "true",
+                ).toTypedArray(),
+            ).also {
+                assertEquals(it, 2.0)
+            }
     }
 }
 

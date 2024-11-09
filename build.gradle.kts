@@ -20,11 +20,14 @@ dependencies {
     implementation(libs.konfig)
     implementation(libs.kotlin.logging)
     implementation("com.bazaarvoice.jackson:rison:2.9.10.2")
+    implementation(libs.prometheus.simpleclient)
 
-    testImplementation(libs.mockk)
     implementation("com.slack.api:slack-api-client:$slackClientVersion")
     implementation("com.slack.api:slack-api-model-kotlin-extension:$slackClientVersion")
     implementation("com.slack.api:slack-api-client-kotlin-extension:$slackClientVersion")
+
+    testImplementation(libs.mockk)
+    testImplementation(libs.rapids.and.rivers.test)
 }
 
 tasks.withType<Jar>().configureEach {

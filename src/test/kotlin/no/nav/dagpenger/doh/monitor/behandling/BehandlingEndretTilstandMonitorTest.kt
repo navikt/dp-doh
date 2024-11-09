@@ -1,7 +1,7 @@
 package no.nav.dagpenger.doh.monitor.behandling
 
+import com.github.navikt.tbd_libs.rapids_and_rivers.test_support.TestRapid
 import io.prometheus.client.CollectorRegistry
-import no.nav.helse.rapids_rivers.testsupport.TestRapid
 import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals

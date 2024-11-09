@@ -1,35 +1,38 @@
 package no.nav.dagpenger.doh.monitor
 
 import com.fasterxml.jackson.databind.JsonNode
+import com.github.navikt.tbd_libs.rapids_and_rivers.JsonMessage
+import com.github.navikt.tbd_libs.rapids_and_rivers.River
+import com.github.navikt.tbd_libs.rapids_and_rivers_api.MessageContext
+import com.github.navikt.tbd_libs.rapids_and_rivers_api.RapidsConnection
 import io.prometheus.client.Counter
-import no.nav.helse.rapids_rivers.JsonMessage
-import no.nav.helse.rapids_rivers.MessageContext
-import no.nav.helse.rapids_rivers.RapidsConnection
-import no.nav.helse.rapids_rivers.River
 
-internal class AktivitetsloggMonitor(rapidsConnection: RapidsConnection) : River.PacketListener {
+internal class AktivitetsloggMonitor(
+    rapidsConnection: RapidsConnection,
+) : River.PacketListener {
     private companion object {
         private val aktivitetCounter =
-            Counter.build("dp_aktivitet_total", "Antall aktiviteter")
+            Counter
+                .build("dp_aktivitet_total", "Antall aktiviteter")
                 .labelNames(
                     "alvorlighetsgrad",
                     "melding",
                     "tilstand",
                     "harFlereFeil",
-                )
-                .register()
+                ).register()
     }
 
     init {
-        River(rapidsConnection).apply {
-            validate {
-                it.requireValue("@event_name", "vedtak_endret")
-                it.requireKey("forrigeTilstand")
-                it.requireArray("aktivitetslogg.aktiviteter") {
-                    requireKey("alvorlighetsgrad", "melding")
+        River(rapidsConnection)
+            .apply {
+                validate {
+                    it.requireValue("@event_name", "vedtak_endret")
+                    it.requireKey("forrigeTilstand")
+                    it.requireArray("aktivitetslogg.aktiviteter") {
+                        requireKey("alvorlighetsgrad", "melding")
+                    }
                 }
-            }
-        }.register(this)
+            }.register(this)
     }
 
     override fun onPacket(
@@ -40,7 +43,8 @@ internal class AktivitetsloggMonitor(rapidsConnection: RapidsConnection) : River
         val harFlereFeil =
             packet["aktivitetslogg.aktiviteter"]
                 .takeIf(JsonNode::isArray)
-                ?.count { it["alvorlighetsgrad"].asText() in listOf("ERROR") }.let {
+                ?.count { it["alvorlighetsgrad"].asText() in listOf("ERROR") }
+                .let {
                     it !== null && it > 1
                 }
 
@@ -48,12 +52,13 @@ internal class AktivitetsloggMonitor(rapidsConnection: RapidsConnection) : River
             .takeIf(JsonNode::isArray)
             ?.filter { it["alvorlighetsgrad"].asText() in listOf("WARN", "ERROR") }
             ?.onEach {
-                aktivitetCounter.labels(
-                    it["alvorlighetsgrad"].asText(),
-                    it["melding"].asText(),
-                    tilstand,
-                    harFlereFeil.toString(),
-                ).inc()
+                aktivitetCounter
+                    .labels(
+                        it["alvorlighetsgrad"].asText(),
+                        it["melding"].asText(),
+                        tilstand,
+                        harFlereFeil.toString(),
+                    ).inc()
             }
     }
 }
