@@ -1,5 +1,9 @@
 package no.nav.dagpenger.doh
 
+import io.micrometer.core.instrument.Clock
+import io.micrometer.prometheusmetrics.PrometheusConfig
+import io.micrometer.prometheusmetrics.PrometheusMeterRegistry
+import io.prometheus.metrics.model.registry.PrometheusRegistry
 import no.nav.dagpenger.doh.Configuration.arenaSinkBot
 import no.nav.dagpenger.doh.Configuration.publiserArenaVedtak
 import no.nav.dagpenger.doh.Configuration.quizMalBot
@@ -21,8 +25,10 @@ import kotlin.time.ExperimentalTime
 @ExperimentalTime
 fun main() {
     RapidApplication
-        .create(Configuration.asMap())
-        .apply {
+        .create(
+            Configuration.asMap(),
+            meterRegistry = PrometheusMeterRegistry(PrometheusConfig.DEFAULT, PrometheusRegistry.defaultRegistry, Clock.SYSTEM),
+        ).apply {
             AppStateMonitor(this, slackAlertClient, Duration.ofMinutes(5))
             NyQuizMalMonitor(this, quizMalBot)
             BehovUtenLøsningMonitor(this, slackAlertClient)

@@ -2,8 +2,13 @@ package no.nav.dagpenger.doh.monitor
 
 import io.prometheus.client.Counter
 import io.prometheus.client.Histogram
+import io.prometheus.metrics.simpleclient.bridge.SimpleclientCollector
 
 object BehandlingMetrikker {
+    init {
+        SimpleclientCollector.builder().register()
+    }
+
     val manuellCounter =
         Counter
             .build("dp_manuell_behandling", "Søknader som blir sendt til manuell behandling")
