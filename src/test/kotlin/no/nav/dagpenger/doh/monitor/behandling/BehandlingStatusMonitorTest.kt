@@ -4,7 +4,9 @@ import com.github.navikt.tbd_libs.rapids_and_rivers.test_support.TestRapid
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
-import io.prometheus.client.CollectorRegistry
+import no.nav.dagpenger.doh.monitor.BehandlingMetrikker.behandlingAvbruttCounter
+import no.nav.dagpenger.doh.monitor.BehandlingMetrikker.behandlingStatusCounter
+import no.nav.dagpenger.doh.monitor.BehandlingMetrikker.behandlingVedtakCounter
 import no.nav.dagpenger.doh.slack.VedtakBot
 import org.junit.jupiter.api.Assertions.assertEquals
 import kotlin.test.Test
@@ -205,38 +207,16 @@ class BehandlingStatusMonitorTest {
         """.trimIndent()
 
     private object Metrikker {
-        fun behandlingStatus(status: String): Double =
-            CollectorRegistry.defaultRegistry.getSampleValue(
-                "dp_behandling_status_total",
-                "status" to status,
-            )
+        fun behandlingStatus(status: String): Double = behandlingStatusCounter.labelValues(status).get()
 
-        fun behandlingAvbrutt(årsak: String): Double =
-            CollectorRegistry.defaultRegistry.getSampleValue(
-                "dp_behandling_avbrutt_total",
-                "aarsak" to årsak,
-            )
+        fun behandlingAvbrutt(årsak: String): Double = behandlingAvbruttCounter.labelValues(årsak).get()
 
         fun behandlingVedtak(
             utfall: Boolean,
             automatisering: Boolean,
         ): Double =
-            CollectorRegistry.defaultRegistry.getSampleValue(
-                "dp_behandling_vedtak_total",
-                "utfall" to utfall.toString(),
-                "automatisk" to if (automatisering) "Automatisk" else "Manuell",
-            )
-
-        private fun CollectorRegistry.getSampleValue(
-            name: String,
-            vararg labels: Pair<String, String>,
-        ): Double {
-            val labelsMap = labels.toMap()
-            return getSampleValue(
-                name,
-                labelsMap.keys.toTypedArray<String>(),
-                labelsMap.values.toTypedArray<String>(),
-            )
-        }
+            behandlingVedtakCounter
+                .labelValues(utfall.toString(), if (automatisering) "Automatisk" else "Manuell")
+                .get()
     }
 }

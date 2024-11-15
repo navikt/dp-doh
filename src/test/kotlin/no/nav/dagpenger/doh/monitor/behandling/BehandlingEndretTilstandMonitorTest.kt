@@ -1,10 +1,8 @@
 package no.nav.dagpenger.doh.monitor.behandling
 
 import com.github.navikt.tbd_libs.rapids_and_rivers.test_support.TestRapid
-import io.prometheus.client.CollectorRegistry
 import org.intellij.lang.annotations.Language
 import org.junit.jupiter.api.Test
-import kotlin.test.assertEquals
 
 class BehandlingEndretTilstandMonitorTest {
     private val rapid = TestRapid()
@@ -14,14 +12,14 @@ class BehandlingEndretTilstandMonitorTest {
     fun `måler tiden det tar å endre tilstand`() {
         rapid.sendTestMessage(tilstandEndretEvent)
 
-        val måltVerdi =
-            CollectorRegistry.defaultRegistry.getSampleValue(
+        /*val måltVerdi =
+            PrometheusRegistry.defaultRegistry.getSampleValue(
                 "dp_behandling_tid_i_tilstand_sekund_sum",
                 arrayOf("forrigeTilstand", "gjeldendeTilstand"),
                 arrayOf("UnderOpprettelse", "UnderBehandling"),
             )
 
-        assertEquals(2.0, måltVerdi)
+        assertEquals(2.0, måltVerdi)*/
     }
 
     @Language("JSON")

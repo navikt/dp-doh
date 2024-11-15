@@ -7,7 +7,7 @@ import com.github.navikt.tbd_libs.rapids_and_rivers.asLocalDateTime
 import com.github.navikt.tbd_libs.rapids_and_rivers_api.MessageContext
 import com.github.navikt.tbd_libs.rapids_and_rivers_api.MessageProblems
 import com.github.navikt.tbd_libs.rapids_and_rivers_api.RapidsConnection
-import io.prometheus.client.Counter
+import io.prometheus.metrics.core.metrics.Counter
 import no.nav.dagpenger.doh.Kibana
 import no.nav.dagpenger.doh.humanReadableTime
 import no.nav.dagpenger.doh.slack.SlackClient
@@ -22,7 +22,9 @@ internal class BehovUtenLøsningMonitor(
         private val sikkerLog = LoggerFactory.getLogger("tjenestekall")
         private val uløsteBehovCounter =
             Counter
-                .build("dp_uloste_behov", "Antall behov uten løsning")
+                .builder()
+                .name("dp_uloste_behov")
+                .help("Antall behov uten løsning")
                 .labelNames("behovType")
                 .register()
     }
@@ -54,7 +56,7 @@ internal class BehovUtenLøsningMonitor(
         context: MessageContext,
     ) {
         packet["mangler"].map(JsonNode::asText).forEach {
-            uløsteBehovCounter.labels(it).inc()
+            uløsteBehovCounter.labelValues(it).inc()
         }
 
         slackClient?.postMessage(

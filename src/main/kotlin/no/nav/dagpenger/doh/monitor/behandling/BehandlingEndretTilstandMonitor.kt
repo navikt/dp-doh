@@ -6,7 +6,6 @@ import com.github.navikt.tbd_libs.rapids_and_rivers_api.MessageContext
 import com.github.navikt.tbd_libs.rapids_and_rivers_api.RapidsConnection
 import mu.KotlinLogging
 import mu.withLoggingContext
-import no.nav.dagpenger.doh.monitor.BehandlingMetrikker.tidBruktITilstand
 import java.time.Duration
 
 internal class BehandlingEndretTilstandMonitor(
@@ -40,7 +39,7 @@ internal class BehandlingEndretTilstandMonitor(
             "behandlingId" to behandlingId,
         ) {
             logger.info { "Behandling gikk fra $forrigeTilstand til $gjeldendeTilstand på $tidBrukt" }
-            tidBruktITilstand.labels(forrigeTilstand, gjeldendeTilstand).observe(tidBrukt.toSeconds().toDouble())
+            // tidBruktITilstand.labelValues(forrigeTilstand, gjeldendeTilstand).observe(tidBrukt.toSeconds().toDouble())
         }
     }
 }

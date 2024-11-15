@@ -48,7 +48,7 @@ internal class BehandlingStatusMonitor(
         ) {
             val eventName = packet["@event_name"].asText()
             logger.info { "Vi har behandling med $eventName" + "(slackbot er konfiguert? ${vedtakBot != null})" }
-            behandlingStatusCounter.labels(eventName.lowercase()).inc()
+            behandlingStatusCounter.labelValues(eventName.lowercase()).inc()
 
             val status =
                 when (eventName) {
@@ -68,7 +68,7 @@ internal class BehandlingStatusMonitor(
             val årsak = packet["årsak"].takeUnless { årsak -> årsak.isMissingNode }?.asText()
 
             if (status == Status.BEHANDLING_AVBRUTT) {
-                behandlingAvbruttCounter.labels(årsak ?: "Ukjent").inc()
+                behandlingAvbruttCounter.labelValues(årsak ?: "Ukjent").inc()
                 return
             }
 
@@ -88,7 +88,7 @@ internal class BehandlingStatusMonitor(
 
             if (status == Status.VEDTAK_FATTET && utfall != null && automatisk != null) {
                 val automatisering = if (automatisk) "Automatisk" else "Manuell"
-                behandlingVedtakCounter.labels(utfall.toString(), automatisering).inc()
+                behandlingVedtakCounter.labelValues(utfall.toString(), automatisering).inc()
             }
         }
     }

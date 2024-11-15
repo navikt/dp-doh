@@ -1,49 +1,57 @@
 package no.nav.dagpenger.doh.monitor
 
-import io.prometheus.client.Counter
-import io.prometheus.client.Histogram
-import io.prometheus.metrics.simpleclient.bridge.SimpleclientCollector
+import io.prometheus.metrics.core.metrics.Counter
+import io.prometheus.metrics.core.metrics.Histogram
 
 object BehandlingMetrikker {
-    init {
-        SimpleclientCollector.builder().register()
-    }
-
     val manuellCounter =
         Counter
-            .build("dp_manuell_behandling", "Søknader som blir sendt til manuell behandling")
+            .builder()
+            .name("dp_manuell_behandling")
+            .help("Søknader som blir sendt til manuell behandling")
             .labelNames("grunn")
             .register()
 
     val resultatCounter =
         Counter
-            .build("dp_prosessresultat", "Resultat av automatiseringsprosessen")
+            .builder()
+            .name("dp_prosessresultat")
+            .help("Resultat av automatiseringsprosessen")
             .labelNames("resultat")
             .register()
 
     val behandlingStatusCounter =
         Counter
-            .build("dp_behandling_status", "Søknader og status")
+            .builder()
+            .name("dp_behandling_status")
+            .help("Søknader og status")
             .labelNames("status")
             .register()
 
     val behandlingVedtakCounter =
         Counter
-            .build("dp_behandling_vedtak", "Behandlinger som fører til fattet vedtak")
+            .builder()
+            .name("dp_behandling_vedtak")
+            .help("Behandlinger som fører til fattet vedtak")
             .labelNames("utfall", "automatisk")
             .register()
 
     val behandlingAvbruttCounter =
         Counter
-            .build("dp_behandling_avbrutt", "Behandlinger som har blitt avbrutt")
+            .builder()
+            .name("dp_behandling_avbrutt")
+            .help("Behandlinger som har blitt avbrutt")
             .labelNames("aarsak")
             .register()
 
     val tidBruktITilstand =
         Histogram
-            .build("dp_behandling_tid_i_tilstand_sekund", "Antall sekund brukt i hver tilstand")
+            .builder()
+            .name("dp_behandling_tid_i_tilstand_sekund")
+            .help("Antall sekund brukt i hver tilstand")
             .labelNames("forrigeTilstand", "gjeldendeTilstand")
-            .buckets(
+            .classicOnly() // TODO: denne tas bort når prometheus scraper native metrics
+            .classicUpperBounds(
                 1.0,
                 5.0,
                 10.0,

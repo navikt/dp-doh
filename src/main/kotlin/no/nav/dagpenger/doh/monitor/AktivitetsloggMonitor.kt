@@ -5,15 +5,17 @@ import com.github.navikt.tbd_libs.rapids_and_rivers.JsonMessage
 import com.github.navikt.tbd_libs.rapids_and_rivers.River
 import com.github.navikt.tbd_libs.rapids_and_rivers_api.MessageContext
 import com.github.navikt.tbd_libs.rapids_and_rivers_api.RapidsConnection
-import io.prometheus.client.Counter
+import io.prometheus.metrics.core.metrics.Counter
 
 internal class AktivitetsloggMonitor(
     rapidsConnection: RapidsConnection,
 ) : River.PacketListener {
-    private companion object {
-        private val aktivitetCounter =
+    companion object {
+        val aktivitetCounter =
             Counter
-                .build("dp_aktivitet_total", "Antall aktiviteter")
+                .builder()
+                .name("dp_aktivitet_total")
+                .help("Antall aktiviteter")
                 .labelNames(
                     "alvorlighetsgrad",
                     "melding",
@@ -53,7 +55,7 @@ internal class AktivitetsloggMonitor(
             ?.filter { it["alvorlighetsgrad"].asText() in listOf("WARN", "ERROR") }
             ?.onEach {
                 aktivitetCounter
-                    .labels(
+                    .labelValues(
                         it["alvorlighetsgrad"].asText(),
                         it["melding"].asText(),
                         tilstand,
