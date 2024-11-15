@@ -77,6 +77,4 @@ internal class BehovUtenLøsningMonitor(
             ),
         )
     }
-
-    private fun JsonNode.toLabel() = this.map(JsonNode::asText).sorted().joinToString()
 }

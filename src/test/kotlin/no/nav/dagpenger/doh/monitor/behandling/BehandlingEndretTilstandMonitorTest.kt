@@ -1,7 +1,9 @@
 package no.nav.dagpenger.doh.monitor.behandling
 
 import com.github.navikt.tbd_libs.rapids_and_rivers.test_support.TestRapid
+import no.nav.dagpenger.doh.monitor.BehandlingMetrikker.tidBruktITilstand
 import org.intellij.lang.annotations.Language
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 class BehandlingEndretTilstandMonitorTest {
@@ -12,14 +14,15 @@ class BehandlingEndretTilstandMonitorTest {
     fun `måler tiden det tar å endre tilstand`() {
         rapid.sendTestMessage(tilstandEndretEvent)
 
-        /*val måltVerdi =
-            PrometheusRegistry.defaultRegistry.getSampleValue(
-                "dp_behandling_tid_i_tilstand_sekund_sum",
-                arrayOf("forrigeTilstand", "gjeldendeTilstand"),
-                arrayOf("UnderOpprettelse", "UnderBehandling"),
-            )
+        val målinger = tidBruktITilstand.collect()
 
-        assertEquals(2.0, måltVerdi)*/
+        assertEquals(1, målinger.dataPoints.sumOf { it.count }, "Antall overganger observert")
+
+        with(tidBruktITilstand.collect().dataPoints.single()) {
+            assertEquals(4.0, sum, "Sekunder brukt på å endre tilstand")
+            assertEquals("UnderOpprettelse", labels.get("forrigeTilstand"))
+            assertEquals("UnderBehandling", labels.get("gjeldendeTilstand"))
+        }
     }
 
     @Language("JSON")
@@ -31,7 +34,7 @@ class BehandlingEndretTilstandMonitorTest {
         |  "forrigeTilstand": "UnderOpprettelse",
         |  "gjeldendeTilstand": "UnderBehandling",
         |  "forventetFerdig": "2024-07-03T16:39:50.006487",
-        |  "tidBrukt": "PT2.661S",
+        |  "tidBrukt": "PT4.661S",
         |  "@id": "013fbdec-07cb-438c-acb1-573f92c9919f",
         |  "@opprettet": "2024-07-03T15:39:50.007145",
         |  "system_read_count": 0,
