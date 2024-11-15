@@ -21,7 +21,7 @@ dependencies {
     implementation(libs.kotlin.logging)
     implementation("com.bazaarvoice.jackson:rison:2.9.10.2")
     implementation(libs.prometheus.simpleclient)
-    implementation("io.prometheus:prometheus-metrics-simpleclient-bridge:1.0.0")
+    implementation("io.prometheus:prometheus-metrics-simpleclient-bridge:1.3.3")
 
     implementation("com.slack.api:slack-api-client:$slackClientVersion")
     implementation("com.slack.api:slack-api-model-kotlin-extension:$slackClientVersion")
