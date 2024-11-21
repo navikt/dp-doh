@@ -4,7 +4,9 @@ import com.github.navikt.tbd_libs.rapids_and_rivers.JsonMessage
 import com.github.navikt.tbd_libs.rapids_and_rivers.River
 import com.github.navikt.tbd_libs.rapids_and_rivers.asLocalDateTime
 import com.github.navikt.tbd_libs.rapids_and_rivers_api.MessageContext
+import com.github.navikt.tbd_libs.rapids_and_rivers_api.MessageMetadata
 import com.github.navikt.tbd_libs.rapids_and_rivers_api.RapidsConnection
+import io.micrometer.core.instrument.MeterRegistry
 import mu.KotlinLogging
 import mu.withLoggingContext
 import no.nav.dagpenger.doh.monitor.BehandlingMetrikker.behandlingAvbruttCounter
@@ -19,12 +21,14 @@ internal class BehandlingStatusMonitor(
     init {
         River(rapidsConnection)
             .apply {
-                validate {
+                precondition {
+                    it.forbid("meldingOmVedtakProdusent") // Unngå å telle republiseringer fra dp-saksbehandling
                     it.requireAny(
                         "@event_name",
                         listOf("behandling_opprettet", "forslag_til_vedtak", "vedtak_fattet", "behandling_avbrutt"),
                     )
-                    it.rejectKey("meldingOmVedtakProdusent") // Unngå å telle republiseringer fra dp-saksbehandling
+                }
+                validate {
                     it.requireKey("behandlingId", "søknadId")
                     it.interestedIn("@opprettet", "årsak", "avklaringer", "fastsatt", "utfall", "automatisk")
                 }
@@ -38,6 +42,8 @@ internal class BehandlingStatusMonitor(
     override fun onPacket(
         packet: JsonMessage,
         context: MessageContext,
+        metadata: MessageMetadata,
+        meterRegistry: MeterRegistry,
     ) {
         val behandlingId = packet["behandlingId"].asText()
         val søknadId = packet["søknadId"].asText()

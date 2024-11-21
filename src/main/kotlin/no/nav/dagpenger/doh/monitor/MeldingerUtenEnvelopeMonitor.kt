@@ -3,7 +3,9 @@ package no.nav.dagpenger.doh.monitor
 import com.github.navikt.tbd_libs.rapids_and_rivers.JsonMessage
 import com.github.navikt.tbd_libs.rapids_and_rivers.River
 import com.github.navikt.tbd_libs.rapids_and_rivers_api.MessageContext
+import com.github.navikt.tbd_libs.rapids_and_rivers_api.MessageMetadata
 import com.github.navikt.tbd_libs.rapids_and_rivers_api.RapidsConnection
+import io.micrometer.core.instrument.MeterRegistry
 import mu.KotlinLogging
 
 internal class MeldingerUtenEnvelopeMonitor(
@@ -28,6 +30,8 @@ internal class MeldingerUtenEnvelopeMonitor(
     override fun onPacket(
         packet: JsonMessage,
         context: MessageContext,
+        metadata: MessageMetadata,
+        meterRegistry: MeterRegistry,
     ) {
         sikkerlogg.info { "Mottok pakke som ikke bruker envelope. Packet: ${packet.toJson()}" }
     }

@@ -4,7 +4,9 @@ import com.github.navikt.tbd_libs.rapids_and_rivers.JsonMessage
 import com.github.navikt.tbd_libs.rapids_and_rivers.River
 import com.github.navikt.tbd_libs.rapids_and_rivers.asLocalDateTime
 import com.github.navikt.tbd_libs.rapids_and_rivers_api.MessageContext
+import com.github.navikt.tbd_libs.rapids_and_rivers_api.MessageMetadata
 import com.github.navikt.tbd_libs.rapids_and_rivers_api.RapidsConnection
+import io.micrometer.core.instrument.MeterRegistry
 import mu.KotlinLogging
 import mu.withLoggingContext
 import no.nav.dagpenger.doh.slack.ArenasinkBot
@@ -16,8 +18,8 @@ internal class ArenasinkVedtakFeiletMonitor(
     init {
         River(rapidsConnection)
             .apply {
+                precondition { it.requireValue("@event_name", "arenasink_vedtak_feilet") }
                 validate {
-                    it.requireValue("@event_name", "arenasink_vedtak_feilet")
                     it.requireKey("kilde")
                     it.interestedIn("@opprettet", "feiltype")
                 }
@@ -31,6 +33,8 @@ internal class ArenasinkVedtakFeiletMonitor(
     override fun onPacket(
         packet: JsonMessage,
         context: MessageContext,
+        metadata: MessageMetadata,
+        meterRegistry: MeterRegistry,
     ) {
         val kildeId = packet["kilde"]["id"].asText()
         val feiltype = packet["feiltype"].asText()
