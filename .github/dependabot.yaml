@@ -21,10 +21,3 @@ updates:
       interval: "daily"
       time: "10:05"
       timezone: "Europe/Oslo"
-  # Maintain dependencies for npm
-  - package-ecosystem: "npm"
-    directory: "/"
-    schedule:
-      interval: "daily"
-      time: "10:05"
-      timezone: "Europe/Oslo"
