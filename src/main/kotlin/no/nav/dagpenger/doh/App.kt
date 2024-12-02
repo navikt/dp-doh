@@ -14,7 +14,6 @@ import no.nav.dagpenger.doh.monitor.behandling.ArenasinkVedtakFeiletMonitor
 import no.nav.dagpenger.doh.monitor.behandling.ArenasinkVedtakOpprettetMonitor
 import no.nav.dagpenger.doh.monitor.behandling.BehandlingEndretTilstandMonitor
 import no.nav.dagpenger.doh.monitor.behandling.BehandlingStatusMonitor
-import no.nav.dagpenger.doh.monitor.behandling.BehandlingStårFastMonitor
 import no.nav.dagpenger.doh.monitor.quiz.NyQuizMalMonitor
 import no.nav.helse.rapids_rivers.RapidApplication
 import java.time.Duration
@@ -30,7 +29,6 @@ fun main() {
             NyQuizMalMonitor(this, quizMalBot)
             BehovUtenLøsningMonitor(this, slackAlertClient)
 
-            BehandlingStårFastMonitor(this)
             BehandlingEndretTilstandMonitor(this)
             BehandlingStatusMonitor(this, vedtakBot)
             if (publiserArenaVedtak) {
