@@ -9,6 +9,7 @@ import no.nav.dagpenger.doh.Configuration.vedtakBot
 import no.nav.dagpenger.doh.monitor.AppStateMonitor
 import no.nav.dagpenger.doh.monitor.BehovUtenLøsningMonitor
 import no.nav.dagpenger.doh.monitor.MeldingerUtenEnvelopeMonitor
+import no.nav.dagpenger.doh.monitor.OpprettJournalpostFeiletMonitor
 import no.nav.dagpenger.doh.monitor.SaksbehandlingAlertMonitor
 import no.nav.dagpenger.doh.monitor.behandling.ArenasinkVedtakFeiletMonitor
 import no.nav.dagpenger.doh.monitor.behandling.ArenasinkVedtakOpprettetMonitor
@@ -37,5 +38,7 @@ fun main() {
             ArenasinkVedtakFeiletMonitor(this, arenaSinkBot)
             MeldingerUtenEnvelopeMonitor(this)
             SaksbehandlingAlertMonitor(this, Configuration.slackClient(stsbSlackAlertChannel))
+
+            OpprettJournalpostFeiletMonitor(this, slackAlertClient)
         }.start()
 }
