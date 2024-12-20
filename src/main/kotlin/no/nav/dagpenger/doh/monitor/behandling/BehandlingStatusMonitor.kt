@@ -3,6 +3,7 @@ package no.nav.dagpenger.doh.monitor.behandling
 import com.github.navikt.tbd_libs.rapids_and_rivers.JsonMessage
 import com.github.navikt.tbd_libs.rapids_and_rivers.River
 import com.github.navikt.tbd_libs.rapids_and_rivers.asLocalDateTime
+import com.github.navikt.tbd_libs.rapids_and_rivers.isMissingOrNull
 import com.github.navikt.tbd_libs.rapids_and_rivers_api.MessageContext
 import com.github.navikt.tbd_libs.rapids_and_rivers_api.MessageMetadata
 import com.github.navikt.tbd_libs.rapids_and_rivers_api.RapidsConnection
@@ -65,11 +66,7 @@ internal class BehandlingStatusMonitor(
                     else -> return
                 }
 
-            val utfall =
-                when (status) {
-                    Status.VEDTAK_FATTET -> packet["fastsatt"]["utfall"].takeIf { fastsatt -> fastsatt.isBoolean }?.asBoolean()
-                    else -> packet["utfall"].takeIf { fastsatt -> fastsatt.isBoolean }?.asBoolean()
-                }
+            val utfall = packet["fastsatt"].takeUnless { it.isMissingOrNull() }?.let { it["utfall"].asBoolean() }
             val automatisk = packet["automatisk"].takeIf { automatisk -> automatisk.isBoolean }?.asBoolean()
             val årsak = packet["årsak"].takeUnless { årsak -> årsak.isMissingNode }?.asText()
 
@@ -84,10 +81,10 @@ internal class BehandlingStatusMonitor(
                 søknadId = søknadId,
                 opprettet = packet["@opprettet"].asLocalDateTime(),
                 årsak = årsak,
-                avklaringer =
-                    packet["avklaringer"].map { avklaring ->
-                        avklaring["type"].asText()
-                    },
+                avklaringer = emptyList(),
+                /*packet["avklaringer"].map { avklaring ->
+                    avklaring["type"].asText()
+                },*/
                 utfall = utfall,
                 automatisk = automatisk,
             )

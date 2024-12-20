@@ -91,7 +91,9 @@ class BehandlingStatusMonitorTest {
                 false,
             )
         }
-        assertEquals(avklaringer.captured.size, 6)
+
+        // Har ingen avklaringer i forslag lenger
+        assertEquals(avklaringer.captured.size, 0)
 
         assertEquals(Metrikker.behandlingStatus("forslag_til_vedtak"), 1.0)
     }
@@ -153,38 +155,9 @@ class BehandlingStatusMonitorTest {
           "søknad_uuid": "4afce924-6cb4-4ab4-a92b-fe91e24f31bf",
           "@id": "4461e599-e60e-41f6-b052-771d6bde0108",
           "@opprettet": "2024-04-10T12:28:31.533933",
-          "avklaringer": [
-            {
-              "type": "SvangerskapsrelaterteSykepenger",
-              "utfall": "Manuell",
-              "begrunnelse": "Personen har sykepenger som kan være svangerskapsrelaterte"
-            },
-            {
-              "type": "EØSArbeid",
-              "utfall": "Manuell",
-              "begrunnelse": "Personen har oppgitt arbeid fra EØS"
-            },
-            {
-              "type": "JobbetUtenforNorge",
-              "utfall": "Manuell",
-              "begrunnelse": "Personen har oppgitt arbeid utenfor Norge"
-            },
-            {
-              "type": "InntektNesteKalendermåned",
-              "utfall": "Manuell",
-              "begrunnelse": "Personen har inntekter som tilhører neste inntektsperiode"
-            },
-            {
-              "type": "HattLukkedeSakerSiste8Uker",
-              "utfall": "Manuell",
-              "begrunnelse": "Personen har lukkede saker i Arena siste 8 uker"
-            },
-            {
-              "type": "MuligGjenopptak",
-              "utfall": "Manuell",
-              "begrunnelse": " Personen har åpne saker i Arena som kan være gjenopptak "
-            }
-          ]
+          "fastsatt": {
+            "utfall": false
+          }
         }
         """.trimIndent()
 
