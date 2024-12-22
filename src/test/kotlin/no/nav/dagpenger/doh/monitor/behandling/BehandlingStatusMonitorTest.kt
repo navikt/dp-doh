@@ -83,13 +83,14 @@ class BehandlingStatusMonitorTest {
         val avklaringer = slot<List<String>>()
         verify(exactly = 1) {
             vedtakBot.postBehandlingStatus(
-                BehandlingStatusMonitor.Status.FORSLAG_TIL_VEDTAK,
-                "018ec78d-4f15-7a02-bdf9-0e67129a0411",
-                any(),
-                any(),
-                null,
-                capture(avklaringer),
-                false,
+                status = BehandlingStatusMonitor.Status.FORSLAG_TIL_VEDTAK,
+                behandlingId = "018ec78d-4f15-7a02-bdf9-0e67129a0411",
+                søknadId = any(),
+                opprettet = any(),
+                årsak = null,
+                avklaringer = capture(avklaringer),
+                utfall = false,
+                automatisk = true,
             )
         }
 
@@ -97,7 +98,16 @@ class BehandlingStatusMonitorTest {
         assertEquals(avklaringer.captured.size, 0)
 
         assertEquals(Metrikker.behandlingStatus("forslag_til_vedtak"), 1.0)
-        assertEquals(Metrikker.vilkår("forslag_til_vedtak", "Alder og sånt", "Oppfylt"), 1.0)
+        assertEquals(
+            Metrikker.vilkår(
+                status = "forslag_til_vedtak",
+                utfall = "false",
+                automatisk = "true",
+                navn = "Alder og sånt",
+                vurdering = "Oppfylt",
+            ),
+            1.0,
+        )
     }
 
     @Test
@@ -160,6 +170,7 @@ class BehandlingStatusMonitorTest {
           "fastsatt": {
             "utfall": false
           },
+          "automatisk": true,
           "vilkår": [
             {
               "navn": "Alder og sånt",
@@ -194,9 +205,11 @@ class BehandlingStatusMonitorTest {
 
         fun vilkår(
             status: String,
-            navn: String,
             utfall: String,
-        ): Double = behandlingVilkårCounter.labelValues(status, navn, utfall).get()
+            automatisk: String,
+            navn: String,
+            vurdering: String,
+        ): Double = behandlingVilkårCounter.labelValues(status, utfall, automatisk, navn, vurdering).get()
 
         fun behandlingVedtak(
             utfall: Boolean,

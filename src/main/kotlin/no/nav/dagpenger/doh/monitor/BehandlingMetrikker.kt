@@ -32,8 +32,8 @@ object BehandlingMetrikker {
         Counter
             .builder()
             .name("dp_behandling_vilkaar")
-            .help("Utfall på vilkår i et forslag til vedtak, eller vedtak")
-            .labelNames("status", "vilkaar", "utfall")
+            .help("Vurdering av vilkår i et forslag til vedtak, eller vedtak")
+            .labelNames("status", "utfall", "automatisk", "vilkaar", "vurdering")
             .register()
 
     val behandlingVedtakCounter =

@@ -98,8 +98,10 @@ internal class BehandlingStatusMonitor(
             packet["vilkår"]
                 .associate {
                     it["navn"].asText() to it["status"].asText()
-                }.forEach { navn, utfall ->
-                    behandlingVilkårCounter.labelValues(status.name.lowercase(), navn, utfall).inc()
+                }.forEach { navn, vurdering ->
+                    behandlingVilkårCounter
+                        .labelValues(status.name.lowercase(), utfall.toString(), automatisk.toString(), navn, vurdering)
+                        .inc()
                 }
         }
     }
