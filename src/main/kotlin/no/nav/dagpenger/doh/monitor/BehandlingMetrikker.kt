@@ -28,6 +28,14 @@ object BehandlingMetrikker {
             .labelNames("status")
             .register()
 
+    val behandlingVilkårCounter =
+        Counter
+            .builder()
+            .name("dp_behandling_vilkaar")
+            .help("Utfall på vilkår i et forslag til vedtak, eller vedtak")
+            .labelNames("status", "vilkaar", "utfall")
+            .register()
+
     val behandlingVedtakCounter =
         Counter
             .builder()

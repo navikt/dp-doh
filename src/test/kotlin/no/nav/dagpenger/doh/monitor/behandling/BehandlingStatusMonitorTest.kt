@@ -7,6 +7,7 @@ import io.mockk.verify
 import no.nav.dagpenger.doh.monitor.BehandlingMetrikker.behandlingAvbruttCounter
 import no.nav.dagpenger.doh.monitor.BehandlingMetrikker.behandlingStatusCounter
 import no.nav.dagpenger.doh.monitor.BehandlingMetrikker.behandlingVedtakCounter
+import no.nav.dagpenger.doh.monitor.BehandlingMetrikker.behandlingVilkårCounter
 import no.nav.dagpenger.doh.slack.VedtakBot
 import org.junit.jupiter.api.Assertions.assertEquals
 import kotlin.test.Test
@@ -96,6 +97,7 @@ class BehandlingStatusMonitorTest {
         assertEquals(avklaringer.captured.size, 0)
 
         assertEquals(Metrikker.behandlingStatus("forslag_til_vedtak"), 1.0)
+        assertEquals(Metrikker.vilkår("forslag_til_vedtak", "Alder og sånt", "Oppfylt"), 1.0)
     }
 
     @Test
@@ -157,7 +159,13 @@ class BehandlingStatusMonitorTest {
           "@opprettet": "2024-04-10T12:28:31.533933",
           "fastsatt": {
             "utfall": false
-          }
+          },
+          "vilkår": [
+            {
+              "navn": "Alder og sånt",
+              "status": "Oppfylt"
+            }
+          ]
         }
         """.trimIndent()
 
@@ -183,6 +191,12 @@ class BehandlingStatusMonitorTest {
         fun behandlingStatus(status: String): Double = behandlingStatusCounter.labelValues(status).get()
 
         fun behandlingAvbrutt(årsak: String): Double = behandlingAvbruttCounter.labelValues(årsak).get()
+
+        fun vilkår(
+            status: String,
+            navn: String,
+            utfall: String,
+        ): Double = behandlingVilkårCounter.labelValues(status, navn, utfall).get()
 
         fun behandlingVedtak(
             utfall: Boolean,

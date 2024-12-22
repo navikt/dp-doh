@@ -13,6 +13,7 @@ import mu.withLoggingContext
 import no.nav.dagpenger.doh.monitor.BehandlingMetrikker.behandlingAvbruttCounter
 import no.nav.dagpenger.doh.monitor.BehandlingMetrikker.behandlingStatusCounter
 import no.nav.dagpenger.doh.monitor.BehandlingMetrikker.behandlingVedtakCounter
+import no.nav.dagpenger.doh.monitor.BehandlingMetrikker.behandlingVilkårCounter
 import no.nav.dagpenger.doh.slack.VedtakBot
 
 internal class BehandlingStatusMonitor(
@@ -31,7 +32,7 @@ internal class BehandlingStatusMonitor(
                 }
                 validate {
                     it.requireKey("behandlingId", "søknadId")
-                    it.interestedIn("@opprettet", "årsak", "avklaringer", "fastsatt", "utfall", "automatisk")
+                    it.interestedIn("@opprettet", "årsak", "avklaringer", "fastsatt", "utfall", "automatisk", "vilkår")
                 }
             }.register(this)
     }
@@ -93,6 +94,13 @@ internal class BehandlingStatusMonitor(
                 val automatisering = if (automatisk) "Automatisk" else "Manuell"
                 behandlingVedtakCounter.labelValues(utfall.toString(), automatisering).inc()
             }
+
+            packet["vilkår"]
+                .associate {
+                    it["navn"].asText() to it["status"].asText()
+                }.forEach { navn, utfall ->
+                    behandlingVilkårCounter.labelValues(status.name.lowercase(), navn, utfall).inc()
+                }
         }
     }
 
