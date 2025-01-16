@@ -1,6 +1,7 @@
 package no.nav.dagpenger.doh.slack
 
 import com.slack.api.methods.MethodsClient
+import com.slack.api.methods.SlackApiException
 import com.slack.api.methods.request.chat.ChatPostMessageRequest.ChatPostMessageRequestBuilder
 import mu.KotlinLogging
 import java.net.InetAddress
@@ -52,6 +53,13 @@ internal abstract class SlackBot(
                         )
                     }
                 }
+        } catch (e: SlackApiException) {
+            if (e.response.code == 429) {
+                log.error { "Rate limit exceeded" }
+            } else {
+                log.error(e) { "Slack API feilet" }
+                throw e
+            }
         } catch (e: SSLHandshakeException) {
             log.error(e) {
                 val ips = InetAddress.getAllByName("slack.com")
