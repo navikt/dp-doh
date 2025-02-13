@@ -7,7 +7,10 @@ import com.github.navikt.tbd_libs.rapids_and_rivers_api.MessageMetadata
 import com.github.navikt.tbd_libs.rapids_and_rivers_api.RapidsConnection
 import io.micrometer.core.instrument.MeterRegistry
 import kotlinx.coroutines.runBlocking
+import mu.KotlinLogging
 import no.nav.dagpenger.doh.slack.SlackClient
+
+private val logger = KotlinLogging.logger { }
 
 internal class SaksbehandlingAlertMonitor(rapidsConnection: RapidsConnection, private val slackClient: SlackClient) : River.PacketListener {
     init {
@@ -37,8 +40,10 @@ internal class SaksbehandlingAlertMonitor(rapidsConnection: RapidsConnection, pr
         val utvidetFeilMelding = packet["utvidetFeilMelding"].asText()
 
         runBlocking {
+            val text = "Saksbehandling Alert: $alertType\n$feilMelding\n$utvidetFeilMelding"
+            logger.error { text }
             slackClient.postMessage(
-                text = "Saksbehandling Alert: $alertType\n$feilMelding\n$utvidetFeilMelding",
+                text = text,
             )
         }
     }
