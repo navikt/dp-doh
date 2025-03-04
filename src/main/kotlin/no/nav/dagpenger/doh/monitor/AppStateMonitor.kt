@@ -82,7 +82,7 @@ internal class AppStateMonitor(
                 }
             val logtext =
                 if (appsToAlert.size == 1) {
-                    val (app, sistAktivitet, _) = appsDown.first()
+                    val (app, sistAktivitet, _) = appsToAlert.first()
                     val tid = humanReadableTime(ChronoUnit.SECONDS.between(sistAktivitet, now))
                     val kibanaUrl = teamdagpengerKibanaUrl()
                     lastAlertTimes[app] = now
@@ -94,7 +94,7 @@ internal class AppStateMonitor(
                     """.trimMargin()
                 } else {
                     val instanser =
-                        appsDown.joinToString(separator = "\n") { (app, sistAktivitet, _) ->
+                        appsToAlert.joinToString(separator = "\n") { (app, sistAktivitet, _) ->
                             val tid = humanReadableTime(ChronoUnit.SECONDS.between(sistAktivitet, now))
                             lastAlertTimes[app] = now
                             "- $app (siste aktivitet: $tid - $sistAktivitet)"
@@ -103,7 +103,7 @@ internal class AppStateMonitor(
                     val kibanaUrl = teamdagpengerKibanaUrl()
 
                     """
-                    | ${appsDown.size} apper er antatt nede da de ikke svarer tilfredsstillende på ping. Trøblete instanser i :thread:
+                    | ${appsToAlert.size} apper er antatt nede da de ikke svarer tilfredsstillende på ping. Trøblete instanser i :thread:
                     |   $instanser
                     |   :question: Hva betyr dette for meg? Det kan bety at appene ikke leser fra Kafka, og kan ha alvorlig feil. Det kan også bety at appene har stoppet opp. 
                     |   - Loggfeil i dagpenger teamet i <$kibanaUrl|Kibana>
@@ -163,4 +163,6 @@ internal class AppStateMonitor(
                 )
             }
     }
+
+    private class Varslingslogg
 }
