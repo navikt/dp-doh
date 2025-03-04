@@ -74,12 +74,12 @@ internal class AppStateMonitor(
 
         val appsDown = packet.apperSomHarVærtNede()
 
-        if (appsDown.isNotEmpty()) {
-            val appsToAlert =
-                appsDown.filter { (app, _, _) ->
-                    val lastAlertTime = lastAlertTimes[app]
-                    lastAlertTime == null || Duration.between(lastAlertTime, now).toMinutes() >= 5
-                }
+        val appsToAlert =
+            appsDown.filter { (app, _, _) ->
+                val lastAlertTime = lastAlertTimes[app]
+                lastAlertTime == null || Duration.between(lastAlertTime, now).toMinutes() >= 5
+            }
+        if (appsToAlert.isNotEmpty()) {
             val logtext =
                 if (appsToAlert.size == 1) {
                     val (app, sistAktivitet, _) = appsToAlert.first()
