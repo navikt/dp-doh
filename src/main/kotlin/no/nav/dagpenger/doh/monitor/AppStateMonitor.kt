@@ -61,6 +61,8 @@ internal class AppStateMonitor(
         sikkerLogg.error(problems.toExtendedReport())
     }
 
+    private val lastAlertTimes = mutableMapOf<String, LocalDateTime>()
+
     override fun onPacket(
         packet: JsonMessage,
         context: MessageContext,
@@ -73,11 +75,17 @@ internal class AppStateMonitor(
         val appsDown = packet.apperSomHarVærtNede()
 
         if (appsDown.isNotEmpty()) {
+            val appsToAlert =
+                appsDown.filter { (app, _, _) ->
+                    val lastAlertTime = lastAlertTimes[app]
+                    lastAlertTime == null || Duration.between(lastAlertTime, now).toMinutes() >= 5
+                }
             val logtext =
-                if (appsDown.size == 1) {
+                if (appsToAlert.size == 1) {
                     val (app, sistAktivitet, _) = appsDown.first()
                     val tid = humanReadableTime(ChronoUnit.SECONDS.between(sistAktivitet, now))
                     val kibanaUrl = teamdagpengerKibanaUrl()
+                    lastAlertTimes[app] = now
                     """
                     | $app er antatt nede (siste aktivitet: $tid) fordi den ikke svarer tilfredsstillende på ping. Trøblete instanser i :thread:
                     |   :question: Hva betyr dette for meg? Det kan bety at appen ikke leser fra Kafka, og kan ha alvorlig feil. Det kan også bety at appene har stoppet opp. 
@@ -88,6 +96,7 @@ internal class AppStateMonitor(
                     val instanser =
                         appsDown.joinToString(separator = "\n") { (app, sistAktivitet, _) ->
                             val tid = humanReadableTime(ChronoUnit.SECONDS.between(sistAktivitet, now))
+                            lastAlertTimes[app] = now
                             "- $app (siste aktivitet: $tid - $sistAktivitet)"
                         }
 
@@ -103,7 +112,7 @@ internal class AppStateMonitor(
                 }
             log.warn(logtext)
             val threadTs = slackClient?.postMessage(logtext)
-            appsDown.forEach { (_, _, instances) ->
+            appsToAlert.forEach { (app, _, instances) ->
                 val text =
                     instances.joinToString(separator = "\n") { (instans, sistAktivitet) ->
                         val tid = humanReadableTime(ChronoUnit.SECONDS.between(sistAktivitet, now))
@@ -117,6 +126,7 @@ internal class AppStateMonitor(
                     """.trimIndent(),
                 )
                 slackClient?.postMessage(text = text, threadTs = threadTs)
+                lastAlertTimes[app] = now
             }
         }
         lastReportTime = now
