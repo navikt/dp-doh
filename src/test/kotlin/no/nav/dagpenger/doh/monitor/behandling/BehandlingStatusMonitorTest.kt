@@ -141,6 +141,11 @@ class BehandlingStatusMonitorTest {
         """
         {
           "@event_name": "behandling_opprettet",
+            "behandletHendelse" : {
+              "id": "4afce924-6cb4-4ab4-a92b-fe91e24f31bf",
+              "type": "Søknad",
+              "datatype": "UUID"
+            },
           "ident": "12345678901",
           "behandlingId": "018ec78d-4f15-7a02-bdf9-0e67129a0411",
           "gjelderDato": "2024-04-10",
@@ -157,6 +162,11 @@ class BehandlingStatusMonitorTest {
         """
         {
           "@event_name": "forslag_til_vedtak",
+            "behandletHendelse" : {
+              "id": "4afce924-6cb4-4ab4-a92b-fe91e24f31bf",
+              "type": "Søknad",
+              "datatype": "UUID"
+            },
           "utfall": false,
           "harAvklart": "Krav på dagpenger",
           "ident": "12345678901",
@@ -185,6 +195,11 @@ class BehandlingStatusMonitorTest {
         """
         {
           "@event_name": "behandling_avbrutt",
+            "behandletHendelse" : {
+              "id": "4afce924-6cb4-4ab4-a92b-fe91e24f31bf",
+              "type": "Søknad",
+              "datatype": "UUID"
+            },
           "harAvklart": "Krav på dagpenger",
           "ident": "12345678901",
           "behandlingId": "018ec78d-4f15-7a02-bdf9-0e67129a0411",

@@ -5,6 +5,11 @@
   "søknadId": "4afce924-6cb4-4ab4-a92b-fe91e24f31bf",
   "vedtakstidspunkt": "2024-10-01T11:40:43.80465",
   "virkningsdato": "2021-05-06",
+  "behandletHendelse" : {
+    "id": "4afce924-6cb4-4ab4-a92b-fe91e24f31bf",
+    "type": "Søknad",
+    "datatype": "UUID"
+  },
   "fastsatt": {
     "utfall": true,
     "status": null,

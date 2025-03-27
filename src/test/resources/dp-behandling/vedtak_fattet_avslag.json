@@ -15,6 +15,11 @@
     "sats" : null,
     "kvoter" : null
   },
+  "behandletHendelse" : {
+    "id": "4afce924-6cb4-4ab4-a92b-fe91e24f31bf",
+    "type": "Søknad",
+    "datatype": "UUID"
+  },
   "behandletAv" : [ ],
   "vilkår" : [ {
     "navn" : "Oppfyller kravet til alder",
