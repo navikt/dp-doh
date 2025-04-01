@@ -21,13 +21,13 @@ internal class VedtakBot(
     internal fun postBehandlingStatus(
         status: BehandlingStatusMonitor.Status,
         behandlingId: String,
-        hendelseId: String? = null,
+        behandletHendelse: BehandlingStatusMonitor.BehandletHendelse,
         opprettet: LocalDateTime,
         årsak: String? = null,
         utfall: Boolean? = null,
         automatisk: Boolean? = null,
-        hendelseType: String? = null,
     ) {
+        val (hendelseId, hendelseType) = behandletHendelse
         val tekst: String =
             when (status) {
                 BehandlingStatusMonitor.Status.BEHANDLING_AVBRUTT ->

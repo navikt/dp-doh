@@ -14,12 +14,12 @@ import no.nav.dagpenger.doh.monitor.SaksbehandlingAlertMonitor
 import no.nav.dagpenger.doh.monitor.behandling.ArenasinkVedtakFeiletMonitor
 import no.nav.dagpenger.doh.monitor.behandling.ArenasinkVedtakOpprettetMonitor
 import no.nav.dagpenger.doh.monitor.behandling.BehandlingEndretTilstandMonitor
+import no.nav.dagpenger.doh.monitor.behandling.BehandlingPåminnelseMonitor
 import no.nav.dagpenger.doh.monitor.behandling.BehandlingStatusMonitor
 import no.nav.dagpenger.doh.monitor.quiz.NyQuizMalMonitor
 import no.nav.helse.rapids_rivers.RapidApplication
 import java.time.Duration
 import kotlin.time.ExperimentalTime
-import no.nav.dagpenger.doh.monitor.behandling.BehandlingPåminnelseMonitor
 
 @ExperimentalTime
 fun main() {

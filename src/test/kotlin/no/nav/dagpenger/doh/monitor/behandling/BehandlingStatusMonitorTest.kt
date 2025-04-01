@@ -2,12 +2,12 @@ package no.nav.dagpenger.doh.monitor.behandling
 
 import com.github.navikt.tbd_libs.rapids_and_rivers.test_support.TestRapid
 import io.mockk.mockk
-import io.mockk.slot
 import io.mockk.verify
 import no.nav.dagpenger.doh.monitor.BehandlingMetrikker.behandlingAvbruttCounter
 import no.nav.dagpenger.doh.monitor.BehandlingMetrikker.behandlingStatusCounter
 import no.nav.dagpenger.doh.monitor.BehandlingMetrikker.behandlingVedtakCounter
 import no.nav.dagpenger.doh.monitor.BehandlingMetrikker.behandlingVilkårCounter
+import no.nav.dagpenger.doh.monitor.behandling.BehandlingStatusMonitor.BehandletHendelse
 import no.nav.dagpenger.doh.slack.VedtakBot
 import org.junit.jupiter.api.Assertions.assertEquals
 import kotlin.test.Test
@@ -38,10 +38,9 @@ class BehandlingStatusMonitorTest {
             vedtakBot.postBehandlingStatus(
                 status = BehandlingStatusMonitor.Status.VEDTAK_FATTET,
                 behandlingId = "0192241a-8301-7b40-9581-d1c2416c9dee",
-                hendelseId = any(),
+                behandletHendelse = BehandletHendelse(type = "Søknad", id = "4afce924-6cb4-4ab4-a92b-fe91e24f31bf"),
                 opprettet = any(),
                 årsak = null,
-                avklaringer = emptyList(),
                 utfall = false,
                 automatisk = true,
             )
@@ -62,10 +61,9 @@ class BehandlingStatusMonitorTest {
             vedtakBot.postBehandlingStatus(
                 status = BehandlingStatusMonitor.Status.VEDTAK_FATTET,
                 behandlingId = "01924774-13c6-7411-a408-20e95689a030",
-                hendelseId = "4afce924-6cb4-4ab4-a92b-fe91e24f31bf",
+                behandletHendelse = BehandletHendelse(type = "Søknad", id = "4afce924-6cb4-4ab4-a92b-fe91e24f31bf"),
                 opprettet = any(),
                 årsak = null,
-                avklaringer = emptyList(),
                 utfall = true,
                 automatisk = false,
             )
@@ -80,22 +78,17 @@ class BehandlingStatusMonitorTest {
             forslagTilVedtakMessage,
         )
 
-        val avklaringer = slot<List<String>>()
         verify(exactly = 1) {
             vedtakBot.postBehandlingStatus(
                 status = BehandlingStatusMonitor.Status.FORSLAG_TIL_VEDTAK,
                 behandlingId = "018ec78d-4f15-7a02-bdf9-0e67129a0411",
-                hendelseId = any(),
+                behandletHendelse = BehandletHendelse(type = "Søknad", id = "4afce924-6cb4-4ab4-a92b-fe91e24f31bf"),
                 opprettet = any(),
                 årsak = null,
-                avklaringer = capture(avklaringer),
                 utfall = false,
                 automatisk = true,
             )
         }
-
-        // Har ingen avklaringer i forslag lenger
-        assertEquals(avklaringer.captured.size, 0)
 
         assertEquals(Metrikker.behandlingStatus("forslag_til_vedtak"), 1.0)
         assertEquals(
@@ -123,8 +116,6 @@ class BehandlingStatusMonitorTest {
                 any(),
                 any(),
                 "For mye inntekt",
-                emptyList(),
-                hendelseType = hendelseType,
             )
         }
 

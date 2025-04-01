@@ -50,14 +50,16 @@ internal class BehandlingStatusMonitor(
         meterRegistry: MeterRegistry,
     ) {
         val behandlingId = packet["behandlingId"].asText()
-        val behandletHendelse = packet["behandletHendelse"]
-        val hendelseType = behandletHendelse["type"].asText()
-        val behandletHendelseId = behandletHendelse["id"].asText()
 
+        val behandletHendelse =
+            BehandletHendelse(
+                id = packet["behandletHendelse"]["id"].asText(),
+                type = packet["behandletHendelse"]["type"].asText(),
+            )
 
         withLoggingContext(
             "behandlingId" to behandlingId,
-            hendelseType to behandletHendelseId,
+            behandletHendelse.type to behandletHendelse.id,
         ) {
             val eventName = packet["@event_name"].asText()
             logger.info { "Vi har behandling med $eventName" + "(slackbot er konfiguert? ${vedtakBot != null})" }
@@ -84,8 +86,7 @@ internal class BehandlingStatusMonitor(
             vedtakBot?.postBehandlingStatus(
                 status = status,
                 behandlingId = behandlingId,
-                hendelseType = hendelseType,
-                hendelseId = behandletHendelseId,
+                behandletHendelse = behandletHendelse,
                 opprettet = packet["@opprettet"].asLocalDateTime(),
                 årsak = årsak,
                 utfall = utfall,
@@ -107,6 +108,11 @@ internal class BehandlingStatusMonitor(
                 }
         }
     }
+
+    data class BehandletHendelse(
+        val type: String,
+        val id: String,
+    )
 
     internal enum class Status {
         BEHANDLING_AVBRUTT,

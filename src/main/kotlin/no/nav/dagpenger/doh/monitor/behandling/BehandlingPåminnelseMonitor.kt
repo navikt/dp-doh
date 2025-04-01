@@ -11,9 +11,8 @@ import no.nav.dagpenger.doh.slack.SlackClient
 
 internal class BehandlingPåminnelseMonitor(
     rapidsConnection: RapidsConnection,
-    private val slackClient: SlackClient?
+    private val slackClient: SlackClient?,
 ) : River.PacketListener {
-
     companion object {
         val logger = KotlinLogging.logger { }
     }
@@ -44,9 +43,6 @@ internal class BehandlingPåminnelseMonitor(
                 text = melding,
                 emoji = ":warning:",
             )
-
         }
-
-
     }
 }
