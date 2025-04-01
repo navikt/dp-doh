@@ -19,6 +19,7 @@ import no.nav.dagpenger.doh.monitor.quiz.NyQuizMalMonitor
 import no.nav.helse.rapids_rivers.RapidApplication
 import java.time.Duration
 import kotlin.time.ExperimentalTime
+import no.nav.dagpenger.doh.monitor.behandling.BehandlingPåminnelseMonitor
 
 @ExperimentalTime
 fun main() {
@@ -29,6 +30,7 @@ fun main() {
             AppStateMonitor(this, slackAlertClient, Duration.ofMinutes(5))
             NyQuizMalMonitor(this, quizMalBot)
             BehovUtenLøsningMonitor(this, slackAlertClient)
+            BehandlingPåminnelseMonitor(this, slackAlertClient)
 
             BehandlingEndretTilstandMonitor(this)
             BehandlingStatusMonitor(this, vedtakBot)

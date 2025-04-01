@@ -50,11 +50,14 @@ internal class BehandlingStatusMonitor(
         meterRegistry: MeterRegistry,
     ) {
         val behandlingId = packet["behandlingId"].asText()
-        val søknadId = packet["behandletHendelse"]["id"].asText()
+        val behandletHendelse = packet["behandletHendelse"]
+        val hendelseType = behandletHendelse["type"].asText()
+        val behandletHendelseId = behandletHendelse["id"].asText()
+
 
         withLoggingContext(
             "behandlingId" to behandlingId,
-            "søknadId" to søknadId,
+            hendelseType to behandletHendelseId,
         ) {
             val eventName = packet["@event_name"].asText()
             logger.info { "Vi har behandling med $eventName" + "(slackbot er konfiguert? ${vedtakBot != null})" }
@@ -81,13 +84,10 @@ internal class BehandlingStatusMonitor(
             vedtakBot?.postBehandlingStatus(
                 status = status,
                 behandlingId = behandlingId,
-                søknadId = søknadId,
+                hendelseType = hendelseType,
+                hendelseId = behandletHendelseId,
                 opprettet = packet["@opprettet"].asLocalDateTime(),
                 årsak = årsak,
-                avklaringer = emptyList(),
-                /*packet["avklaringer"].map { avklaring ->
-                    avklaring["type"].asText()
-                },*/
                 utfall = utfall,
                 automatisk = automatisk,
             )

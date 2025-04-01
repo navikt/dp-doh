@@ -21,34 +21,33 @@ internal class VedtakBot(
     internal fun postBehandlingStatus(
         status: BehandlingStatusMonitor.Status,
         behandlingId: String,
-        søknadId: String,
+        hendelseId: String? = null,
         opprettet: LocalDateTime,
         årsak: String? = null,
-        avklaringer: List<String>,
         utfall: Boolean? = null,
         automatisk: Boolean? = null,
+        hendelseType: String? = null,
     ) {
         val tekst: String =
             when (status) {
                 BehandlingStatusMonitor.Status.BEHANDLING_AVBRUTT ->
                     """
                     |Behandlingen er avbrutt 
-                    |*Søknad ID:* $søknadId 
+                    |*$hendelseType ID:* $hendelseId 
                     |*Behandling ID:* $behandlingId
                     |${årsak?.let { "*Årsak*: $it" } ?: ""} 
                     """.trimMargin()
 
                 BehandlingStatusMonitor.Status.FORSLAG_TIL_VEDTAK ->
                     """Vi har et forslag til vedtak 
-                    |*Søknad ID:* $søknadId 
+                    |*$hendelseType ID:* $hendelseId 
                     |*Behandling ID:* $behandlingId
                     |*Utfall:* ${tolk(utfall)}
-                    |*Avklaringer*: ${avklaringer.joinToString()}
                     """.trimMargin()
 
                 BehandlingStatusMonitor.Status.VEDTAK_FATTET ->
                     """Vi har fattet et vedtak 
-                    |*Søknad ID:* $søknadId 
+                    |*$hendelseType ID:* $hendelseId 
                     |*Behandling ID:* $behandlingId
                     |*Behandling*: ${if (automatisk == true) "Automatisk" else "Manuell"}
                     |*Utfall:* ${tolk(utfall)}
@@ -109,6 +108,7 @@ internal class VedtakBot(
                 BehandlingStatusMonitor.Status.BEHANDLING_AVBRUTT,
                 BehandlingStatusMonitor.Status.FORSLAG_TIL_VEDTAK,
                 BehandlingStatusMonitor.Status.VEDTAK_FATTET,
+
                 -> true
             }
         return visKnapp

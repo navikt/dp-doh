@@ -38,7 +38,7 @@ class BehandlingStatusMonitorTest {
             vedtakBot.postBehandlingStatus(
                 status = BehandlingStatusMonitor.Status.VEDTAK_FATTET,
                 behandlingId = "0192241a-8301-7b40-9581-d1c2416c9dee",
-                søknadId = any(),
+                hendelseId = any(),
                 opprettet = any(),
                 årsak = null,
                 avklaringer = emptyList(),
@@ -62,7 +62,7 @@ class BehandlingStatusMonitorTest {
             vedtakBot.postBehandlingStatus(
                 status = BehandlingStatusMonitor.Status.VEDTAK_FATTET,
                 behandlingId = "01924774-13c6-7411-a408-20e95689a030",
-                søknadId = "4afce924-6cb4-4ab4-a92b-fe91e24f31bf",
+                hendelseId = "4afce924-6cb4-4ab4-a92b-fe91e24f31bf",
                 opprettet = any(),
                 årsak = null,
                 avklaringer = emptyList(),
@@ -85,7 +85,7 @@ class BehandlingStatusMonitorTest {
             vedtakBot.postBehandlingStatus(
                 status = BehandlingStatusMonitor.Status.FORSLAG_TIL_VEDTAK,
                 behandlingId = "018ec78d-4f15-7a02-bdf9-0e67129a0411",
-                søknadId = any(),
+                hendelseId = any(),
                 opprettet = any(),
                 årsak = null,
                 avklaringer = capture(avklaringer),
@@ -124,7 +124,7 @@ class BehandlingStatusMonitorTest {
                 any(),
                 "For mye inntekt",
                 emptyList(),
-                null,
+                hendelseType = hendelseType,
             )
         }
 
