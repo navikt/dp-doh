@@ -110,8 +110,8 @@ internal class BehandlingStatusMonitor(
     }
 
     data class BehandletHendelse(
-        val type: String,
         val id: String,
+        val type: String,
     )
 
     internal enum class Status {
