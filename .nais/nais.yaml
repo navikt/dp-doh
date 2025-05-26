@@ -6,7 +6,7 @@ metadata:
   labels:
     team: teamdagpenger
 spec:
-  image: {{ image }}
+  image: "{{ image }}"
   port: 8080
   strategy:
     rollingUpdate:
@@ -29,22 +29,22 @@ spec:
       cpu: 200m
       memory: 256Mi
   kafka:
-    pool: {{ kafka_pool }}
+    pool: "{{ kafka_pool }}"
   secureLogs:
     enabled: true
   envFrom:
     - secret: credential-slack
   env:
     - name: DP_SLACKER_ALERT_CHANNEL_ID
-      value: {{dp_slacker_alert_channel_id}}
+      value: "{{dp_slacker_alert_channel_id}}"
     - name: DP_SLACKER_CHANNEL_ID
-      value: {{dp_slacker_channel_id}}
+      value: "{{dp_slacker_channel_id}}"
     - name: DP_SLACKER_MAL_CHANNEL_ID
-      value: {{dp_slacker_mal_channel_id}}
+      value: "{{dp_slacker_mal_channel_id}}"
     - name: DP_SLACKER_VEDTAK_CHANNEL_ID
-      value: {{dp_slacker_vedtak_channel_id}}
+      value: "{{dp_slacker_vedtak_channel_id}}"
     - name: DP_SLACKER_STSB_CHANNEL_ID
-      value: {{DP_SLACKER_STSB_CHANNEL_ID}}
+      value: "{{DP_SLACKER_STSB_CHANNEL_ID}}"
     - name: DP_ARENA_SINK_OPPRETTET_MELDING
       value: "{{dp_arena_sink_opprettet_melding}}"
   accessPolicy:
