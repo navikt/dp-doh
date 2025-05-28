@@ -46,12 +46,18 @@ internal class OpprettJournalpostFeiletMonitor(
         val type = packet["type"].asText()
 
         runBlocking {
-            slackClient?.postMessage(
-                text = "Vi har feilet i å opprette journalpost for $type med søknadId $søknadId og behovId $behovId",
+            val loggURL =
                 Kibana.createUrl(
                     String.format("\"%s\" AND application:dp-behov-journalforing", behovId),
                     packet["@opprettet"].asLocalDateTime().minusMinutes(5),
-                ),
+                )
+            slackClient?.postMessage(
+                text =
+                    """
+                    Klarte ikke å opprette journalpost for $type med søknadId=$søknadId og behovId=$behovId
+                    <Logg|$loggURL>
+                    """.trimIndent(),
+                emoji = ":ghost",
             )
         }
     }
