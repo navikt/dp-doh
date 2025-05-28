@@ -8,6 +8,7 @@ import no.nav.dagpenger.doh.Configuration.stsbSlackAlertChannel
 import no.nav.dagpenger.doh.Configuration.vedtakBot
 import no.nav.dagpenger.doh.monitor.AppStateMonitor
 import no.nav.dagpenger.doh.monitor.BehovUtenLøsningMonitor
+import no.nav.dagpenger.doh.monitor.JournalføringFeiletMonitor
 import no.nav.dagpenger.doh.monitor.MeldingerUtenEnvelopeMonitor
 import no.nav.dagpenger.doh.monitor.OpprettJournalpostFeiletMonitor
 import no.nav.dagpenger.doh.monitor.SaksbehandlingAlertMonitor
@@ -42,5 +43,7 @@ fun main() {
             SaksbehandlingAlertMonitor(this, Configuration.slackClient(stsbSlackAlertChannel))
 
             OpprettJournalpostFeiletMonitor(this, slackAlertClient)
+
+            JournalføringFeiletMonitor(this, slackAlertClient)
         }.start()
 }
