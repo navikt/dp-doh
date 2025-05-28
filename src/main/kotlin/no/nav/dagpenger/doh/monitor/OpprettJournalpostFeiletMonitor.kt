@@ -2,11 +2,13 @@ package no.nav.dagpenger.doh.monitor
 
 import com.github.navikt.tbd_libs.rapids_and_rivers.JsonMessage
 import com.github.navikt.tbd_libs.rapids_and_rivers.River
+import com.github.navikt.tbd_libs.rapids_and_rivers.asLocalDateTime
 import com.github.navikt.tbd_libs.rapids_and_rivers_api.MessageContext
 import com.github.navikt.tbd_libs.rapids_and_rivers_api.MessageMetadata
 import com.github.navikt.tbd_libs.rapids_and_rivers_api.RapidsConnection
 import io.micrometer.core.instrument.MeterRegistry
 import kotlinx.coroutines.runBlocking
+import no.nav.dagpenger.doh.Kibana
 import no.nav.dagpenger.doh.slack.SlackClient
 
 internal class OpprettJournalpostFeiletMonitor(
@@ -45,6 +47,10 @@ internal class OpprettJournalpostFeiletMonitor(
         runBlocking {
             slackClient?.postMessage(
                 text = "Vi har feilet i å opprette journalpost for $type med søknadId $søknadId og behovId $behovId",
+                Kibana.createUrl(
+                    String.format("\"%s\" AND application:dp-behov-journalforing", behovId),
+                    packet["behov_opprettet"].asLocalDateTime().minusMinutes(5),
+                ),
             )
         }
     }
