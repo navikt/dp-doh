@@ -54,8 +54,7 @@ internal class OpprettJournalpostFeiletMonitor(
             slackClient?.postMessage(
                 text =
                     """
-                    Klarte ikke å opprette journalpost for $type med søknadId=$søknadId og behovId=$behovId
-                    <Logg|$loggURL>
+                    Klarte <$loggURL|ikke å opprette journalpost> for $type med søknadId=$søknadId og behovId=$behovId
                     """.trimIndent(),
                 emoji = ":ghost",
             )
