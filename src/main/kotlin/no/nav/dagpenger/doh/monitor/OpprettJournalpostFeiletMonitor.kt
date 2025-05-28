@@ -23,6 +23,7 @@ internal class OpprettJournalpostFeiletMonitor(
                 }
                 validate {
                     it.requireKey(
+                        "@opprettet",
                         "behovId",
                         "søknadId",
                         "type",
@@ -49,7 +50,7 @@ internal class OpprettJournalpostFeiletMonitor(
                 text = "Vi har feilet i å opprette journalpost for $type med søknadId $søknadId og behovId $behovId",
                 Kibana.createUrl(
                     String.format("\"%s\" AND application:dp-behov-journalforing", behovId),
-                    packet["behov_opprettet"].asLocalDateTime().minusMinutes(5),
+                    packet["@opprettet"].asLocalDateTime().minusMinutes(5),
                 ),
             )
         }

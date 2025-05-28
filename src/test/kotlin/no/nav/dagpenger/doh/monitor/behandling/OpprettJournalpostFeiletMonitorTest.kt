@@ -21,7 +21,7 @@ class OpprettJournalpostFeiletMonitorTest {
         testRapid.sendTestMessage(journalpostFeilet)
 
         verify(exactly = 1) {
-            slackClient.postMessage(any())
+            slackClient.postMessage(any(), any())
         }
     }
 
