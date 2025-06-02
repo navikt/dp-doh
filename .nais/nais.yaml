@@ -63,3 +63,11 @@ spec:
         - ipv4: 52.29.238.212
 
         - host: logs.adeo.no
+  observability:
+    logging:
+      destinations:
+        - id: loki
+        - id: elastic
+    autoInstrumentation:
+      enabled: true
+      runtime: java
