@@ -12,10 +12,20 @@ spec:
     rollingUpdate:
       maxSurge: 100%
       maxUnavailable: 99%
+  startup:
+    path: /isalive
+    initialDelay: 5
+    failureThreshold: 6
+    periodSeconds: 5
+    timeout: 1
   liveness:
     path: /isalive
+    failureThreshold: 6
+    periodSeconds: 5
   readiness:
     path: /isready
+    failureThreshold: 3
+    periodSeconds: 5
   prometheus:
     enabled: true
     path: /metrics
