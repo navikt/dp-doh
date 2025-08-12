@@ -18,7 +18,7 @@ jobs:
       checks: "write"
       id-token: "write"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -59,7 +59,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: dev-gcp
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: nais/deploy/actions/deploy@v2
         env:
           CLUSTER: dev-gcp
@@ -75,7 +75,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: prod-gcp
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: nais/deploy/actions/deploy@v2
         env:
           CLUSTER: prod-gcp
