@@ -12,7 +12,8 @@ import no.nav.dagpenger.doh.slack.SlackClient
 
 private val logger = KotlinLogging.logger { }
 
-internal class SaksbehandlingAlertMonitor(rapidsConnection: RapidsConnection, private val slackClient: SlackClient) : River.PacketListener {
+internal class SaksbehandlingAlertMonitor(rapidsConnection: RapidsConnection, private val slackClient: SlackClient) :
+    River.PacketListener {
     init {
         River(rapidsConnection)
             .apply {
@@ -23,8 +24,8 @@ internal class SaksbehandlingAlertMonitor(rapidsConnection: RapidsConnection, pr
                     it.requireKey(
                         "alertType",
                         "feilMelding",
-                        "utvidetFeilMelding",
                     )
+                    it.interestedIn("utvidetFeilMelding")
                 }
             }.register(this)
     }
@@ -37,7 +38,7 @@ internal class SaksbehandlingAlertMonitor(rapidsConnection: RapidsConnection, pr
     ) {
         val alertType = packet["alertType"].asText()
         val feilMelding = packet["feilMelding"].asText()
-        val utvidetFeilMelding = packet["utvidetFeilMelding"].asText()
+        val utvidetFeilMelding = packet["utvidetFeilMelding"].asText("")
 
         runBlocking {
             val text = "Saksbehandling Alert: $alertType\n$feilMelding\n$utvidetFeilMelding"
