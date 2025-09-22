@@ -5,12 +5,23 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.slf4j.LoggerFactory
 import java.io.IOException
-import java.io.InputStream
-import java.net.HttpURLConnection
 import java.net.URI
+import java.net.http.HttpClient
+import java.net.http.HttpRequest
+import java.net.http.HttpRequest.BodyPublishers.ofString
+import java.net.http.HttpResponse
 import kotlin.time.Duration.Companion.seconds
+import kotlin.time.toJavaDuration
 
-internal class SlackClient(private val accessToken: String, private val channel: String) {
+internal class SlackClient(
+    private val accessToken: String,
+    private val channel: String,
+    private val httpClient: HttpClient =
+        HttpClient
+            .newBuilder()
+            .connectTimeout(2.seconds.toJavaDuration())
+            .build(),
+) {
     private companion object {
         private val tjenestekall = LoggerFactory.getLogger("tjenestekall")
         private val log = LoggerFactory.getLogger(SlackClient::class.java)
@@ -39,55 +50,41 @@ internal class SlackClient(private val accessToken: String, private val channel:
                 "icon_emoji" to emoji,
             ) + slackTrådParameter
 
-        return "https://slack.com/api/chat.postMessage".post(
-            objectMapper.writeValueAsString(
-                parameters,
-            ),
-        )?.let {
-            objectMapper.readTree(it)["ts"]?.asText()
-        }
+        return "https://slack.com/api/chat.postMessage"
+            .post(objectMapper.writeValueAsString(parameters))
+            ?.let { objectMapper.readTree(it)["ts"]?.asText() }
     }
 
     private fun String.post(jsonPayload: String): String? {
-        var connection: HttpURLConnection? = null
         try {
-            connection =
-                (URI(this).toURL().openConnection() as HttpURLConnection).apply {
-                    requestMethod = "POST"
-                    connectTimeout = 3.seconds.inWholeMilliseconds.toInt()
-                    readTimeout = 5.seconds.inWholeMilliseconds.toInt()
-                    doOutput = true
-                    setRequestProperty("Authorization", "Bearer $accessToken")
-                    setRequestProperty("Content-Type", "application/json; charset=utf-8")
-                    setRequestProperty("User-Agent", "navikt/dp-doh")
+            val request =
+                HttpRequest
+                    .newBuilder(URI(this))
+                    .header("Authorization", "Bearer $accessToken")
+                    .header("Content-Type", "application/json; charset=utf-8")
+                    .header("Accept", "application/json")
+                    .header("User-Agent", "navikt/dp-doh")
+                    .POST(ofString(jsonPayload))
+                    .build()
 
-                    outputStream.use {
-                        it.bufferedWriter(Charsets.UTF_8).apply {
-                            write(jsonPayload)
-                            flush()
-                        }
-                    }
-                }
-            val responseCode = connection.responseCode
+            val response = httpClient.send(request, HttpResponse.BodyHandlers.ofString())
+            val responseCode = response?.statusCode()
 
-            if (connection.responseCode !in 200..299) {
+            if (responseCode !in 200..299) {
                 log.error("response from slack: code=$responseCode")
-                tjenestekall.error("response from slack: code=$responseCode body=${connection.errorStream.readText()}")
+                tjenestekall.error("response from slack: code=$responseCode body=${response.body()}")
                 return null
             }
-            val responseBody = connection.inputStream.readText()
+
+            val responseBody = response.body()
             log.debug("response from slack: code=$responseCode")
             tjenestekall.debug("response from slack: code=$responseCode body=$responseBody")
 
             return responseBody
         } catch (err: IOException) {
             log.error("feil ved posting til slack: {}", err.message, err)
-        } finally {
-            connection?.disconnect()
         }
 
         return null
     }
-
-    private fun InputStream.readText() = use { it.bufferedReader().readText() }
 }
