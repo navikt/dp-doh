@@ -64,6 +64,17 @@ internal class VedtakBot(
         }
     }
 
+    internal fun korrigertMeldekort(tekst: String) {
+        chatPostMessage {
+            it.iconEmoji(":rotating_light:")
+            it.blocks {
+                section {
+                    markdownText(tekst)
+                }
+            }
+        }
+    }
+
     private fun tolk(utfall: Boolean?): String =
         when (utfall) {
             true -> "Innvilget :tada:"
