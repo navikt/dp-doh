@@ -16,7 +16,6 @@ import no.nav.dagpenger.doh.monitor.behandling.ArenasinkVedtakOpprettetMonitor
 import no.nav.dagpenger.doh.monitor.behandling.BehandlingEndretTilstandMonitor
 import no.nav.dagpenger.doh.monitor.behandling.BehandlingPåminnelseMonitor
 import no.nav.dagpenger.doh.monitor.behandling.BehandlingStatusMonitor
-import no.nav.dagpenger.doh.monitor.behandling.KorrigertMeldekortMonitor
 import no.nav.dagpenger.doh.monitor.quiz.NyQuizMalMonitor
 import no.nav.helse.rapids_rivers.RapidApplication
 import java.time.Duration
@@ -44,6 +43,7 @@ fun main() {
 
             OpprettJournalpostFeiletMonitor(this, slackAlertClient)
 
-            KorrigertMeldekortMonitor(this, vedtakBot)
+            // TODO: Denne må bli litt mer presis
+            //  KorrigertMeldekortMonitor(this, vedtakBot)
         }.start()
 }
