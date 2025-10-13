@@ -75,6 +75,17 @@ internal class VedtakBot(
         }
     }
 
+    internal fun skalBeregnemeldekort(tekst: String) {
+        chatPostMessage {
+            it.iconEmoji(":calc:")
+            it.blocks {
+                section {
+                    markdownText(tekst)
+                }
+            }
+        }
+    }
+
     private fun tolk(utfall: Boolean?): String =
         when (utfall) {
             true -> "Innvilget :tada:"

@@ -127,7 +127,7 @@ class KorrigertMeldekortMonitorTest {
           "kanEndres": true,
           "begrunnelseEndring": null,
           "registrertArbeidssoker": true,
-          "korrigeringAv": "123-123-123",
+          "originalMeldekortId": "123-123-123",
           "status": "Innsendt",
           "kilde": {
             "rolle": "Bruker",

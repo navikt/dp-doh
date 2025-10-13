@@ -2,15 +2,15 @@ package no.nav.dagpenger.doh.monitor.behandling
 
 import com.github.navikt.tbd_libs.rapids_and_rivers.JsonMessage
 import com.github.navikt.tbd_libs.rapids_and_rivers.River
-import com.github.navikt.tbd_libs.rapids_and_rivers.asLocalDate
 import com.github.navikt.tbd_libs.rapids_and_rivers_api.MessageContext
 import com.github.navikt.tbd_libs.rapids_and_rivers_api.MessageMetadata
 import com.github.navikt.tbd_libs.rapids_and_rivers_api.RapidsConnection
 import io.github.oshai.kotlinlogging.KotlinLogging
+import io.github.oshai.kotlinlogging.withLoggingContext
 import io.micrometer.core.instrument.MeterRegistry
 import no.nav.dagpenger.doh.slack.VedtakBot
 
-internal class KorrigertMeldekortMonitor(
+internal class BeregnMeldekortMottak(
     rapidsConnection: RapidsConnection,
     private val slackClient: VedtakBot?,
 ) : River.PacketListener {
@@ -21,8 +21,8 @@ internal class KorrigertMeldekortMonitor(
     init {
         River(rapidsConnection)
             .apply {
-                precondition { it.requireValue("@event_name", "meldekort_innsendt") }
-                validate { it.requireKey("periode", "originalMeldekortId") }
+                precondition { it.requireValue("@event_name", "beregn_meldekort") }
+                validate { it.requireKey("meldekortId", "ident", "eksternMeldekortId") }
             }.register(this)
     }
 
@@ -32,11 +32,19 @@ internal class KorrigertMeldekortMonitor(
         metadata: MessageMetadata,
         meterRegistry: MeterRegistry,
     ) {
-        val fraOgMed = packet["periode"]["fraOgMed"].asLocalDate()
-        val tilOgMed = packet["periode"]["tilOgMed"].asLocalDate()
-        val korrigeringAv = packet["originalMeldekortId"].asText()
-        val melding = "Mottok korrigert av meldekort ($korrigeringAv) for perioden $fraOgMed -> $tilOgMed!"
+        val meldekortId = packet["meldekortId"].asText()
+        val eksternMeldekortId = packet["eksternMeldekortId"].asText().takeIf { !it.isNullOrEmpty() }
+        val melding =
+            "Skal beregne for meldekortId=$meldekortId" +
+                (eksternMeldekortId?.let { " og eksternMeldekortId=$it" } ?: "")
 
-        slackClient?.korrigertMeldekort(melding)
+        withLoggingContext(
+            "meldekortId" to meldekortId,
+            "eksternMeldekortId" to eksternMeldekortId,
+        ) {
+            slackClient?.skalBeregnemeldekort(
+                melding,
+            )
+        }
     }
 }
