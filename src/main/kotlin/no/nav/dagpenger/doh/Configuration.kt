@@ -19,10 +19,6 @@ internal object Configuration {
         properties[Key("DP_SLACKER_STSB_CHANNEL_ID", stringType)]
     }
 
-    val quizResultatSlackChannelId by lazy {
-        properties[Key("dp.slacker.channel.id", stringType)]
-    }
-
     val quizMalSlackChannelId by lazy {
         properties[Key("dp.slacker.mal.channel.id", stringType)]
     }
@@ -52,14 +48,13 @@ internal object Configuration {
         properties.getOrNull(Key("SLACK_ACCESS_TOKEN", stringType))
     }
 
-    fun slackClient(channel: String): SlackClient {
-        return slackToken?.let {
+    fun slackClient(channel: String): SlackClient =
+        slackToken?.let {
             SlackClient(
                 accessToken = it,
                 channel = channel,
             )
         } ?: throw RuntimeException("Slack token not found")
-    }
 
     val slackAlertClient: SlackClient? by lazy {
         slackToken?.let {

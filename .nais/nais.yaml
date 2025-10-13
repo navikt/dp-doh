@@ -47,8 +47,6 @@ spec:
   env:
     - name: DP_SLACKER_ALERT_CHANNEL_ID
       value: "{{dp_slacker_alert_channel_id}}"
-    - name: DP_SLACKER_CHANNEL_ID
-      value: "{{dp_slacker_channel_id}}"
     - name: DP_SLACKER_MAL_CHANNEL_ID
       value: "{{dp_slacker_mal_channel_id}}"
     - name: DP_SLACKER_VEDTAK_CHANNEL_ID
