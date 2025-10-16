@@ -68,7 +68,7 @@ internal class BehandlingStatusMonitor(
             val status =
                 when (eventName) {
                     "behandling_avbrutt" -> Status.BEHANDLING_AVBRUTT
-                    "forslag_til_vedtak" -> Status.FORSLAG_TIL_VEDTAK
+                    "forslag_til_vedtak" -> return // Vi vil bare telle, ikke poste Slack-melding
                     "vedtak_fattet" -> Status.VEDTAK_FATTET
                     "behandling_opprettet" -> return // Vi vil bare telle, ikke poste Slack-melding
                     else -> return
