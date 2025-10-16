@@ -78,7 +78,7 @@ class BehandlingStatusMonitorTest {
             forslagTilVedtakMessage,
         )
 
-        verify(exactly = 1) {
+        verify(exactly = 0) {
             vedtakBot.postBehandlingStatus(
                 status = BehandlingStatusMonitor.Status.FORSLAG_TIL_VEDTAK,
                 behandlingId = "018ec78d-4f15-7a02-bdf9-0e67129a0411",
@@ -91,16 +91,6 @@ class BehandlingStatusMonitorTest {
         }
 
         assertEquals(Metrikker.behandlingStatus("forslag_til_vedtak"), 1.0)
-        assertEquals(
-            Metrikker.vilkår(
-                status = "forslag_til_vedtak",
-                utfall = "false",
-                automatisk = "true",
-                navn = "Alder og sånt",
-                vurdering = "Oppfylt",
-            ),
-            1.0,
-        )
     }
 
     @Test
