@@ -34,9 +34,13 @@ internal class BeregnMeldekortMottak(
     ) {
         val meldekortId = packet["meldekortId"].asText()
         val eksternMeldekortId = packet["eksternMeldekortId"].asText().takeIf { !it.isNullOrEmpty() }
+
         val melding =
-            "Skal beregne for meldekortId=$meldekortId" +
-                (eksternMeldekortId?.let { " og eksternMeldekortId=$it" } ?: "")
+            """
+            |Skal beregne meldekort
+            |*Meldekort ID*: $eksternMeldekortId
+            |(intent meldekort ID: $meldekortId)
+            """.trimIndent()
 
         withLoggingContext(
             "meldekortId" to meldekortId,
