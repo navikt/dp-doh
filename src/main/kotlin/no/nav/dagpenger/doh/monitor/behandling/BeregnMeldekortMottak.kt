@@ -39,7 +39,7 @@ internal class BeregnMeldekortMottak(
             """
             |Skal beregne meldekort
             |*Meldekort ID*: $eksternMeldekortId
-            |(intent meldekort ID: $meldekortId)
+            |(intern meldekort ID: $meldekortId)
             """.trimMargin()
 
         withLoggingContext(
