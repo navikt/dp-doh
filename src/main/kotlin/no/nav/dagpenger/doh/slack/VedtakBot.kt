@@ -86,6 +86,17 @@ internal class VedtakBot(
         }
     }
 
+    internal fun utbetalingStatus(tekst: String) {
+        chatPostMessage {
+            it.iconEmoji(":moneybag:")
+            it.blocks {
+                section {
+                    markdownText(tekst)
+                }
+            }
+        }
+    }
+
     private fun tolk(utfall: Boolean?): String =
         when (utfall) {
             true -> "Innvilget :tada:"
