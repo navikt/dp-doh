@@ -56,16 +56,16 @@ internal class UtbetalingStatusMonitor(
                     "utbetaling_feilet" ->
                         """
                     |:alert: Utbetaling feilet :alert:
-                    |*Behandling:* ${packet["behandlingId"].asText()}
-                    |*SakId:* $behandlingId
+                    |*Behandling:* $behandlingId
+                    |*SakId:* ${packet["sakId"].asText()}
                     |*MeldekortId:* ${packet["meldekortId"].asText()}
                         """.trimMargin()
 
                     "utbetaling_utført" ->
                         """
                     |:dollar: Utbetaling utført :dagpenger: 
-                    |*Behandling:* ${packet["behandlingId"].asText()}
-                    |*SakId:* $behandlingId
+                    |*Behandling:* $behandlingId
+                    |*SakId:* ${packet["sakId"].asText()}
                     |*MeldekortId:* ${packet["meldekortId"].asText()}
                         """.trimMargin()
 
