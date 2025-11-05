@@ -18,21 +18,22 @@ internal class UtbetalingStatusMonitor(
         listOf("utbetaling_mottatt", "utbetaling_sendt", "utbetaling_feilet", "utbetaling_utført")
 
     init {
-        River(rapidsConnection).apply {
-            precondition {
-                it.requireAllOrAny(
-                    "@event_name",
-                    utbetalingEventer,
-                )
-            }
-            validate {
-                it.requireKey(
-                    "behandlingId",
-                    "sakId",
-                    "meldekortId",
-                )
-            }
-        }
+        River(rapidsConnection)
+            .apply {
+                precondition {
+                    it.requireAny(
+                        "@event_name",
+                        utbetalingEventer,
+                    )
+                }
+                validate {
+                    it.requireKey(
+                        "behandlingId",
+                        "sakId",
+                        "meldekortId",
+                    )
+                }
+            }.register(this)
     }
 
     override fun onPacket(
@@ -42,11 +43,12 @@ internal class UtbetalingStatusMonitor(
         meterRegistry: MeterRegistry,
     ) {
         val eventName = packet["@event_name"].asText()
-        val behandlingId = packet["sakId"].asText()
+        val behandlingId = packet["behandlingId"].asText()
 
         withLoggingContext(
             "behandlingId" to behandlingId,
         ) {
+            logger.info { "Mottok utbetaling hendelse: $eventName for behandlingId: $behandlingId" }
             val tekst =
                 when (eventName) {
                     "utbetaling_sendt" ->
