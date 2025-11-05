@@ -51,13 +51,7 @@ internal class UtbetalingStatusMonitor(
             logger.info { "Mottok utbetaling hendelse: $eventName for behandlingId: $behandlingId" }
             val tekst =
                 when (eventName) {
-                    "utbetaling_sendt" ->
-                        """
-                        | Utbetaling sendt til utbetaling
-                        |*Behandling:* ${packet["behandlingId"].asText()}
-                        |*SakId:* $behandlingId
-                        |*MeldekortId:* ${packet["meldekortId"].asText()}     
-                        """.trimIndent()
+                    "utbetaling_sendt" -> return
 
                     "utbetaling_feilet" ->
                         """
@@ -69,7 +63,7 @@ internal class UtbetalingStatusMonitor(
 
                     "utbetaling_utført" ->
                         """
-                    |Utbetaling utført
+                    |:dollar: Utbetaling utført :dagpenger: 
                     |*Behandling:* ${packet["behandlingId"].asText()}
                     |*SakId:* $behandlingId
                     |*MeldekortId:* ${packet["meldekortId"].asText()}

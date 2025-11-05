@@ -43,7 +43,7 @@ class UtbetalingStatusMonitorTest {
             testRapid.sendTestMessage(melding)
         }
 
-        verify(exactly = 3) {
+        verify(exactly = 2) {
             vedtakBot.utbetalingStatus(any())
         }
     }
