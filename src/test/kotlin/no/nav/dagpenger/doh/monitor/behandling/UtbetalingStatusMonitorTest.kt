@@ -35,7 +35,9 @@ class UtbetalingStatusMonitorTest {
                 {
                     "@event_name": "$eventName",
                     "behandlingId": "${UUID.randomUUID()}",
+                    "eksternBehandlingId": "${UUID.randomUUID()}",
                     "sakId": "${UUID.randomUUID()}",
+                    "eksternSakId": "${UUID.randomUUID()}",
                     "meldekortId": "${UUID.randomUUID()}"
                 }
                 """.trimIndent()

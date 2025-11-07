@@ -32,6 +32,7 @@ internal class UtbetalingStatusMonitor(
                         "sakId",
                         "meldekortId",
                     )
+                    it.interestedIn("eksternBehandlingId", "eksternSakId")
                 }
             }.register(this)
     }
@@ -49,24 +50,26 @@ internal class UtbetalingStatusMonitor(
             "behandlingId" to behandlingId,
         ) {
             logger.info { "Mottok utbetaling hendelse: $eventName for behandlingId: $behandlingId" }
+            val sakId = packet["sakId"].asText()
+            val eksternSakId = packet["eksternSakId"].asText()
+            val eksternBehandlingId = packet["eksternBehandlingId"].asText()
+            val meldekortId = packet["meldekortId"].asText()
             val tekst =
                 when (eventName) {
-                    "utbetaling_sendt" -> return
-
                     "utbetaling_feilet" ->
                         """
-                    |:alert: Utbetaling feilet :alert:
-                    |*Behandling:* $behandlingId
-                    |*SakId:* ${packet["sakId"].asText()}
-                    |*MeldekortId:* ${packet["meldekortId"].asText()}
+                        |:alert: Utbetaling feilet :alert:
+                        |*Behandling:* $behandlingId (ekstern: $eksternBehandlingId)
+                        |*SakId:* $sakId (ekstern: $eksternSakId)
+                        |*MeldekortId:* $meldekortId 
                         """.trimMargin()
 
                     "utbetaling_utført" ->
                         """
-                    |:dollar: Utbetaling utført :dagpenger: 
-                    |*Behandling:* $behandlingId
-                    |*SakId:* ${packet["sakId"].asText()}
-                    |*MeldekortId:* ${packet["meldekortId"].asText()}
+                        |:dollar: Utbetaling utført :dagpenger: 
+                        |*Behandling:* $behandlingId (ekstern: $eksternBehandlingId)
+                        |*SakId:* $sakId (ekstern: $eksternSakId)
+                        |*MeldekortId:* $meldekortId
                         """.trimMargin()
 
                     else -> return
