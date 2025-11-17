@@ -45,13 +45,14 @@ internal abstract class SlackBot(
                         log.error { "Kunne ikke poste på Slack fordi ${response.errors}" }
                         log.error { response }
                     }
+                    val threadTs = response.ts
                     trådNøkkel?.let {
-                        val threadTs = response.ts
                         log.info { "Lagrer tråd for $it med $threadTs" }
                         slackTrådRepository?.lagreTråd(
                             SlackTråd(it, response.ts),
                         )
                     }
+                    log.info { "Publiserte melding på Slack med threadTs=$threadTs" }
                 }
         } catch (e: SlackApiException) {
             if (e.response.code == 429) {
