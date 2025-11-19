@@ -42,9 +42,9 @@ internal class UtbetalingStatusMonitor(
             logger.info { "$tekst (slackbot er konfiguert? ${slackClient != null})" }
             slackClient?.utbetalingStatus(
                 tekst = tekst,
-                packet["eksternSakId"].asText(),
-                behandlingId,
-                packet["@opprettet"].asLocalDateTime(),
+                eksternSakId = packet["eksternSakId"].asText(),
+                behandlingId = behandlingId,
+                opprettet = packet["@opprettet"].asLocalDateTime(),
             )
         }
     }
@@ -59,29 +59,21 @@ internal class UtbetalingStatusMonitor(
         val eksternBehandlingId = packet["eksternBehandlingId"].asText()
         val meldekortId = packet["meldekortId"].asText()
 
-        return when (eventName) {
-            "utbetaling_feilet" ->
-                """
-                |:alert: Utbetaling feilet :alert:
-                |*Behandling:* $behandlingId 
-                | - (ekstern: $eksternBehandlingId)
-                |*SakId:* $sakId 
-                | -  (ekstern: $eksternSakId)
-                |*MeldekortId:* $meldekortId
-                """.trimMargin()
+        val (icon, status) =
+            when (eventName) {
+                "utbetaling_feilet" -> ":alert:" to "Utbetaling feilet :alert:"
+                "utbetaling_utført" -> ":dollar:" to "Utbetaling utført :dagpenger:"
+                else -> return null
+            }
 
-            "utbetaling_utført" ->
-                """
-                |:dollar: Utbetaling utført :dagpenger:
-                |*Behandling:* $behandlingId 
-                | -  (ekstern: $eksternBehandlingId)
-                |*SakId:* $sakId 
-                | -  (ekstern: $eksternSakId)
-                |*MeldekortId:* $meldekortId
-                """.trimMargin()
-
-            else -> null
-        }
+        return """
+        |$icon $status
+        |*Behandling:* $behandlingId 
+        | - Helved-ref: `$eksternBehandlingId`
+        |*SakId:* $sakId 
+        | - Helved-ref: `$eksternSakId`
+        |*MeldekortId:* $meldekortId
+            """.trimMargin()
     }
 
     private companion object {

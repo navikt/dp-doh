@@ -100,10 +100,10 @@ internal class VedtakBot(
                 }
                 actions {
                     button {
-                        text(":ledger: Se logg i Kibana")
+                        text(":ledger: Søk etter Helved-referanse i Kibana")
                         url(
                             Kibana.createUrl(
-                                String.format("\"%s\" OR \"%s\"", eksternSakId, behandlingId),
+                                String.format("\"%s\"", eksternSakId),
                                 opprettet.minusHours(1),
                             ),
                         )
