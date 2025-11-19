@@ -86,12 +86,28 @@ internal class VedtakBot(
         }
     }
 
-    internal fun utbetalingStatus(tekst: String) {
-        chatPostMessage {
+    internal fun utbetalingStatus(
+        tekst: String,
+        eksternSakId: String,
+        behandlingId: String,
+        opprettet: LocalDateTime,
+    ) {
+        chatPostMessage(trådNøkkel = behandlingId, replyBroadCast = true) {
             it.iconEmoji(":moneybag:")
             it.blocks {
                 section {
                     markdownText(tekst)
+                }
+                actions {
+                    button {
+                        text(":ledger: Se logg i Kibana")
+                        url(
+                            Kibana.createUrl(
+                                String.format("\"%s\" OR \"%s\"", eksternSakId, behandlingId),
+                                opprettet.minusHours(1),
+                            ),
+                        )
+                    }
                 }
             }
         }

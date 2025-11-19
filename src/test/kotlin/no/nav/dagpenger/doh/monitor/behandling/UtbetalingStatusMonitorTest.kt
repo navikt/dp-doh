@@ -7,6 +7,7 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.verify
 import no.nav.dagpenger.doh.slack.VedtakBot
+import java.time.LocalDateTime
 import java.util.UUID
 import kotlin.test.Test
 
@@ -14,7 +15,7 @@ class UtbetalingStatusMonitorTest {
     private val testRapid = TestRapid()
     private val vedtakBot =
         mockk<VedtakBot>().also {
-            every { it.utbetalingStatus(any()) } just Runs
+            every { it.utbetalingStatus(any<String>(), any<String>(), any<String>(), any<LocalDateTime>()) } just Runs
         }
 
     @Test
@@ -38,7 +39,8 @@ class UtbetalingStatusMonitorTest {
                     "eksternBehandlingId": "${UUID.randomUUID()}",
                     "sakId": "${UUID.randomUUID()}",
                     "eksternSakId": "${UUID.randomUUID()}",
-                    "meldekortId": "${UUID.randomUUID()}"
+                    "meldekortId": "${UUID.randomUUID()}",
+                    "@opprettet": "${LocalDateTime.now()}"
                 }
                 """.trimIndent()
 
@@ -46,7 +48,7 @@ class UtbetalingStatusMonitorTest {
         }
 
         verify(exactly = 2) {
-            vedtakBot.utbetalingStatus(any())
+            vedtakBot.utbetalingStatus(any<String>(), any<String>(), any<String>(), any<LocalDateTime>())
         }
     }
 }
