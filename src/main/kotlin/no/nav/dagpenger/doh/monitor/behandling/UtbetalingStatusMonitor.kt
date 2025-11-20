@@ -20,7 +20,7 @@ internal class UtbetalingStatusMonitor(
             .apply {
                 precondition { it.requireAny("@event_name", UTBETALING_EVENTER) }
                 validate {
-                    it.requireKey("behandlingId", "sakId", "meldekortId", "@opprettet")
+                    it.requireKey("behandlingId", "sakId", "behandletHendelseId", "@opprettet")
                     it.interestedIn("eksternBehandlingId", "eksternSakId")
                 }
             }.register(this)
@@ -57,7 +57,7 @@ internal class UtbetalingStatusMonitor(
         val sakId = packet["sakId"].asText()
         val eksternSakId = packet["eksternSakId"].asText()
         val eksternBehandlingId = packet["eksternBehandlingId"].asText()
-        val meldekortId = packet["meldekortId"].asText()
+        val behandletHendelseId = packet["behandletHendelseId"].asText()
 
         val (icon, status) =
             when (eventName) {
@@ -72,7 +72,7 @@ internal class UtbetalingStatusMonitor(
         | - Helved-ref: `$eksternBehandlingId`
         |*SakId:* $sakId 
         | - Helved-ref: `$eksternSakId`
-        |*MeldekortId:* $meldekortId
+        |*Behandlet hendelse med id:* $behandletHendelseId
             """.trimMargin()
     }
 

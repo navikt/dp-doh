@@ -39,7 +39,7 @@ class UtbetalingStatusMonitorTest {
                     "eksternBehandlingId": "${UUID.randomUUID()}",
                     "sakId": "${UUID.randomUUID()}",
                     "eksternSakId": "${UUID.randomUUID()}",
-                    "meldekortId": "${UUID.randomUUID()}",
+                    "behandletHendelseId": "${UUID.randomUUID()}",
                     "@opprettet": "${LocalDateTime.now()}"
                 }
                 """.trimIndent()
