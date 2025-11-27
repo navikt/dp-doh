@@ -8,7 +8,6 @@ import io.mockk.mockk
 import io.mockk.verify
 import no.nav.dagpenger.doh.slack.VedtakBot
 import java.time.LocalDateTime
-import java.util.UUID
 import kotlin.test.Test
 
 class UtbetalingStatusMonitorTest {
@@ -34,13 +33,24 @@ class UtbetalingStatusMonitorTest {
             val melding =
                 """
                 {
-                    "@event_name": "$eventName",
-                    "behandlingId": "${UUID.randomUUID()}",
-                    "eksternBehandlingId": "${UUID.randomUUID()}",
-                    "sakId": "${UUID.randomUUID()}",
-                    "eksternSakId": "${UUID.randomUUID()}",
-                    "behandletHendelseId": "${UUID.randomUUID()}",
-                    "@opprettet": "${LocalDateTime.now()}"
+                  "@event_name": "$eventName",
+                  "ident": "12345678901",
+                  "behandlingId": "123e4567-e89b-12d3-a456-426614174000",
+                  "eksternBehandlingId": "Ej5FZ+ibEtOkVkJmFBdAAA==",
+                  "sakId": "123e4567-e89b-12d3-a456-426614174001",
+                  "eksternSakId": "Ej5FZ+ibEtOkVkJmFBdAAQ==",
+                  "behandletHendelseId": "m1",
+                  "meldekortId": "m1",
+                  "status": "MOTTATT",
+                  "@id": "c0dd639d-b676-4bc9-a41f-71510ab837a6",
+                  "@opprettet": "2025-11-21T12:10:18.210682",
+                  "system_read_count": 0,
+                  "system_participating_services": [
+                    {
+                      "id": "c0dd639d-b676-4bc9-a41f-71510ab837a6",
+                      "time": "2025-11-21T12:10:18.210682"
+                    }
+                  ]
                 }
                 """.trimIndent()
 

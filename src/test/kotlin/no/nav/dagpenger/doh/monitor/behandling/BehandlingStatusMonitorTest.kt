@@ -6,7 +6,6 @@ import io.mockk.verify
 import no.nav.dagpenger.doh.monitor.BehandlingMetrikker.behandlingAvbruttCounter
 import no.nav.dagpenger.doh.monitor.BehandlingMetrikker.behandlingStatusCounter
 import no.nav.dagpenger.doh.monitor.BehandlingMetrikker.behandlingVedtakCounter
-import no.nav.dagpenger.doh.monitor.BehandlingMetrikker.behandlingVilkårCounter
 import no.nav.dagpenger.doh.monitor.behandling.BehandlingStatusMonitor.BehandletHendelse
 import no.nav.dagpenger.doh.slack.VedtakBot
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -28,7 +27,8 @@ class BehandlingStatusMonitorTest {
 
     @Test
     fun `vedtak fattet med avslag`() {
-        val vedtakFattet = les("/dp-behandling/vedtak_fattet_avslag.json")
+        // Tall fra https://github.com/navikt/dp-behandling/blob/2ac5c756ad235112db8c10c032956ac275692092/mediator/src/test/kotlin/no/nav/dagpenger/behandling/scenario/ScenarioTest.kt#L75
+        val vedtakFattet = les("/dp-behandling/behandlingsresultat_avslag.json")
 
         testRapid.sendTestMessage(
             vedtakFattet,
@@ -37,60 +37,40 @@ class BehandlingStatusMonitorTest {
         verify(exactly = 1) {
             vedtakBot.postBehandlingStatus(
                 status = BehandlingStatusMonitor.Status.VEDTAK_FATTET,
-                behandlingId = "0192241a-8301-7b40-9581-d1c2416c9dee",
-                behandletHendelse = BehandletHendelse(id = "4afce924-6cb4-4ab4-a92b-fe91e24f31bf", type = "Søknad"),
+                behandlingId = "019ac567-fe1c-7745-81e6-8f64cc3c3712",
+                behandletHendelse = BehandletHendelse(id = "a06709e0-b05f-4a20-9c55-f12c358b7ec3", type = "Søknad"),
                 opprettet = any(),
                 årsak = null,
-                utfall = false,
-                automatisk = true,
-            )
-        }
-
-        assertEquals(Metrikker.behandlingVedtak(utfall = false, automatisering = true), 1.0)
-    }
-
-    @Test
-    fun `vedtak fattet med innvilgelse`() {
-        val vedtakFattet = les("/dp-behandling/vedtak_fattet_innvilgelse.json")
-
-        testRapid.sendTestMessage(
-            vedtakFattet,
-        )
-
-        verify(exactly = 1) {
-            vedtakBot.postBehandlingStatus(
-                status = BehandlingStatusMonitor.Status.VEDTAK_FATTET,
-                behandlingId = "01924774-13c6-7411-a408-20e95689a030",
-                behandletHendelse = BehandletHendelse(id = "4afce924-6cb4-4ab4-a92b-fe91e24f31bf", type = "Søknad"),
-                opprettet = any(),
-                årsak = null,
-                utfall = true,
+                førteTil = "Avslag",
                 automatisk = false,
             )
         }
 
-        assertEquals(Metrikker.behandlingVedtak(utfall = true, automatisering = false), 1.0)
+        assertEquals(Metrikker.behandlingVedtak(førteTil = "Avslag", automatisering = false), 1.0)
     }
 
     @Test
-    fun `forslag til vedtak`() {
+    fun `vedtak fattet med innvilgelse`() {
+        // tatt fra https://github.com/navikt/dp-behandling/blob/2ac5c756ad235112db8c10c032956ac275692092/mediator/src/test/kotlin/no/nav/dagpenger/behandling/scenario/ScenarioTest.kt#L125
+        val vedtakFattet = les("/dp-behandling/behandlingsresultat_innvilgelse.json")
+
         testRapid.sendTestMessage(
-            forslagTilVedtakMessage,
+            vedtakFattet,
         )
 
-        verify(exactly = 0) {
+        verify(exactly = 1) {
             vedtakBot.postBehandlingStatus(
-                status = BehandlingStatusMonitor.Status.FORSLAG_TIL_VEDTAK,
-                behandlingId = "018ec78d-4f15-7a02-bdf9-0e67129a0411",
-                behandletHendelse = BehandletHendelse(id = "4afce924-6cb4-4ab4-a92b-fe91e24f31bf", type = "Søknad"),
+                status = BehandlingStatusMonitor.Status.VEDTAK_FATTET,
+                behandlingId = "019ac569-d6bf-7d72-a05c-dc1085c86b4c",
+                behandletHendelse = BehandletHendelse(id = "cfb917d8-707d-4afd-952f-2cfda3825825", type = "Søknad"),
                 opprettet = any(),
                 årsak = null,
-                utfall = false,
-                automatisk = true,
+                førteTil = "Innvilgelse",
+                automatisk = false,
             )
         }
 
-        assertEquals(Metrikker.behandlingStatus("forslag_til_vedtak"), 1.0)
+        assertEquals(Metrikker.behandlingVedtak(førteTil = "Innvilgelse", automatisering = false), 1.0)
     }
 
     @Test
@@ -139,39 +119,6 @@ class BehandlingStatusMonitorTest {
         """.trimIndent()
 
     // language=JSON
-    private val forslagTilVedtakMessage =
-        """
-        {
-          "@event_name": "forslag_til_vedtak",
-            "behandletHendelse" : {
-              "id": "4afce924-6cb4-4ab4-a92b-fe91e24f31bf",
-              "type": "Søknad",
-              "datatype": "UUID"
-            },
-          "utfall": false,
-          "harAvklart": "Krav på dagpenger",
-          "ident": "12345678901",
-          "behandlingId": "018ec78d-4f15-7a02-bdf9-0e67129a0411",
-          "gjelderDato": "2024-04-10",
-          "fagsakId": "123",
-          "søknadId": "4afce924-6cb4-4ab4-a92b-fe91e24f31bf",
-          "søknad_uuid": "4afce924-6cb4-4ab4-a92b-fe91e24f31bf",
-          "@id": "4461e599-e60e-41f6-b052-771d6bde0108",
-          "@opprettet": "2024-04-10T12:28:31.533933",
-          "fastsatt": {
-            "utfall": false
-          },
-          "automatisk": true,
-          "vilkår": [
-            {
-              "navn": "Alder og sånt",
-              "status": "Oppfylt"
-            }
-          ]
-        }
-        """.trimIndent()
-
-    // language=JSON
     private val behandlingAvbrutt =
         """
         {
@@ -199,20 +146,12 @@ class BehandlingStatusMonitorTest {
 
         fun behandlingAvbrutt(årsak: String): Double = behandlingAvbruttCounter.labelValues(årsak).get()
 
-        fun vilkår(
-            status: String,
-            utfall: String,
-            automatisk: String,
-            navn: String,
-            vurdering: String,
-        ): Double = behandlingVilkårCounter.labelValues(status, utfall, automatisk, navn, vurdering).get()
-
         fun behandlingVedtak(
-            utfall: Boolean,
+            førteTil: String,
             automatisering: Boolean,
         ): Double =
             behandlingVedtakCounter
-                .labelValues(utfall.toString(), if (automatisering) "Automatisk" else "Manuell")
+                .labelValues(førteTil, if (automatisering) "Automatisk" else "Manuell")
                 .get()
     }
 }

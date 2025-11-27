@@ -13,7 +13,6 @@ import io.micrometer.core.instrument.MeterRegistry
 import no.nav.dagpenger.doh.monitor.BehandlingMetrikker.behandlingAvbruttCounter
 import no.nav.dagpenger.doh.monitor.BehandlingMetrikker.behandlingStatusCounter
 import no.nav.dagpenger.doh.monitor.BehandlingMetrikker.behandlingVedtakCounter
-import no.nav.dagpenger.doh.monitor.BehandlingMetrikker.behandlingVilkårCounter
 import no.nav.dagpenger.doh.slack.VedtakBot
 
 internal class BehandlingStatusMonitor(
@@ -26,15 +25,12 @@ internal class BehandlingStatusMonitor(
                 precondition {
                     it.requireAny(
                         "@event_name",
-                        listOf("behandling_opprettet", "forslag_til_vedtak", "vedtak_fattet", "behandling_avbrutt"),
+                        listOf("behandling_opprettet", "forslag_til_behandlingsresultat", "behandlingsresultat", "behandling_avbrutt"),
                     )
                 }
                 validate {
-                    it.requireKey("behandlingId")
-                    it.require("behandletHendelse") {
-                        it["type"].asText() == "Søknad"
-                    }
-                    it.interestedIn("@opprettet", "årsak", "avklaringer", "fastsatt", "utfall", "automatisk", "vilkår")
+                    it.requireKey("behandlingId", "behandletHendelse", "@opprettet")
+                    it.interestedIn("førteTil", "automatisk", "årsak", "opprettet")
                 }
             }.register(this)
     }
@@ -68,13 +64,13 @@ internal class BehandlingStatusMonitor(
             val status =
                 when (eventName) {
                     "behandling_avbrutt" -> Status.BEHANDLING_AVBRUTT
-                    "forslag_til_vedtak" -> return // Vi vil bare telle, ikke poste Slack-melding
-                    "vedtak_fattet" -> Status.VEDTAK_FATTET
+                    "forslag_til_behandlingsresultat" -> return // Vi vil bare telle, ikke poste Slack-melding
+                    "behandlingsresultat" -> Status.VEDTAK_FATTET
                     "behandling_opprettet" -> return // Vi vil bare telle, ikke poste Slack-melding
                     else -> return
                 }
 
-            val utfall = packet["fastsatt"].takeUnless { it.isMissingOrNull() }?.let { it["utfall"].asBoolean() }
+            val førteTil = packet["førteTil"].takeUnless { it.isMissingOrNull() }?.asText()
             val automatisk = packet["automatisk"].takeIf { automatisk -> automatisk.isBoolean }?.asBoolean()
             val årsak = packet["årsak"].takeUnless { årsak -> årsak.isMissingNode }?.asText()
 
@@ -87,25 +83,16 @@ internal class BehandlingStatusMonitor(
                 status = status,
                 behandlingId = behandlingId,
                 behandletHendelse = behandletHendelse,
-                opprettet = packet["@opprettet"].asLocalDateTime(),
+                opprettet = packet["opprettet"].asLocalDateTime(),
                 årsak = årsak,
-                utfall = utfall,
+                førteTil = førteTil,
                 automatisk = automatisk,
             )
 
-            if (status == Status.VEDTAK_FATTET && utfall != null && automatisk != null) {
+            if (førteTil != null && automatisk != null) {
                 val automatisering = if (automatisk) "Automatisk" else "Manuell"
-                behandlingVedtakCounter.labelValues(utfall.toString(), automatisering).inc()
+                behandlingVedtakCounter.labelValues(førteTil, automatisering).inc()
             }
-
-            packet["vilkår"]
-                .associate {
-                    it["navn"].asText() to it["status"].asText()
-                }.forEach { (navn, vurdering) ->
-                    behandlingVilkårCounter
-                        .labelValues(status.name.lowercase(), utfall.toString(), automatisk.toString(), navn, vurdering)
-                        .inc()
-                }
         }
     }
 

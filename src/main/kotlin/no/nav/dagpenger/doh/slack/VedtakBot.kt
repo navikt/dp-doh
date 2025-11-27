@@ -24,7 +24,7 @@ internal class VedtakBot(
         behandletHendelse: BehandlingStatusMonitor.BehandletHendelse,
         opprettet: LocalDateTime,
         årsak: String? = null,
-        utfall: Boolean? = null,
+        førteTil: String? = null,
         automatisk: Boolean? = null,
     ) {
         val (hendelseId, hendelseType) = behandletHendelse
@@ -42,7 +42,7 @@ internal class VedtakBot(
                     """Vi har et forslag til vedtak 
                     |*$hendelseType ID:* $hendelseId 
                     |*Behandling ID:* $behandlingId
-                    |*Utfall:* ${tolk(utfall)}
+                    |*Førte til:* $førteTil
                     """.trimMargin()
 
                 BehandlingStatusMonitor.Status.VEDTAK_FATTET ->
@@ -50,7 +50,7 @@ internal class VedtakBot(
                     |*$hendelseType ID:* $hendelseId 
                     |*Behandling ID:* $behandlingId
                     |*Behandling*: ${if (automatisk == true) "Automatisk" else "Manuell"}
-                    |*Utfall:* ${tolk(utfall)}
+                    |*Førte til:* $førteTil
                     """.trimMargin()
             }
         chatPostMessage(trådNøkkel = behandlingId) {
