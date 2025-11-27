@@ -50,7 +50,7 @@ internal class VedtakBot(
                     |*$hendelseType ID:* $hendelseId 
                     |*Behandling ID:* $behandlingId
                     |*Behandling*: ${if (automatisk == true) "Automatisk" else "Manuell"}
-                    |*Førte til:* $førteTil
+                    |*Førte til:* $førteTil ${førteTilEmoji(førteTil)}
                     """.trimMargin()
             }
         chatPostMessage(trådNøkkel = behandlingId) {
@@ -112,6 +112,16 @@ internal class VedtakBot(
             }
         }
     }
+
+    private fun førteTilEmoji(førteTil: String?): String =
+        when (førteTil) {
+            "Innvilgelse" -> ":tada:"
+            "Avslag" -> ":no_entry_sign:"
+            "Stans" -> ":stop_sign:"
+            "Gjenopptak" -> ":repeat:"
+            "Endring" -> ":pencil2:"
+            else -> ""
+        }
 
     private fun emoji(status: BehandlingStatusMonitor.Status): String {
         val emoji =
