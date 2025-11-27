@@ -113,13 +113,6 @@ internal class VedtakBot(
         }
     }
 
-    private fun tolk(utfall: Boolean?): String =
-        when (utfall) {
-            true -> "Innvilget :tada:"
-            false -> "Avslag :x:"
-            else -> "Uavklart (vi klarer ikke å finne utfallet!)"
-        }
-
     private fun emoji(status: BehandlingStatusMonitor.Status): String {
         val emoji =
             when (status) {
