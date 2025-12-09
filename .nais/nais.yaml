@@ -57,6 +57,9 @@ spec:
       value: "{{dp_arena_sink_opprettet_melding}}"
   accessPolicy:
     outbound:
+      rules:
+        - application: logging
+          namespace: nais-system
       external:
         - host: slack.com
         - ipv4: 18.134.215.41

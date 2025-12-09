@@ -30,28 +30,31 @@ internal class VedtakBot(
         val (hendelseId, hendelseType) = behandletHendelse
         val tekst: String =
             when (status) {
-                BehandlingStatusMonitor.Status.BEHANDLING_AVBRUTT ->
+                BehandlingStatusMonitor.Status.BEHANDLING_AVBRUTT -> {
                     """
-                    |Behandlingen er avbrutt 
-                    |*$hendelseType ID:* $hendelseId 
-                    |*Behandling ID:* $behandlingId
-                    |${årsak?.let { "*Årsak*: $it" } ?: ""} 
+Behandlingen er avbrutt 
+*$hendelseType ID:* $hendelseId 
+*Behandling ID:* $behandlingId
+${årsak?.let { "*Årsak*: $it" } ?: ""} 
                     """.trimMargin()
+                }
 
-                BehandlingStatusMonitor.Status.FORSLAG_TIL_VEDTAK ->
+                BehandlingStatusMonitor.Status.FORSLAG_TIL_VEDTAK -> {
                     """Vi har et forslag til vedtak 
-                    |*$hendelseType ID:* $hendelseId 
-                    |*Behandling ID:* $behandlingId
-                    |*Førte til:* $førteTil
+*$hendelseType ID:* $hendelseId 
+*Behandling ID:* $behandlingId
+*Førte til:* $førteTil
                     """.trimMargin()
+                }
 
-                BehandlingStatusMonitor.Status.VEDTAK_FATTET ->
+                BehandlingStatusMonitor.Status.VEDTAK_FATTET -> {
                     """Vi har fattet et vedtak 
-                    |*$hendelseType ID:* $hendelseId 
-                    |*Behandling ID:* $behandlingId
-                    |*Behandling*: ${if (automatisk == true) "Automatisk" else "Manuell"}
-                    |*Førte til:* $førteTil ${førteTilEmoji(førteTil)}
+*$hendelseType ID:* $hendelseId 
+*Behandling ID:* $behandlingId
+*Behandlingsmåte*: ${if (automatisk == true) "Automatisk" else "Manuell"}                  
+*Førte til:* $førteTil ${førteTilEmoji(førteTil)}
                     """.trimMargin()
+                }
             }
         chatPostMessage(trådNøkkel = behandlingId) {
             it.iconEmoji(emoji(status))
