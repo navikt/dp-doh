@@ -8,7 +8,7 @@ import com.github.navikt.tbd_libs.rapids_and_rivers_api.MessageMetadata
 import com.github.navikt.tbd_libs.rapids_and_rivers_api.RapidsConnection
 import io.micrometer.core.instrument.MeterRegistry
 import kotlinx.coroutines.runBlocking
-import no.nav.dagpenger.doh.Kibana
+import no.nav.dagpenger.doh.OpenSearch
 import no.nav.dagpenger.doh.slack.SlackClient
 
 internal class OpprettJournalpostFeiletMonitor(
@@ -47,7 +47,7 @@ internal class OpprettJournalpostFeiletMonitor(
 
         runBlocking {
             val loggURL =
-                Kibana.createUrl(
+                OpenSearch.createUrl(
                     String.format("\"%s\" AND application:dp-behov-journalforing", behovId),
                     packet["@opprettet"].asLocalDateTime().minusMinutes(5),
                 )

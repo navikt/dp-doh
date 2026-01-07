@@ -10,7 +10,7 @@ import com.github.navikt.tbd_libs.rapids_and_rivers_api.MessageProblems
 import com.github.navikt.tbd_libs.rapids_and_rivers_api.RapidsConnection
 import io.micrometer.core.instrument.MeterRegistry
 import io.prometheus.metrics.core.metrics.Counter
-import no.nav.dagpenger.doh.Kibana
+import no.nav.dagpenger.doh.OpenSearch
 import no.nav.dagpenger.doh.humanReadableTime
 import no.nav.dagpenger.doh.slack.SlackClient
 import org.slf4j.LoggerFactory
@@ -67,7 +67,7 @@ internal class BehovUtenLøsningMonitor(
         slackClient?.postMessage(
             String.format(
                 "Behov <%s|%s> mottok aldri løsning for %s innen %s",
-                Kibana.createUrl(
+                OpenSearch.createUrl(
                     String.format("\"%s\"", packet["behov_id"].asText()),
                     packet["behov_opprettet"].asLocalDateTime().minusHours(1),
                 ),

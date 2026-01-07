@@ -3,7 +3,7 @@ package no.nav.dagpenger.doh.slack
 import com.slack.api.methods.MethodsClient
 import com.slack.api.methods.kotlin_extension.request.chat.blocks
 import com.slack.api.model.block.Blocks
-import no.nav.dagpenger.doh.Kibana
+import no.nav.dagpenger.doh.OpenSearch
 import java.time.LocalDateTime
 
 internal class ArenasinkBot(
@@ -54,8 +54,8 @@ internal class ArenasinkBot(
                 Blocks.divider()
                 actions {
                     button {
-                        text(":ledger: Se behandlingslogg i Kibana")
-                        url(Kibana.createUrl(String.format("\"%s\"", kildeId), opprettet.minusHours(1)))
+                        text(":ledger: Se behandlingslogg i OpenSearch")
+                        url(OpenSearch.createUrl(String.format("\"%s\"", kildeId), opprettet.minusHours(1)))
                     }
                 }
             }
@@ -89,8 +89,8 @@ internal class ArenasinkBot(
                 Blocks.divider()
                 actions {
                     button {
-                        text(":ledger: Se behandlingslogg i Kibana")
-                        url(Kibana.createUrl(String.format("\"%s\"", kildeId), opprettet.minusHours(1)))
+                        text(":ledger: Se behandlingslogg i OpenSearch")
+                        url(OpenSearch.createUrl(String.format("\"%s\"", kildeId), opprettet.minusHours(1)))
                     }
                 }
             }

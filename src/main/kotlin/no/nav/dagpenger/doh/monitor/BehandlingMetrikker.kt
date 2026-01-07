@@ -4,22 +4,6 @@ import io.prometheus.metrics.core.metrics.Counter
 import io.prometheus.metrics.core.metrics.Histogram
 
 object BehandlingMetrikker {
-    val manuellCounter =
-        Counter
-            .builder()
-            .name("dp_manuell_behandling")
-            .help("Søknader som blir sendt til manuell behandling")
-            .labelNames("grunn")
-            .register()
-
-    val resultatCounter =
-        Counter
-            .builder()
-            .name("dp_prosessresultat")
-            .help("Resultat av automatiseringsprosessen")
-            .labelNames("resultat")
-            .register()
-
     val behandlingStatusCounter =
         Counter
             .builder()

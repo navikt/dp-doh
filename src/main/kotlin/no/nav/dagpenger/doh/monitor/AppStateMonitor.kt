@@ -9,7 +9,7 @@ import com.github.navikt.tbd_libs.rapids_and_rivers_api.MessageMetadata
 import com.github.navikt.tbd_libs.rapids_and_rivers_api.MessageProblems
 import com.github.navikt.tbd_libs.rapids_and_rivers_api.RapidsConnection
 import io.micrometer.core.instrument.MeterRegistry
-import no.nav.dagpenger.doh.Kibana
+import no.nav.dagpenger.doh.OpenSearch
 import no.nav.dagpenger.doh.humanReadableTime
 import no.nav.dagpenger.doh.slack.SlackClient
 import org.slf4j.LoggerFactory
@@ -89,7 +89,7 @@ internal class AppStateMonitor(
                     """
                     | $app er antatt nede (siste aktivitet: $tid) fordi den ikke svarer tilfredsstillende på ping. Trøblete instanser i :thread:
                     |   :question: Hva betyr dette for meg? Det kan bety at appen ikke leser fra Kafka, og kan ha alvorlig feil. Det kan også bety at appene har stoppet opp. 
-                    |   - Sjekk logger i <$kibanaUrl|Kibana>
+                    |   - Sjekk logger i <$kibanaUrl|OpenSearch>
                     |   - Sjekk lag i <https://grafana.nais.io/d/j-ZhhGJnz/kafka-viser-offset-og-messages-second-per-consumer?orgId=1&var-datasource=prod-gcp&var-consumer_group=All&var-topic=All&viewPanel=18|Grafana>
                     """.trimMargin()
                 } else {
@@ -106,7 +106,7 @@ internal class AppStateMonitor(
                     | ${appsToAlert.size} apper er antatt nede da de ikke svarer tilfredsstillende på ping. Trøblete instanser i :thread:
                     |   $instanser
                     |   :question: Hva betyr dette for meg? Det kan bety at appene ikke leser fra Kafka, og kan ha alvorlig feil. Det kan også bety at appene har stoppet opp. 
-                    |   - Loggfeil i dagpenger teamet i <$kibanaUrl|Kibana>
+                    |   - Loggfeil i dagpenger teamet i <$kibanaUrl|OpenSearch>
                     |   - Sjekk kafka lag i <https://grafana.nais.io/d/j-ZhhGJnz/kafka-viser-offset-og-messages-second-per-consumer?orgId=1&var-datasource=prod-gcp&var-consumer_group=All&var-topic=All&viewPanel=18|Grafana>
                     """.trimMargin()
                 }
@@ -133,7 +133,7 @@ internal class AppStateMonitor(
     }
 
     private fun teamdagpengerKibanaUrl(): String =
-        Kibana.createUrl(
+        OpenSearch.createUrl(
             URLEncoder.encode(
                 "team: teamdagpenger AND (level:Error OR level:Warning) AND envclass:p",
                 Charset.defaultCharset(),

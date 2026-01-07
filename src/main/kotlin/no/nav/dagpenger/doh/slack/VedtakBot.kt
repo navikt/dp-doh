@@ -4,7 +4,7 @@ import com.slack.api.methods.MethodsClient
 import com.slack.api.methods.kotlin_extension.request.chat.blocks
 import com.slack.api.model.block.Blocks
 import com.slack.api.model.kotlin_extension.block.dsl.LayoutBlockDsl
-import no.nav.dagpenger.doh.Kibana
+import no.nav.dagpenger.doh.OpenSearch
 import no.nav.dagpenger.doh.monitor.behandling.BehandlingStatusMonitor
 import java.time.LocalDateTime
 
@@ -103,9 +103,9 @@ ${årsak?.let { "*Årsak*: $it" } ?: ""}
                 }
                 actions {
                     button {
-                        text(":ledger: Søk etter Helved-referanse i Kibana")
+                        text(":ledger: Søk etter Helved-referanse i OpenSearch")
                         url(
-                            Kibana.createUrl(
+                            OpenSearch.createUrl(
                                 String.format("\"%s\"", eksternSakId),
                                 opprettet.minusHours(1),
                             ),
@@ -146,9 +146,9 @@ ${årsak?.let { "*Årsak*: $it" } ?: ""}
         Blocks.divider()
         actions {
             button {
-                text(":ledger: Se behandlingslogg i Kibana")
+                text(":ledger: Se behandlingslogg i OpenSearch")
                 url(
-                    Kibana.createUrl(
+                    OpenSearch.createUrl(
                         String.format("\"%s\"", behandlingId),
                         opprettet.minusHours(1),
                     ),
