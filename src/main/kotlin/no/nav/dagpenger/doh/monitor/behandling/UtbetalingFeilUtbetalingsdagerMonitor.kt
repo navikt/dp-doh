@@ -11,16 +11,16 @@ import io.github.oshai.kotlinlogging.withLoggingContext
 import io.micrometer.core.instrument.MeterRegistry
 import no.nav.dagpenger.doh.slack.VedtakBot
 
-internal class UtbetalingStatusMonitor(
+internal class UtbetalingFeilUtbetalingsdagerMonitor(
     rapidsConnection: RapidsConnection,
     private val slackClient: VedtakBot?,
 ) : River.PacketListener {
     init {
         River(rapidsConnection)
             .apply {
-                precondition { it.requireAny("@event_name", UTBETALING_EVENTER) }
+                precondition { it.requireValue("@event_name", "utbetaling_feil_grensedato") }
                 validate {
-                    it.requireKey("behandlingId", "sakId", "behandletHendelseId", "@opprettet")
+                    it.requireKey("behandlingId", "sakId", "@opprettet", "førsteUtbetalingsdag", "førsteDagFraHelVed")
                     it.interestedIn("eksternBehandlingId", "eksternSakId")
                 }
             }.register(this)
@@ -32,13 +32,10 @@ internal class UtbetalingStatusMonitor(
         metadata: MessageMetadata,
         meterRegistry: MeterRegistry,
     ) {
-        val eventName = packet["@event_name"].asText()
         val behandlingId = packet["behandlingId"].asText()
 
         withLoggingContext("behandlingId" to behandlingId) {
-            logger.info { "Mottok utbetaling hendelse: $eventName for behandlingId: $behandlingId" }
-
-            val tekst = createSlackMessage(eventName, packet) ?: return
+            val tekst = createSlackMessage(packet) ?: return
             logger.info { "$tekst (slackbot er konfiguert? ${slackClient != null})" }
             slackClient?.utbetalingStatus(
                 tekst = tekst,
@@ -49,42 +46,24 @@ internal class UtbetalingStatusMonitor(
         }
     }
 
-    private fun createSlackMessage(
-        eventName: String,
-        packet: JsonMessage,
-    ): String? {
+    private fun createSlackMessage(packet: JsonMessage): String? {
         val behandlingId = packet["behandlingId"].asText()
         val sakId = packet["sakId"].asText()
         val eksternSakId = packet["eksternSakId"].asText()
         val eksternBehandlingId = packet["eksternBehandlingId"].asText()
-        val behandletHendelseId = packet["behandletHendelseId"].asText()
-
-        val (icon, status) =
-            when (eventName) {
-                "utbetaling_feilet" -> ":alert:" to "Utbetaling feilet :alert:"
-                "utbetaling_utført" -> ":dollar:" to "Utbetaling utført :dagpenger:"
-                "utbetaling_feil_grensedato" -> ":alert:" to ":alert: :alert: :alert: Utbetalingsdager stemmer ikke med behandling"
-                else -> return null
-            }
 
         return """
-        |$icon $status
+        |${":alert: :alert: :alert: Utbetalingsdager stemmer ikke med behandling"}
+        |*Forventet dato:* ${packet["førsteUtbetalingsdag"].asText()}
+        |*Dato fra Hel Ved:* ${packet["førsteDagFraHelVed"].asText()}
         |*Behandling:* $behandlingId 
         | - Helved-ref: `$eksternBehandlingId`
         |*SakId:* $sakId 
         | - Helved-ref: `$eksternSakId`
-        |*Behandlet hendelse med id:* $behandletHendelseId
             """.trimMargin()
     }
 
     private companion object {
         private val logger = KotlinLogging.logger { }
-        private val UTBETALING_EVENTER =
-            listOf(
-                "utbetaling_mottatt",
-                "utbetaling_sendt",
-                "utbetaling_feilet",
-                "utbetaling_utført",
-            )
     }
 }
