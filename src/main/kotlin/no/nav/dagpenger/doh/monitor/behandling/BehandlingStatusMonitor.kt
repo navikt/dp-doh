@@ -47,6 +47,12 @@ internal class BehandlingStatusMonitor(
     ) {
         val behandlingId = packet["behandlingId"].asText()
 
+        if (behandlingId == "019bf98f-a7ea-7464-b00b-f55895d75c8b") {
+            // Midlertidig filter for å unngå støy fra en spesifikk behandling som ikke er laget fra dp-behandling i dev?
+            logger.info { "Ignorerer behandling med ID $behandlingId" }
+            return
+        }
+
         val behandletHendelse =
             BehandletHendelse(
                 id = packet["behandletHendelse"]["id"].asText(),
@@ -64,9 +70,15 @@ internal class BehandlingStatusMonitor(
             val status =
                 when (eventName) {
                     "behandling_avbrutt" -> Status.BEHANDLING_AVBRUTT
-                    "forslag_til_behandlingsresultat" -> return // Vi vil bare telle, ikke poste Slack-melding
+
+                    "forslag_til_behandlingsresultat" -> return
+
+                    // Vi vil bare telle, ikke poste Slack-melding
                     "behandlingsresultat" -> Status.VEDTAK_FATTET
-                    "behandling_opprettet" -> return // Vi vil bare telle, ikke poste Slack-melding
+
+                    "behandling_opprettet" -> return
+
+                    // Vi vil bare telle, ikke poste Slack-melding
                     else -> return
                 }
 
