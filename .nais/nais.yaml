@@ -40,8 +40,6 @@ spec:
       memory: 256Mi
   kafka:
     pool: "{{ kafka_pool }}"
-  secureLogs:
-    enabled: true
   envFrom:
     - secret: credential-slack
   env:
