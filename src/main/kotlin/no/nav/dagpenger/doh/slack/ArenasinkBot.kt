@@ -69,11 +69,11 @@ internal class ArenasinkBot(
         opprettet: LocalDateTime,
     ) {
         chatPostMessage(trådNøkkel = kildeId) {
-            it.iconEmoji(":sink:")
+            it.iconEmoji(":alert:")
             it.blocks {
                 section {
                     markdownText(
-                        "Vi klarte ikke å opprette vedtak i Arena",
+                        ":alert: :alert: :alert: Vi klarte ikke å opprette vedtak i Arena",
                     )
                 }
                 Blocks.divider()

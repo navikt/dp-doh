@@ -46,7 +46,7 @@ internal class UtbetalingFeilUtbetalingsdagerMonitor(
         }
     }
 
-    private fun createSlackMessage(packet: JsonMessage): String? {
+    private fun createSlackMessage(packet: JsonMessage): String {
         val behandlingId = packet["behandlingId"].asText()
         val sakId = packet["sakId"].asText()
         val eksternSakId = packet["eksternSakId"].asText()
