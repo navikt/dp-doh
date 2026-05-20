@@ -11,6 +11,7 @@ import no.nav.dagpenger.doh.monitor.BehovUtenLøsningMonitor
 import no.nav.dagpenger.doh.monitor.MeldingerUtenEnvelopeMonitor
 import no.nav.dagpenger.doh.monitor.OpprettJournalpostFeiletMonitor
 import no.nav.dagpenger.doh.monitor.SaksbehandlingAlertMonitor
+import no.nav.dagpenger.doh.monitor.SøknadPipelineMonitor
 import no.nav.dagpenger.doh.monitor.behandling.ArenasinkVedtakFeiletMonitor
 import no.nav.dagpenger.doh.monitor.behandling.ArenasinkVedtakOpprettetMonitor
 import no.nav.dagpenger.doh.monitor.behandling.BehandlingEndretTilstandMonitor
@@ -44,6 +45,7 @@ fun main() {
             MeldingerUtenEnvelopeMonitor(this)
             SaksbehandlingAlertMonitor(this, Configuration.slackClient(stsbSlackAlertChannel))
 
+            SøknadPipelineMonitor(this, slackAlertClient)
             OpprettJournalpostFeiletMonitor(this, slackAlertClient)
             BeregnMeldekortMottak(this, vedtakBot)
             UtbetalingStatusMonitor(this, vedtakBot)
