@@ -27,6 +27,10 @@ internal object Configuration {
         properties.getOrNull(Key("DP_SLACKER_VEDTAK_CHANNEL_ID", stringType))
     }
 
+    val beregningKontrollbehovSlackChannelId: String? by lazy {
+        properties.getOrNull(Key("DP_SLACKER_BEREGNING_KONTROLLBEHOV_CHANNEL_ID", stringType))
+    }
+
     val publiserArenaVedtak by lazy {
         properties[Key("DP_ARENA_SINK_OPPRETTET_MELDING", stringType)].toBoolean()
     }
@@ -73,6 +77,18 @@ internal object Configuration {
     val vedtakBot: VedtakBot? by lazy {
         slackBotClient?.let { slackBotClient ->
             vedtakBotSlackChannelId?.let {
+                VedtakBot(
+                    slackBotClient,
+                    it,
+                    slackTrådRepository,
+                )
+            }
+        }
+    }
+
+    val kontrollbehovBot: VedtakBot? by lazy {
+        slackBotClient?.let { slackBotClient ->
+            beregningKontrollbehovSlackChannelId?.let {
                 VedtakBot(
                     slackBotClient,
                     it,

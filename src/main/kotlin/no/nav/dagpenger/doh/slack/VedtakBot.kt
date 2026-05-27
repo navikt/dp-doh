@@ -89,6 +89,17 @@ ${årsak?.let { "*Årsak*: $it" } ?: ""}
         }
     }
 
+    internal fun meldekortKontrollbehov(tekst: String) {
+        chatPostMessage {
+            it.iconEmoji(":warning:")
+            it.blocks {
+                section {
+                    markdownText(tekst)
+                }
+            }
+        }
+    }
+
     internal fun utbetalingStatus(
         tekst: String,
         eksternSakId: String,

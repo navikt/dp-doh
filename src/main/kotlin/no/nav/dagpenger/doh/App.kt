@@ -1,6 +1,7 @@
 package no.nav.dagpenger.doh
 
 import no.nav.dagpenger.doh.Configuration.arenaSinkBot
+import no.nav.dagpenger.doh.Configuration.kontrollbehovBot
 import no.nav.dagpenger.doh.Configuration.publiserArenaVedtak
 import no.nav.dagpenger.doh.Configuration.quizMalBot
 import no.nav.dagpenger.doh.Configuration.slackAlertClient
@@ -18,6 +19,7 @@ import no.nav.dagpenger.doh.monitor.behandling.BehandlingEndretTilstandMonitor
 import no.nav.dagpenger.doh.monitor.behandling.BehandlingPåminnelseMonitor
 import no.nav.dagpenger.doh.monitor.behandling.BehandlingStatusMonitor
 import no.nav.dagpenger.doh.monitor.behandling.BeregnMeldekortMottak
+import no.nav.dagpenger.doh.monitor.behandling.MeldekortKontrollbehovMonitor
 import no.nav.dagpenger.doh.monitor.behandling.UtbetalingFeilUtbetalingsdagerMonitor
 import no.nav.dagpenger.doh.monitor.behandling.UtbetalingStatusMonitor
 import no.nav.dagpenger.doh.monitor.quiz.NyQuizMalMonitor
@@ -48,6 +50,7 @@ fun main() {
             SøknadPipelineMonitor(this, slackAlertClient)
             OpprettJournalpostFeiletMonitor(this, slackAlertClient)
             BeregnMeldekortMottak(this, vedtakBot)
+            kontrollbehovBot?.let { MeldekortKontrollbehovMonitor(this, it) }
             UtbetalingStatusMonitor(this, vedtakBot)
             UtbetalingFeilUtbetalingsdagerMonitor(this, vedtakBot)
 
