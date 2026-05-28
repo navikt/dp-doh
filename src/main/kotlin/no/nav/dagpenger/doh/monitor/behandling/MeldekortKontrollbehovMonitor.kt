@@ -34,14 +34,16 @@ internal class MeldekortKontrollbehovMonitor(
         val behandlingId = packet["behandlingId"].asText()
         val behandletHendelseId = packet["behandletHendelseId"].asText()
         val ident = packet["ident"].asText("")
-        val aktiveDetaljer = aktiveDetaljer(packet)
+        val identlinje = ident.takeIf { it.isNotBlank() }?.let { "*Ident*: $it\n" } ?: ""
+        val begrunnelse = begrunnelse(packet)
 
         val melding =
             """
             |Meldekortberegning trenger kontrollregning
             |*Behandling ID*: $behandlingId
             |*Behandlet hendelse ID*: $behandletHendelseId
-            |*Detaljer*: $aktiveDetaljer
+            |$identlinje*Begrunnelse*:
+            |$begrunnelse
             """.trimMargin()
 
         withLoggingContext("behandlingId" to behandlingId, "behandletHendelseId" to behandletHendelseId) {
@@ -50,15 +52,33 @@ internal class MeldekortKontrollbehovMonitor(
         }
     }
 
-    private fun aktiveDetaljer(packet: JsonMessage): String =
-        packet["detaljer"]
-            .fields()
-            .asSequence()
-            .filter { (_, verdi) -> verdi.isBoolean && verdi.asBoolean() }
-            .map { (nøkkel, _) -> nøkkel }
-            .sorted()
-            .joinToString(", ")
-            .ifBlank { "Ingen aktive detaljer" }
+    private fun begrunnelse(packet: JsonMessage): String {
+        val begrunnelser =
+            packet["detaljer"]
+                .fields()
+                .asSequence()
+                .filter { (_, verdi) -> verdi.isBoolean && verdi.asBoolean() }
+                .filterNot { (nøkkel, _) -> nøkkel == "meldekortMedInnhold" || nøkkel == "harEndring" }
+                .map { (nøkkel, _) -> detaljTilTekst(nøkkel) }
+                .sorted()
+                .toList()
+
+        return if (begrunnelser.isEmpty()) {
+            "- Kontrollbehov flagget uten spesifisert detalj."
+        } else {
+            begrunnelser.joinToString(separator = "\n") { "- $it" }
+        }
+    }
+
+    private fun detaljTilTekst(nøkkel: String): String =
+        when (nøkkel) {
+            "trekkVedForsenMelding" -> "Trekk ved for sen melding"
+            "arbeidsdagUtenArbeid" -> "Inneholder annen aktivitet enn arbeid"
+            "arbeidstimerIkkeNull" -> "Inneholder dager med arbeidstimer"
+            "avgjorelseStans" -> "Behandlingen fører til stans"
+            "nyOpplysningUtenforBeregning" -> "Det er gjort endringer utover beregning"
+            else -> nøkkel
+        }
 
     private companion object {
         private val logger = KotlinLogging.logger { }

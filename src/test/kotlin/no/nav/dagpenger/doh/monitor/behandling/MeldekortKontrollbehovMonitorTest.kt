@@ -21,7 +21,14 @@ internal class MeldekortKontrollbehovMonitorTest {
         rapid.sendTestMessage(meldingOmKontrollbehov)
 
         verify(exactly = 1) {
-            slack.meldekortKontrollbehov(any())
+            slack.meldekortKontrollbehov(
+                match {
+                    it.contains("*Begrunnelse*:") &&
+                        it.contains("- Inneholder dager med arbeid") &&
+                        !it.contains("Meldekortet har innhold") &&
+                        !it.contains("registrert endring")
+                },
+            )
         }
     }
 
@@ -52,6 +59,7 @@ internal class MeldekortKontrollbehovMonitorTest {
                         mapOf(
                             "meldekortMedInnhold" to true,
                             "harEndring" to true,
+                            "arbeidstimerIkkeNull" to true,
                             "avgjorelseStans" to false,
                         ),
                 ),
