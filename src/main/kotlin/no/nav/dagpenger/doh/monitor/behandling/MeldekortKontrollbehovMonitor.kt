@@ -34,7 +34,6 @@ internal class MeldekortKontrollbehovMonitor(
         val behandlingId = packet["behandlingId"].asText()
         val behandletHendelseId = packet["behandletHendelseId"].asText()
         val ident = packet["ident"].asText("")
-        val identlinje = ident.takeIf { it.isNotBlank() }?.let { "*Ident*: $it\n" } ?: ""
         val begrunnelse = begrunnelse(packet)
 
         val melding =
@@ -42,7 +41,7 @@ internal class MeldekortKontrollbehovMonitor(
             |Meldekortberegning trenger kontrollregning
             |*Behandling ID*: $behandlingId
             |*Behandlet hendelse ID*: $behandletHendelseId
-            |$identlinje*Begrunnelse*:
+            |*Begrunnelse*:
             |$begrunnelse
             """.trimMargin()
 
