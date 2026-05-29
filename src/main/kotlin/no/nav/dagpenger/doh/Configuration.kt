@@ -11,12 +11,17 @@ import com.slack.api.methods.MethodsClient
 import no.nav.dagpenger.doh.slack.ArenasinkBot
 import no.nav.dagpenger.doh.slack.InMemorySlackTrådRepository
 import no.nav.dagpenger.doh.slack.QuizMalBot
+import no.nav.dagpenger.doh.slack.RampBot
 import no.nav.dagpenger.doh.slack.SlackClient
 import no.nav.dagpenger.doh.slack.VedtakBot
 
 internal object Configuration {
     val stsbSlackAlertChannel: String by lazy {
         properties[Key("DP_SLACKER_STSB_CHANNEL_ID", stringType)]
+    }
+
+    val rampBotSlackChannelId: String? by lazy {
+        properties.getOrNull(Key("DP_SLACKER_RAMP_CHANNEL_ID", stringType))
     }
 
     val quizMalSlackChannelId by lazy {
@@ -112,6 +117,18 @@ internal object Configuration {
 
     val quizMalBot: QuizMalBot? by lazy {
         slackBotClient?.let { QuizMalBot(it, quizMalSlackChannelId) }
+    }
+
+    val rampBot: RampBot? by lazy {
+        slackBotClient?.let { slackBotClient ->
+            rampBotSlackChannelId?.let {
+                RampBot(
+                    slackBotClient,
+                    it,
+                    slackTrådRepository,
+                )
+            }
+        }
     }
 
     fun asMap(): Map<String, String> =

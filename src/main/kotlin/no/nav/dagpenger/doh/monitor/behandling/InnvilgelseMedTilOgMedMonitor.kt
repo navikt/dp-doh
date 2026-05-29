@@ -10,12 +10,12 @@ import com.github.navikt.tbd_libs.rapids_and_rivers_api.RapidsConnection
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.github.oshai.kotlinlogging.withLoggingContext
 import io.micrometer.core.instrument.MeterRegistry
-import no.nav.dagpenger.doh.slack.VedtakBot
+import no.nav.dagpenger.doh.slack.RampBot
 import java.time.LocalDate
 
 internal class InnvilgelseMedTilOgMedMonitor(
     rapidsConnection: RapidsConnection,
-    private val vedtakBot: VedtakBot?,
+    private val rampBot: RampBot?,
 ) : River.PacketListener {
     init {
         River(rapidsConnection)
@@ -72,7 +72,7 @@ internal class InnvilgelseMedTilOgMedMonitor(
                         "Mottatt innvilgelsesvedtak med tilOgMed-dato: $it"
                     }
 
-                    vedtakBot?.postInnvilgelseMedTilOgMed(
+                    rampBot?.postInnvilgelseMedTilOgMed(
                         behandlingId = behandlingId,
                         behandlingskjedeId = behandlingskjedeId,
                         opprettet = opprettet,

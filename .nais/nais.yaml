@@ -53,6 +53,8 @@ spec:
       value: "{{DP_SLACKER_STSB_CHANNEL_ID}}"
     - name: DP_SLACKER_BEREGNING_KONTROLLBEHOV_CHANNEL_ID
       value: "{{dp_slacker_beregning_kontrollbehov_channel_id}}"
+    - name: DP_SLACKER_RAMP_CHANNEL_ID
+      value: "{{dp_slacker_ramp_channel_id}}"
     - name: DP_ARENA_SINK_OPPRETTET_MELDING
       value: "{{dp_arena_sink_opprettet_melding}}"
   accessPolicy:

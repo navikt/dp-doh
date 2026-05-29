@@ -3,14 +3,14 @@ package no.nav.dagpenger.doh.monitor.behandling
 import com.github.navikt.tbd_libs.rapids_and_rivers.test_support.TestRapid
 import io.mockk.mockk
 import io.mockk.verify
-import no.nav.dagpenger.doh.slack.VedtakBot
+import no.nav.dagpenger.doh.slack.RampBot
 import kotlin.test.Test
 
 internal class InnvilgelseMedTilOgMedMonitorTest {
-    private val vedtakBot = mockk<VedtakBot>(relaxed = true)
+    private val rampBot = mockk<RampBot>(relaxed = true)
     private val testRapid =
         TestRapid().also {
-            InnvilgelseMedTilOgMedMonitor(it, vedtakBot)
+            InnvilgelseMedTilOgMedMonitor(it, rampBot)
         }
 
     @Test
@@ -18,7 +18,7 @@ internal class InnvilgelseMedTilOgMedMonitorTest {
         testRapid.sendTestMessage(innvilgelseSomErNyMedTilOgMed)
 
         verify(exactly = 1) {
-            vedtakBot.postInnvilgelseMedTilOgMed(
+            rampBot.postInnvilgelseMedTilOgMed(
                 behandlingId = "test-behandling-id",
                 behandlingskjedeId = "test-behandlingskjede-id",
                 opprettet = any(),
@@ -31,7 +31,7 @@ internal class InnvilgelseMedTilOgMedMonitorTest {
         testRapid.sendTestMessage(innvilgelseSomErNyMenManglerTilOgMed)
 
         verify(exactly = 0) {
-            vedtakBot.postInnvilgelseMedTilOgMed(any(), any(), any())
+            rampBot.postInnvilgelseMedTilOgMed(any(), any(), any())
         }
     }
 
@@ -40,7 +40,7 @@ internal class InnvilgelseMedTilOgMedMonitorTest {
         testRapid.sendTestMessage(innvilgelseMedTilOgMedMenIkkeNy)
 
         verify(exactly = 0) {
-            vedtakBot.postInnvilgelseMedTilOgMed(any(), any(), any())
+            rampBot.postInnvilgelseMedTilOgMed(any(), any(), any())
         }
     }
 
