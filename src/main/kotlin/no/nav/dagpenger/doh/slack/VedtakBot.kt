@@ -100,6 +100,38 @@ ${årsak?.let { "*Årsak*: $it" } ?: ""}
         }
     }
 
+    internal fun postInnvilgelseMedTilOgMed(
+        behandlingId: String,
+        behandlingskjedeId: String,
+    ) {
+        val tekst =
+            """
+            |Innvilgelsesvedtak mottatt med tilOgMed-dato
+            |*BehandlingId:* $behandlingId
+            |*BehandlingskjedeId:* $behandlingskjedeId
+            """.trimMargin()
+
+        chatPostMessage(trådNøkkel = behandlingId) {
+            it.iconEmoji(":warning:")
+            it.blocks {
+                section {
+                    markdownText(tekst)
+                }
+                actions {
+                    button {
+                        text(":ledger: Se logg i OpenSearch")
+                        url(
+                            OpenSearch.createUrl(
+                                String.format("\"%s\"", behandlingId),
+                                LocalDateTime.now().minusHours(1),
+                            ),
+                        )
+                    }
+                }
+            }
+        }
+    }
+
     internal fun utbetalingStatus(
         tekst: String,
         eksternSakId: String,
