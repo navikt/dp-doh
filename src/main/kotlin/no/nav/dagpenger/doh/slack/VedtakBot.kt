@@ -103,6 +103,7 @@ ${årsak?.let { "*Årsak*: $it" } ?: ""}
     internal fun postInnvilgelseMedTilOgMed(
         behandlingId: String,
         behandlingskjedeId: String,
+        opprettet: LocalDateTime,
     ) {
         val tekst =
             """

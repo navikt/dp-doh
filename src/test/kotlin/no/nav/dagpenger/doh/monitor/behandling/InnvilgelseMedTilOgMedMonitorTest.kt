@@ -15,36 +15,37 @@ internal class InnvilgelseMedTilOgMedMonitorTest {
 
     @Test
     fun `varsler når innvilgelse har rettighetsperiode med tilOgMed og opprinnelse Ny`() {
-        testRapid.sendTestMessage(innvilgelseMedTilOgMed)
+        testRapid.sendTestMessage(innvilgelseSomErNyMedTilOgMed)
 
         verify(exactly = 1) {
             vedtakBot.postInnvilgelseMedTilOgMed(
                 behandlingId = "test-behandling-id",
                 behandlingskjedeId = "test-behandlingskjede-id",
+                opprettet = any(),
             )
         }
     }
 
     @Test
-    fun `varsler ikke når rettighetsperiode mangler tilOgMed`() {
-        testRapid.sendTestMessage(innvilgelseUtenTilOgMed)
+    fun `varsler ikke når rettighetsperiode er Ny, men mangler tilOgMed`() {
+        testRapid.sendTestMessage(innvilgelseSomErNyMenManglerTilOgMed)
 
         verify(exactly = 0) {
-            vedtakBot.postInnvilgelseMedTilOgMed(any(), any())
+            vedtakBot.postInnvilgelseMedTilOgMed(any(), any(), any())
         }
     }
 
     @Test
-    fun `varsler ikke når opprinnelse ikke er Ny`() {
+    fun `varsler ikke når tilOgMed er med, men opprinnelse ikke er Ny`() {
         testRapid.sendTestMessage(innvilgelseMedTilOgMedMenIkkeNy)
 
         verify(exactly = 0) {
-            vedtakBot.postInnvilgelseMedTilOgMed(any(), any())
+            vedtakBot.postInnvilgelseMedTilOgMed(any(), any(), any())
         }
     }
 
     // language=JSON
-    private val innvilgelseMedTilOgMed =
+    private val innvilgelseSomErNyMedTilOgMed =
         """
         {
           "@event_name": "behandlingsresultat",
@@ -69,12 +70,13 @@ internal class InnvilgelseMedTilOgMedMonitorTest {
               "harRett": true,
               "opprinnelse": "Ny"
             }
-          ]
+          ],
+          "opprettet": "2024-04-10T12:28:31.533933"
         }
         """.trimIndent()
 
     // language=JSON
-    private val innvilgelseUtenTilOgMed =
+    private val innvilgelseSomErNyMenManglerTilOgMed =
         """
         {
           "@event_name": "behandlingsresultat",
@@ -92,7 +94,8 @@ internal class InnvilgelseMedTilOgMedMonitorTest {
               "harRett": true,
               "opprinnelse": "Ny"
             }
-          ]
+          ],
+          "opprettet": "2024-04-10T12:28:31.533933"
         }
         """.trimIndent()
 
@@ -116,7 +119,8 @@ internal class InnvilgelseMedTilOgMedMonitorTest {
               "harRett": true,
               "opprinnelse": "Arvet"
             }
-          ]
+          ],
+          "opprettet": "2024-04-10T12:28:31.533933"
         }
         """.trimIndent()
 }
