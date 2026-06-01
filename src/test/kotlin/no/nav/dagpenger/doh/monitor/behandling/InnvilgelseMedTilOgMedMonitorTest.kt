@@ -3,7 +3,11 @@ package no.nav.dagpenger.doh.monitor.behandling
 import com.github.navikt.tbd_libs.rapids_and_rivers.test_support.TestRapid
 import io.mockk.mockk
 import io.mockk.verify
+import no.nav.dagpenger.doh.monitor.behandling.InnvilgelseMedTilOgMedMonitorTest.Opprinnelse.ARVET
+import no.nav.dagpenger.doh.monitor.behandling.InnvilgelseMedTilOgMedMonitorTest.Opprinnelse.NY
 import no.nav.dagpenger.doh.slack.RampBot
+import java.time.LocalDate
+import java.time.LocalDate.now
 import kotlin.test.Test
 
 internal class InnvilgelseMedTilOgMedMonitorTest {
@@ -14,8 +18,8 @@ internal class InnvilgelseMedTilOgMedMonitorTest {
         }
 
     @Test
-    fun `varsler når innvilgelse har rettighetsperiode med tilOgMed og opprinnelse Ny`() {
-        testRapid.sendTestMessage(innvilgelseSomErNyMedTilOgMed)
+    fun `varsler når innvilgelse har rettighetsperiode med tilOgMed != null, harRett == true, og opprinnelse == Ny`() {
+        testRapid.sendTestMessage(lagTestdata(now().plusDays(1), true, NY))
 
         verify(exactly = 1) {
             rampBot.postInnvilgelseMedTilOgMed(
@@ -27,8 +31,8 @@ internal class InnvilgelseMedTilOgMedMonitorTest {
     }
 
     @Test
-    fun `varsler ikke når rettighetsperiode er Ny, men mangler tilOgMed`() {
-        testRapid.sendTestMessage(innvilgelseSomErNyMenManglerTilOgMed)
+    fun `varsler ikke når innvilgelse har rettighetsperiode med tilOgMed != null, harRett == true, opprinnelse != Ny`() {
+        testRapid.sendTestMessage(lagTestdata(now().plusDays(1), true, ARVET))
 
         verify(exactly = 0) {
             rampBot.postInnvilgelseMedTilOgMed(any(), any(), any())
@@ -36,16 +40,28 @@ internal class InnvilgelseMedTilOgMedMonitorTest {
     }
 
     @Test
-    fun `varsler ikke når tilOgMed er med, men opprinnelse ikke er Ny`() {
-        testRapid.sendTestMessage(innvilgelseMedTilOgMedMenIkkeNy)
+    fun `varsler ikke når innvilgelse har rettighetsperiode med tilOgMed != null, harRett == false, og opprinnelse == Ny`() {
+        testRapid.sendTestMessage(lagTestdata(now().plusDays(1), false, NY))
 
         verify(exactly = 0) {
             rampBot.postInnvilgelseMedTilOgMed(any(), any(), any())
         }
     }
 
-    // language=JSON
-    private val innvilgelseSomErNyMedTilOgMed =
+    @Test
+    fun `varsler ikke når innvilgelse har rettighetsperiode med tilOgMed == null, harRett == true, og opprinnelse == Ny`() {
+        testRapid.sendTestMessage(lagTestdata(null, true, NY))
+
+        verify(exactly = 0) {
+            rampBot.postInnvilgelseMedTilOgMed(any(), any(), any())
+        }
+    }
+
+    private fun lagTestdata(
+        tilOgMed: LocalDate?,
+        harRett: Boolean,
+        opprinnelse: Opprinnelse,
+    ) = // language=JSON
         """
         {
           "@event_name": "behandlingsresultat",
@@ -60,67 +76,20 @@ internal class InnvilgelseMedTilOgMedMonitorTest {
           "rettighetsperioder": [
             {
               "fraOgMed": "2024-01-01",
-              "tilOgMed": "2024-06-30",
-              "harRett": true,
-              "opprinnelse": "Ny"
-            },
-            {
-              "fraOgMed": "2024-01-02",
-              "tilOgMed": "2024-06-28",
-              "harRett": true,
-              "opprinnelse": "Ny"
+              ${if (tilOgMed != null) "\"tilOgMed\": \"$tilOgMed\"," else ""}
+              "harRett": $harRett,
+              "opprinnelse": "${opprinnelse.jsonVerdi}"
             }
           ],
           "opprettet": "2024-04-10T12:28:31.533933"
         }
         """.trimIndent()
 
-    // language=JSON
-    private val innvilgelseSomErNyMenManglerTilOgMed =
-        """
-        {
-          "@event_name": "behandlingsresultat",
-          "behandlingId": "test-behandling-id-2",
-          "behandlingskjedeId" : "019ac567-fe1c-7745-81e6-8f64cc3c3712",
-          "behandletHendelse": {
-            "id": "test-hendelse-id-2",
-            "type": "Søknad"
-          },
-          "ident": "12345678901",
-          "automatisk": false,
-          "rettighetsperioder": [
-            {
-              "fraOgMed": "2024-01-01",
-              "harRett": true,
-              "opprinnelse": "Ny"
-            }
-          ],
-          "opprettet": "2024-04-10T12:28:31.533933"
-        }
-        """.trimIndent()
-
-    // language=JSON
-    private val innvilgelseMedTilOgMedMenIkkeNy =
-        """
-        {
-          "@event_name": "behandlingsresultat",
-          "behandlingId": "test-behandling-id-3",
-          "behandlingskjedeId" : "019ac567-fe1c-7745-81e6-8f64cc3c3712",
-          "behandletHendelse": {
-            "id": "test-hendelse-id-3",
-            "type": "Søknad"
-          },
-          "ident": "12345678901",
-          "automatisk": false,
-          "rettighetsperioder": [
-            {
-              "fraOgMed": "2024-01-01",
-              "tilOgMed": "2024-06-30",
-              "harRett": true,
-              "opprinnelse": "Arvet"
-            }
-          ],
-          "opprettet": "2024-04-10T12:28:31.533933"
-        }
-        """.trimIndent()
+    @Suppress("unused")
+    enum class Opprinnelse(
+        val jsonVerdi: String,
+    ) {
+        NY("Ny"),
+        ARVET("Arvet"),
+    }
 }

@@ -58,9 +58,9 @@ internal class InnvilgelseMedTilOgMedMonitor(
                     fraOgMed = rettighetsperiode["fraOgMed"].asLocalDate(),
                     tilOgMed = rettighetsperiode["tilOgMed"]?.asLocalDate(),
                     harRett = rettighetsperiode["harRett"].asBoolean(),
-                    opprinnelse = rettighetsperiode["opprinnelse"].asText(),
+                    opprinnelse = rettighetsperiode["opprinnelse"].asText().uppercase(),
                 )
-            }.filter { it.tilOgMed != null && it.opprinnelse == "Ny" }
+            }.filter { it.tilOgMed != null && it.harRett && it.opprinnelse == "NY" }
             .takeUnless { it.isEmpty() }
             ?.let {
                 withLoggingContext(
@@ -69,7 +69,7 @@ internal class InnvilgelseMedTilOgMedMonitor(
                     "behandlingskjedeId" to behandlingskjedeId,
                 ) {
                     logger.info {
-                        "Mottatt innvilgelsesvedtak med tilOgMed-dato: $it"
+                        "Mottatt innvilgelsesvedtak med tilOgMed-dato, harRett == true, og opprinnelse == NY: $it"
                     }
 
                     rampBot?.postInnvilgelseMedTilOgMed(
