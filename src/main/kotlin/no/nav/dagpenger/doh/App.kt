@@ -4,6 +4,7 @@ import no.nav.dagpenger.doh.Configuration.arenaSinkBot
 import no.nav.dagpenger.doh.Configuration.kontrollbehovBot
 import no.nav.dagpenger.doh.Configuration.publiserArenaVedtak
 import no.nav.dagpenger.doh.Configuration.quizMalBot
+import no.nav.dagpenger.doh.Configuration.rampBot
 import no.nav.dagpenger.doh.Configuration.slackAlertClient
 import no.nav.dagpenger.doh.Configuration.stsbSlackAlertChannel
 import no.nav.dagpenger.doh.Configuration.vedtakBot
@@ -19,6 +20,7 @@ import no.nav.dagpenger.doh.monitor.behandling.BehandlingEndretTilstandMonitor
 import no.nav.dagpenger.doh.monitor.behandling.BehandlingPåminnelseMonitor
 import no.nav.dagpenger.doh.monitor.behandling.BehandlingStatusMonitor
 import no.nav.dagpenger.doh.monitor.behandling.BeregnMeldekortMottak
+import no.nav.dagpenger.doh.monitor.behandling.InnvilgelseMedTilOgMedMonitor
 import no.nav.dagpenger.doh.monitor.behandling.MeldekortKontrollbehovMonitor
 import no.nav.dagpenger.doh.monitor.behandling.UtbetalingFeilUtbetalingsdagerMonitor
 import no.nav.dagpenger.doh.monitor.behandling.UtbetalingStatusMonitor
@@ -53,6 +55,7 @@ fun main() {
             kontrollbehovBot?.let { MeldekortKontrollbehovMonitor(this, it) }
             UtbetalingStatusMonitor(this, vedtakBot)
             UtbetalingFeilUtbetalingsdagerMonitor(this, vedtakBot)
+            InnvilgelseMedTilOgMedMonitor(this, rampBot)
 
             // TODO: Denne må bli litt mer presis
             //  KorrigertMeldekortMonitor(this, vedtakBot)
