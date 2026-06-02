@@ -43,6 +43,10 @@ internal class RampBot(
                             ),
                         )
                     }
+                    button {
+                        text(":slack: Se instruks i Slack")
+                        url(text = "https://nav-it.slack.com/docs/T5LNAMWNA/F0B7R87TA01")
+                    }
                 }
             }
         }
