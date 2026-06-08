@@ -20,7 +20,7 @@ internal class UtbetalingStatusMonitor(
             .apply {
                 precondition { it.requireAny("@event_name", UTBETALING_EVENTER) }
                 validate {
-                    it.requireKey("behandlingId", "sakId", "behandletHendelseId", "@opprettet")
+                    it.requireKey("behandlingId", "sakId", "behandletHendelseId", "behandletHendelseType", "@opprettet")
                     it.interestedIn("eksternBehandlingId", "eksternSakId")
                 }
             }.register(this)
@@ -58,22 +58,36 @@ internal class UtbetalingStatusMonitor(
         val eksternSakId = packet["eksternSakId"].asText()
         val eksternBehandlingId = packet["eksternBehandlingId"].asText()
         val behandletHendelseId = packet["behandletHendelseId"].asText()
+        val behandletHendelseType = packet["behandletHendelseType"].asText()
 
-        val (icon, status) =
+        val melding =
             when (eventName) {
-                "utbetaling_feilet" -> ":alert:" to "Utbetaling feilet :alert:"
-                "utbetaling_utført" -> ":dollar:" to "Utbetaling utført :dagpenger:"
-                "utbetaling_feil_grensedato" -> ":alert:" to ":alert: :alert: :alert: Utbetalingsdager stemmer ikke med behandling"
-                else -> return null
+                "utbetaling_feilet" -> {
+                    SlackMelding(":alert:", "Utbetaling feilet", "Utbetalingen stoppet underveis")
+                }
+
+                "utbetaling_utført" -> {
+                    SlackMelding(":dollar:", "Utbetaling utført", "Utbetalingen ble gjennomført")
+                }
+
+                "utbetaling_feil_grensedato" -> {
+                    SlackMelding(
+                        ":alert:",
+                        "Utbetaling stoppet",
+                        "Utbetalingsdager stemmer ikke med behandlingen",
+                    )
+                }
+
+                else -> {
+                    return null
+                }
             }
 
         return """
-        |$icon $status
-        |*Behandling:* $behandlingId 
-        | - Helved-ref: `$eksternBehandlingId`
-        |*SakId:* $sakId 
-        | - Helved-ref: `$eksternSakId`
-        |*Behandlet hendelse med id:* $behandletHendelseId
+        |${melding.icon} *${melding.overskrift}:* ${melding.beskrivelse}
+        |*Gjelder:* behandling
+        |*Referanser:* Behandling ID: `$behandlingId`, Sak ID: `$sakId`, Behandlet hendelse: `$behandletHendelseType` ID: `$behandletHendelseId`
+        |*Helved-referanser:* Behandling `$eksternBehandlingId`, Sak `$eksternSakId`
             """.trimMargin()
     }
 
@@ -87,4 +101,10 @@ internal class UtbetalingStatusMonitor(
                 "utbetaling_utført",
             )
     }
+
+    private data class SlackMelding(
+        val icon: String,
+        val overskrift: String,
+        val beskrivelse: String,
+    )
 }

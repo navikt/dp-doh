@@ -9,12 +9,15 @@ import io.mockk.verify
 import no.nav.dagpenger.doh.slack.VedtakBot
 import java.time.LocalDateTime
 import kotlin.test.Test
+import kotlin.test.assertContains
+import kotlin.test.assertEquals
 
 class UtbetalingStatusMonitorTest {
     private val testRapid = TestRapid()
+    private val slackMeldinger = mutableListOf<String>()
     private val vedtakBot =
         mockk<VedtakBot>().also {
-            every { it.utbetalingStatus(any<String>(), any<String>(), any<String>(), any<LocalDateTime>()) } just Runs
+            every { it.utbetalingStatus(capture(slackMeldinger), any<String>(), any<String>(), any<LocalDateTime>()) } just Runs
         }
 
     @Test
@@ -40,6 +43,7 @@ class UtbetalingStatusMonitorTest {
                   "sakId": "123e4567-e89b-12d3-a456-426614174001",
                   "eksternSakId": "Ej5FZ+ibEtOkVkJmFBdAAQ==",
                   "behandletHendelseId": "m1",
+                  "behandletHendelseType": "Meldekort",
                   "meldekortId": "m1",
                   "status": "MOTTATT",
                   "@id": "c0dd639d-b676-4bc9-a41f-71510ab837a6",
@@ -60,5 +64,14 @@ class UtbetalingStatusMonitorTest {
         verify(exactly = 2) {
             vedtakBot.utbetalingStatus(any<String>(), any<String>(), any<String>(), any<LocalDateTime>())
         }
+
+        assertEquals(2, slackMeldinger.size)
+        assertContains(slackMeldinger.first(), "*Utbetaling feilet:* Utbetalingen stoppet underveis")
+        assertContains(slackMeldinger.first(), "*Referanser:* Behandling ID:")
+        assertContains(slackMeldinger.first(), "*Helved-referanser:* Behandling")
+
+        assertContains(slackMeldinger.last(), "*Utbetaling utført:* Utbetalingen ble gjennomført")
+        assertContains(slackMeldinger.last(), "*Referanser:* Behandling ID:")
+        assertContains(slackMeldinger.last(), "*Helved-referanser:* Behandling")
     }
 }

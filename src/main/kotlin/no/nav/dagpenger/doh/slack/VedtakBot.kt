@@ -32,28 +32,27 @@ internal class VedtakBot(
             when (status) {
                 BehandlingStatusMonitor.Status.BEHANDLING_AVBRUTT -> {
                     """
-Behandlingen er avbrutt 
-*$hendelseType ID:* $hendelseId 
-*Behandling ID:* $behandlingId
-${årsak?.let { "*Årsak*: $it" } ?: ""} 
-                    """.trimMargin()
+                    *Behandling avbrutt:* ${årsak ?: "Ukjent årsak"}
+                    *Gjelder:* $hendelseType
+                    *Referanser:* ${referanseTekst(hendelseType, hendelseId, behandlingId)}
+                    """.trimIndent()
                 }
 
                 BehandlingStatusMonitor.Status.FORSLAG_TIL_VEDTAK -> {
-                    """Vi har et forslag til vedtak 
-*$hendelseType ID:* $hendelseId 
-*Behandling ID:* $behandlingId
-*Førte til:* $førteTil
-                    """.trimMargin()
+                    """
+                    *Forslag til vedtak:* ${utfallTekst(førteTil)}
+                    *Gjelder:* $hendelseType
+                    *Referanser:* ${referanseTekst(hendelseType, hendelseId, behandlingId)}
+                    """.trimIndent()
                 }
 
                 BehandlingStatusMonitor.Status.VEDTAK_FATTET -> {
-                    """Vi har fattet et vedtak 
-*$hendelseType ID:* $hendelseId 
-*Behandling ID:* $behandlingId
-*Behandlingsmåte*: ${if (automatisk == true) "Automatisk" else "Manuell"}                  
-*Førte til:* $førteTil ${førteTilEmoji(førteTil)}
-                    """.trimMargin()
+                    """
+                    *Vedtak fattet:* ${utfallTekst(førteTil)}
+                    *Behandlingsmåte:* ${if (automatisk == true) "Automatisk" else "Manuell"}
+                    *Gjelder:* $hendelseType
+                    *Referanser:* ${referanseTekst(hendelseType, hendelseId, behandlingId)}
+                    """.trimIndent()
                 }
             }
         chatPostMessage(trådNøkkel = behandlingId) {
@@ -126,6 +125,17 @@ ${årsak?.let { "*Årsak*: $it" } ?: ""}
             }
         }
     }
+
+    private fun utfallTekst(førteTil: String?): String {
+        val utfall = førteTil ?: "Ukjent utfall"
+        return " førte til: $utfall ${førteTilEmoji(førteTil)}".trim()
+    }
+
+    private fun referanseTekst(
+        hendelseType: String,
+        hendelseId: String,
+        behandlingId: String,
+    ): String = "$hendelseType ID: `$hendelseId`, Behandling ID: `$behandlingId`"
 
     private fun førteTilEmoji(førteTil: String?): String =
         when (førteTil) {
