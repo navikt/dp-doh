@@ -128,7 +128,7 @@ internal class VedtakBot(
 
     private fun utfallTekst(førteTil: String?): String {
         val utfall = førteTil ?: "Ukjent utfall"
-        return " førte til: $utfall ${førteTilEmoji(førteTil)}".trim()
+        return " førte til -> *$utfall* ${førteTilEmoji(førteTil)}".trim()
     }
 
     private fun referanseTekst(
