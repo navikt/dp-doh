@@ -85,8 +85,8 @@ internal class UtbetalingStatusMonitor(
 
         return """
         |${melding.icon} *${melding.overskrift}:* ${melding.beskrivelse}
-        |*Gjelder:* behandling
-        |*Referanser:* Behandling ID: `$behandlingId`, Sak ID: `$sakId`, Behandlet hendelse: `$behandletHendelseType` ID: `$behandletHendelseId`
+        |*Gjelder:* $behandletHendelseType
+        |*Referanser:* Behandling ID: `$behandlingId`, Sak ID: `$sakId`, Hendelse: `$behandletHendelseType` ID: `$behandletHendelseId`
         |*Helved-referanser:* Behandling `$eksternBehandlingId`, Sak `$eksternSakId`
             """.trimMargin()
     }
