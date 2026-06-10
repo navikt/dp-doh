@@ -63,19 +63,11 @@ internal class UtbetalingStatusMonitor(
         val melding =
             when (eventName) {
                 "utbetaling_feilet" -> {
-                    SlackMelding(":alert:", "Utbetaling feilet", "Utbetalingen stoppet underveis")
+                    SlackMelding(":alert:", "Utbetalingen feilet")
                 }
 
                 "utbetaling_utført" -> {
-                    SlackMelding(":dollar:", "Utbetaling utført", "Utbetalingen ble gjennomført")
-                }
-
-                "utbetaling_feil_grensedato" -> {
-                    SlackMelding(
-                        ":alert:",
-                        "Utbetaling stoppet",
-                        "Utbetalingsdager stemmer ikke med behandlingen",
-                    )
+                    SlackMelding(":dollar:", "Utbetalingen gjennomført")
                 }
 
                 else -> {
@@ -84,9 +76,9 @@ internal class UtbetalingStatusMonitor(
             }
 
         return """
-        |${melding.icon} *${melding.overskrift}:* ${melding.beskrivelse}
+        |${melding.icon} *${melding.overskrift}* 
         |*Gjelder:* $behandletHendelseType
-        |*Referanser:* Behandling ID: `$behandlingId`, Sak ID: `$sakId`, Hendelse: `$behandletHendelseType` ID: `$behandletHendelseId`
+        |*Referanser:* Behandling ID: `$behandlingId`, Sak ID: `$sakId`, Hendelse: $behandletHendelseType ID: `$behandletHendelseId`
         |*Helved-referanser:* Behandling `$eksternBehandlingId`, Sak `$eksternSakId`
             """.trimMargin()
     }
@@ -105,6 +97,5 @@ internal class UtbetalingStatusMonitor(
     private data class SlackMelding(
         val icon: String,
         val overskrift: String,
-        val beskrivelse: String,
     )
 }

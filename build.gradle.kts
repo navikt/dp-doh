@@ -27,6 +27,7 @@ dependencies {
     implementation("com.slack.api:slack-api-client-kotlin-extension:$slackClientVersion")
 
     testImplementation(libs.mockk)
+    testImplementation(libs.kotest.assertions.core)
     testImplementation(libs.rapids.and.rivers.test)
 }
 

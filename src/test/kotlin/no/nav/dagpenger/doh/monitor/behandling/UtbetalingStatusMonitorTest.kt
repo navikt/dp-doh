@@ -1,6 +1,8 @@
 package no.nav.dagpenger.doh.monitor.behandling
 
 import com.github.navikt.tbd_libs.rapids_and_rivers.test_support.TestRapid
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.string.shouldContain
 import io.mockk.Runs
 import io.mockk.every
 import io.mockk.just
@@ -9,8 +11,6 @@ import io.mockk.verify
 import no.nav.dagpenger.doh.slack.VedtakBot
 import java.time.LocalDateTime
 import kotlin.test.Test
-import kotlin.test.assertContains
-import kotlin.test.assertEquals
 
 class UtbetalingStatusMonitorTest {
     private val testRapid = TestRapid()
@@ -32,7 +32,6 @@ class UtbetalingStatusMonitorTest {
             )
 
         utbetalingHendelser.forEach { eventName ->
-            //language=JSON
             val melding =
                 """
                 {
@@ -65,13 +64,14 @@ class UtbetalingStatusMonitorTest {
             vedtakBot.utbetalingStatus(any<String>(), any<String>(), any<String>(), any<LocalDateTime>())
         }
 
-        assertEquals(2, slackMeldinger.size)
-        assertContains(slackMeldinger.first(), "*Utbetaling feilet:* Utbetalingen stoppet underveis")
-        assertContains(slackMeldinger.first(), "*Referanser:* Behandling ID:")
-        assertContains(slackMeldinger.first(), "*Helved-referanser:* Behandling")
+        slackMeldinger.size shouldBe 2
 
-        assertContains(slackMeldinger.last(), "*Utbetaling utført:* Utbetalingen ble gjennomført")
-        assertContains(slackMeldinger.last(), "*Referanser:* Behandling ID:")
-        assertContains(slackMeldinger.last(), "*Helved-referanser:* Behandling")
+        slackMeldinger.first() shouldContain "*Utbetalingen feilet*"
+        slackMeldinger.first() shouldContain "*Referanser:* Behandling ID:"
+        slackMeldinger.first() shouldContain "*Helved-referanser:* Behandling"
+
+        slackMeldinger.last() shouldContain "*Utbetalingen gjennomført*"
+        slackMeldinger.last() shouldContain "*Referanser:* Behandling ID:"
+        slackMeldinger.last() shouldContain "*Helved-referanser:* Behandling"
     }
 }
