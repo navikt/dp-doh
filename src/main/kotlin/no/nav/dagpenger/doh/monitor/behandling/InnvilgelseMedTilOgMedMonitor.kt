@@ -51,17 +51,21 @@ internal class InnvilgelseMedTilOgMedMonitor(
         val behandlingId = packet["behandlingId"].asText()
         val behandlingskjedeId = packet["behandlingskjedeId"].asText()
         val opprettet = packet["opprettet"].asLocalDateTime()
-
-        packet["rettighetsperioder"]
-            .map { rettighetsperiode ->
+        val rettighetsperioder =
+            packet["rettighetsperioder"].map { rettighetsperiode ->
                 Rettighetsperiode(
                     fraOgMed = rettighetsperiode["fraOgMed"].asLocalDate(),
                     tilOgMed = rettighetsperiode["tilOgMed"]?.asLocalDate(),
                     harRett = rettighetsperiode["harRett"].asBoolean(),
                     opprinnelse = rettighetsperiode["opprinnelse"].asText().uppercase(),
                 )
-            }.filter { it.tilOgMed != null && it.harRett && it.opprinnelse == "NY" }
-            .takeUnless { it.isEmpty() }
+            }
+
+        rettighetsperioder
+            .filter {
+                it.tilOgMed != null && it.harRett && it.opprinnelse == "NY" &&
+                    !rettighetsperioder.harPeriodeMedHarRettFalseFraOgMedDagenEtter(it)
+            }.takeUnless { it.isEmpty() }
             ?.let {
                 withLoggingContext(
                     "behandlingId" to behandlingId,
@@ -81,6 +85,9 @@ internal class InnvilgelseMedTilOgMedMonitor(
             }
     }
 }
+
+private fun List<Rettighetsperiode>.harPeriodeMedHarRettFalseFraOgMedDagenEtter(rettighetsperiode: Rettighetsperiode): Boolean =
+    any { !it.harRett && it.fraOgMed == rettighetsperiode.tilOgMed?.plusDays(1) }
 
 private data class Rettighetsperiode(
     val fraOgMed: LocalDate,
