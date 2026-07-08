@@ -24,7 +24,7 @@ internal class MeldekortKontrollbehovMonitorTest {
             slack.meldekortKontrollbehov(
                 match {
                     it.contains("*Begrunnelse*:") &&
-                        it.contains("- Inneholder dager med arbeid") &&
+                        it.contains("- Inneholder dager med arbeidstimer") &&
                         !it.contains("Meldekortet har innhold") &&
                         !it.contains("registrert endring")
                 },
@@ -57,10 +57,14 @@ internal class MeldekortKontrollbehovMonitorTest {
                     "behandletHendelseId" to UUID.randomUUID().toString(),
                     "detaljer" to
                         mapOf(
-                            "meldekortMedInnhold" to true,
-                            "harEndring" to true,
-                            "arbeidstimerIkkeNull" to true,
-                            "avgjorelseStans" to false,
+                            "meldekortSendtForSent" to false,
+                            "harMeldtAnnenAktivitet" to false,
+                            "harMeldtArbeidstimer" to true,
+                            "harEndringISats" to false,
+                            "harEndringiArbeidstid" to false,
+                            "harEndringITerskel" to false,
+                            "ileggesSanksjon" to false,
+                            "harEndretRettighetsperiode" to false,
                         ),
                 ),
             ).toJson()

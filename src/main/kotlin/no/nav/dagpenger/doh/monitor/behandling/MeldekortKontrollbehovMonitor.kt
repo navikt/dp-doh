@@ -33,7 +33,6 @@ internal class MeldekortKontrollbehovMonitor(
     ) {
         val behandlingId = packet["behandlingId"].asText()
         val behandletHendelseId = packet["behandletHendelseId"].asText()
-        val ident = packet["ident"].asText("")
         val begrunnelse = begrunnelse(packet)
 
         val melding =
@@ -57,7 +56,6 @@ internal class MeldekortKontrollbehovMonitor(
                 .fields()
                 .asSequence()
                 .filter { (_, verdi) -> verdi.isBoolean && verdi.asBoolean() }
-                .filterNot { (nøkkel, _) -> nøkkel == "meldekortMedInnhold" || nøkkel == "harEndring" }
                 .map { (nøkkel, _) -> detaljTilTekst(nøkkel) }
                 .sorted()
                 .toList()
@@ -71,11 +69,14 @@ internal class MeldekortKontrollbehovMonitor(
 
     private fun detaljTilTekst(nøkkel: String): String =
         when (nøkkel) {
-            "trekkVedForsenMelding" -> "Trekk ved for sen melding"
-            "arbeidsdagUtenArbeid" -> "Inneholder annen aktivitet enn arbeid"
-            "arbeidstimerIkkeNull" -> "Inneholder dager med arbeidstimer"
-            "avgjorelseStans" -> "Behandlingen fører til stans"
-            "nyOpplysningUtenforBeregning" -> "Det er gjort endringer utover beregning"
+            "meldekortSendtForSent" -> "Meldekortet er sent for sent"
+            "harMeldtAnnenAktivitet" -> "Inneholder annen aktivitet enn arbeid"
+            "harMeldtArbeidstimer" -> "Inneholder dager med arbeidstimer"
+            "harEndringISats" -> "Har fått endret sats"
+            "harEndringiArbeidstid" -> "Har fått endret arbeidstid"
+            "harEndringITerskel" -> "Har fått endring i terskel for tap av arbeid"
+            "ileggesSanksjon" -> "Har blitt ilagt sanksjon"
+            "harEndretRettighetsperiode" -> "Har fått endret rettighetsperiode (stans/gjenopptak)"
             else -> nøkkel
         }
 
