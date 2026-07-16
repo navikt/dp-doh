@@ -45,13 +45,18 @@ jobs:
     name: Generate SBOM, attest and sign image
     needs: [ build ]
     runs-on: ubuntu-latest
+    permissions:
+      id-token: "write"
     steps:
-      - uses: navikt/dagpenger/actions/attest-sign@master
+      - name: NAIS login
+        uses: nais/login@v0
+        id: login
         with:
-          digest: ${{ needs.build.outputs.digest }}
-          identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
-          project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
           team: teamdagpenger
+      - name: Attest and sign image
+        uses: nais/attest-sign@v2
+        with:
+          image_ref: ${{ needs.build.outputs.image }}
 
   deploy-dev:
     name: Deploy to dev
