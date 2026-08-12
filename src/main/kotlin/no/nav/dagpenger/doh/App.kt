@@ -24,6 +24,7 @@ import no.nav.dagpenger.doh.monitor.behandling.BrukerHarMeldekortMedEndretMeldes
 import no.nav.dagpenger.doh.monitor.behandling.InnvilgelseMedTilOgMedMonitor
 import no.nav.dagpenger.doh.monitor.behandling.MeldekortKontrollbehovMonitor
 import no.nav.dagpenger.doh.monitor.behandling.UtbetalingFeilUtbetalingsdagerMonitor
+import no.nav.dagpenger.doh.monitor.behandling.UtbetalingHengerMonitor
 import no.nav.dagpenger.doh.monitor.behandling.UtbetalingStatusMonitor
 import no.nav.dagpenger.doh.monitor.quiz.NyQuizMalMonitor
 import no.nav.helse.rapids_rivers.RapidApplication
@@ -56,6 +57,7 @@ fun main() {
             kontrollbehovBot?.let { MeldekortKontrollbehovMonitor(this, it) }
             UtbetalingStatusMonitor(this, vedtakBot)
             UtbetalingFeilUtbetalingsdagerMonitor(this, vedtakBot)
+            UtbetalingHengerMonitor(this, slackAlertClient)
             InnvilgelseMedTilOgMedMonitor(this, rampBot)
             BrukerHarMeldekortMedEndretMeldesyklusIArenaMonitor(this, rampBot)
 
