@@ -21,7 +21,6 @@ import no.nav.dagpenger.doh.monitor.behandling.BehandlingPåminnelseMonitor
 import no.nav.dagpenger.doh.monitor.behandling.BehandlingStatusMonitor
 import no.nav.dagpenger.doh.monitor.behandling.BeregnMeldekortMottak
 import no.nav.dagpenger.doh.monitor.behandling.BrukerHarMeldekortMedEndretMeldesyklusIArenaMonitor
-import no.nav.dagpenger.doh.monitor.behandling.InnvilgelseMedTilOgMedMonitor
 import no.nav.dagpenger.doh.monitor.behandling.MeldekortKontrollbehovMonitor
 import no.nav.dagpenger.doh.monitor.behandling.UtbetalingFeilUtbetalingsdagerMonitor
 import no.nav.dagpenger.doh.monitor.behandling.UtbetalingHengerMonitor
@@ -58,7 +57,6 @@ fun main() {
             UtbetalingStatusMonitor(this, vedtakBot)
             UtbetalingFeilUtbetalingsdagerMonitor(this, vedtakBot)
             UtbetalingHengerMonitor(this, slackAlertClient)
-            InnvilgelseMedTilOgMedMonitor(this, rampBot)
             BrukerHarMeldekortMedEndretMeldesyklusIArenaMonitor(this, rampBot)
 
             // TODO: Denne må bli litt mer presis
