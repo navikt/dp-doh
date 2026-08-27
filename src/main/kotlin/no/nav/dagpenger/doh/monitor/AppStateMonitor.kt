@@ -1,6 +1,5 @@
 package no.nav.dagpenger.doh.monitor
 
-import com.fasterxml.jackson.databind.JsonNode
 import com.github.navikt.tbd_libs.rapids_and_rivers.JsonMessage
 import com.github.navikt.tbd_libs.rapids_and_rivers.River
 import com.github.navikt.tbd_libs.rapids_and_rivers.asLocalDateTime
@@ -13,6 +12,7 @@ import no.nav.dagpenger.doh.OpenSearch
 import no.nav.dagpenger.doh.humanReadableTime
 import no.nav.dagpenger.doh.slack.SlackClient
 import org.slf4j.LoggerFactory
+import tools.jackson.databind.JsonNode
 import java.net.URLEncoder
 import java.nio.charset.Charset
 import java.time.Duration
@@ -145,7 +145,7 @@ internal class AppStateMonitor(
         val opprettet = this["@opprettet"].asLocalDateTime()
         val grenseForVarsel: LocalDateTime = opprettet.minus(nedetidFørAlarm)
         return this["states"]
-            .filter { it["state"].asInt() == 0 }
+            .filter { it["state"].asInt(0) == 0 }
             .filter {
                 it["last_active_time"].asLocalDateTime().isBefore(grenseForVarsel)
             }.map {
@@ -153,7 +153,7 @@ internal class AppStateMonitor(
                     it["app"].asText(),
                     it["last_active_time"].asLocalDateTime(),
                     it["instances"]
-                        .filter { instance -> instance.path("state").asInt() == 0 }
+                        .filter { instance -> instance.path("state").asInt(0) == 0 }
                         .map { instance ->
                             Pair(
                                 instance.path("instance").asText(),

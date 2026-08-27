@@ -1,7 +1,7 @@
 package no.nav.dagpenger.doh
 
 import com.bazaarvoice.jackson.rison.RisonFactory
-import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.ObjectMapper // Jackson 2: RisonFactory extends Jackson 2's JsonFactory
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 

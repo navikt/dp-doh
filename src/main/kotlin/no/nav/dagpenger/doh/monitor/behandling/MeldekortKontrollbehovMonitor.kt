@@ -53,7 +53,7 @@ internal class MeldekortKontrollbehovMonitor(
     private fun begrunnelse(packet: JsonMessage): String {
         val begrunnelser =
             packet["detaljer"]
-                .fields()
+                .properties()
                 .asSequence()
                 .filter { (_, verdi) -> verdi.isBoolean && verdi.asBoolean() }
                 .map { (nøkkel, _) -> detaljTilTekst(nøkkel) }

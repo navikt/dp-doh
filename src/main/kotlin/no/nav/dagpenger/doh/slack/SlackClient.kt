@@ -1,9 +1,7 @@
 package no.nav.dagpenger.doh.slack
 
-import com.fasterxml.jackson.databind.SerializationFeature
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.slf4j.LoggerFactory
+import tools.jackson.module.kotlin.jacksonMapperBuilder
 import java.io.IOException
 import java.net.URI
 import java.net.http.HttpClient
@@ -25,10 +23,7 @@ internal class SlackClient(
     private companion object {
         private val tjenestekall = LoggerFactory.getLogger("tjenestekall")
         private val log = LoggerFactory.getLogger(SlackClient::class.java)
-        private val objectMapper =
-            jacksonObjectMapper()
-                .registerModule(JavaTimeModule())
-                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+        private val objectMapper = jacksonMapperBuilder().build()
     }
 
     fun postMessage(
