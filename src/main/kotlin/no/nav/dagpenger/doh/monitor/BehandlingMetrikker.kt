@@ -17,7 +17,7 @@ object BehandlingMetrikker {
             .builder()
             .name("dp_behandling_vedtak")
             .help("Behandlinger som fører til fattet vedtak")
-            .labelNames("utfall", "automatisk")
+            .labelNames("utfall", "automatisk", "hendelseType")
             .register()
 
     val behandlingAvbruttCounter =

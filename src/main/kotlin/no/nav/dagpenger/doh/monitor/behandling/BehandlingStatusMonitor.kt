@@ -64,9 +64,15 @@ internal class BehandlingStatusMonitor(
             val status =
                 when (eventName) {
                     "behandling_avbrutt" -> Status.BEHANDLING_AVBRUTT
-                    "forslag_til_behandlingsresultat" -> return // Vi vil bare telle, ikke poste Slack-melding
+
+                    "forslag_til_behandlingsresultat" -> return
+
+                    // Vi vil bare telle, ikke poste Slack-melding
                     "behandlingsresultat" -> Status.VEDTAK_FATTET
-                    "behandling_opprettet" -> return // Vi vil bare telle, ikke poste Slack-melding
+
+                    "behandling_opprettet" -> return
+
+                    // Vi vil bare telle, ikke poste Slack-melding
                     else -> return
                 }
 
@@ -91,7 +97,7 @@ internal class BehandlingStatusMonitor(
 
             if (førteTil != null && automatisk != null) {
                 val automatisering = if (automatisk) "Automatisk" else "Manuell"
-                behandlingVedtakCounter.labelValues(førteTil, automatisering).inc()
+                behandlingVedtakCounter.labelValues(førteTil, automatisering, behandletHendelse.type).inc()
             }
         }
     }

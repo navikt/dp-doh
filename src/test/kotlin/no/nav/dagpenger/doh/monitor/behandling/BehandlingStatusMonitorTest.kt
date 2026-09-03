@@ -46,7 +46,7 @@ class BehandlingStatusMonitorTest {
             )
         }
 
-        assertEquals(Metrikker.behandlingVedtak(førteTil = "Avslag", automatisering = false), 1.0)
+        assertEquals(Metrikker.behandlingVedtak(førteTil = "Avslag", automatisering = false, "Søknad"), 1.0)
     }
 
     @Test
@@ -70,7 +70,7 @@ class BehandlingStatusMonitorTest {
             )
         }
 
-        assertEquals(Metrikker.behandlingVedtak(førteTil = "Innvilgelse", automatisering = false), 1.0)
+        assertEquals(Metrikker.behandlingVedtak(førteTil = "Innvilgelse", automatisering = false, "Søknad"), 1.0)
     }
 
     @Test
@@ -149,9 +149,10 @@ class BehandlingStatusMonitorTest {
         fun behandlingVedtak(
             førteTil: String,
             automatisering: Boolean,
+            hendelseType: String,
         ): Double =
             behandlingVedtakCounter
-                .labelValues(førteTil, if (automatisering) "Automatisk" else "Manuell")
+                .labelValues(førteTil, if (automatisering) "Automatisk" else "Manuell", hendelseType)
                 .get()
     }
 }
