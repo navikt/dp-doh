@@ -54,7 +54,7 @@ jobs:
         with:
           team: teamdagpenger
       - name: Attest and sign image
-        uses: nais/attest-sign@v2.0.17
+        uses: nais/attest-sign@v2.0.18
         with:
           image_ref: ${{ needs.build.outputs.image }}
 
