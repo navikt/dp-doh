@@ -12,8 +12,10 @@ import no.nav.dagpenger.doh.slack.SlackClient
 
 private val logger = KotlinLogging.logger { }
 
-internal class SaksbehandlingAlertMonitor(rapidsConnection: RapidsConnection, private val slackClient: SlackClient) :
-    River.PacketListener {
+internal class SaksbehandlingAlertMonitor(
+    rapidsConnection: RapidsConnection,
+    private val slackClient: SlackClient,
+) : River.PacketListener {
     init {
         River(rapidsConnection)
             .apply {

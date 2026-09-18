@@ -8,4 +8,8 @@ interface SlackTrådRepository {
     fun lagreTråd(slackTråd: SlackTråd)
 }
 
-data class SlackTråd(val søknadId: String, val threadTs: String, val opprettet: LocalDateTime = LocalDateTime.now())
+data class SlackTråd(
+    val søknadId: String,
+    val threadTs: String,
+    val opprettet: LocalDateTime = LocalDateTime.now(),
+)
