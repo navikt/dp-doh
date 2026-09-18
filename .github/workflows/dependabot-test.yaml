@@ -1,9 +1,11 @@
 name: Test Dependabot PRs
 
 on:
+  merge_group: 
   push:
     branches:
       - 'dependabot/**'
+      - 'renovate/**'
 
 jobs:
   # Denne matches mot required checks som trigger automerge av Dependabot PRs. Endrer du her må du også endre i https://github.com/navikt/dp-auth/settings/branches
