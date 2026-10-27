@@ -46,8 +46,14 @@ internal class SaksbehandlingAlertMonitor(
             val text = "Saksbehandling Alert: $alertType\n$feilMelding\n$utvidetFeilMelding"
             logger.error { text }
             slackClient.postMessage(
-                text = text,
+                text = text + tagger(alertType),
             )
         }
     }
+
+    private fun tagger(alertType: String): String =
+        when (alertType) {
+            "IDENTENDRING_FOR_SAK" -> "\n<!subteam^S0BP1MHDRT7>" // @dp-kvintett
+            else -> ""
+        }
 }
