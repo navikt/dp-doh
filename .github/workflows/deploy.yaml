@@ -61,7 +61,7 @@ jobs:
 
   deploy-dev:
     name: Deploy to dev
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/identendring-tagg'
     needs: [ build ]
     runs-on: ubuntu-latest
     environment: dev-gcp
