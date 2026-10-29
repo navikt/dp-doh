@@ -3,7 +3,6 @@ package no.nav.dagpenger.doh
 import no.nav.dagpenger.doh.Configuration.arenaSinkBot
 import no.nav.dagpenger.doh.Configuration.kontrollbehovBot
 import no.nav.dagpenger.doh.Configuration.publiserArenaVedtak
-import no.nav.dagpenger.doh.Configuration.quizMalBot
 import no.nav.dagpenger.doh.Configuration.rampBot
 import no.nav.dagpenger.doh.Configuration.slackAlertClient
 import no.nav.dagpenger.doh.Configuration.slackBotClient
@@ -28,7 +27,6 @@ import no.nav.dagpenger.doh.monitor.behandling.UtbetalingFeilUtbetalingsdagerMon
 import no.nav.dagpenger.doh.monitor.behandling.UtbetalingHengerMonitor
 import no.nav.dagpenger.doh.monitor.behandling.UtbetalingStatusMonitor
 import no.nav.dagpenger.doh.monitor.behandling.VurderAvklaringMottak
-import no.nav.dagpenger.doh.monitor.quiz.NyQuizMalMonitor
 import no.nav.helse.rapids_rivers.RapidApplication
 import java.time.Duration
 import kotlin.time.ExperimentalTime
@@ -40,7 +38,6 @@ fun main() {
             Configuration.asMap(),
         ).apply {
             AppStateMonitor(this, slackAlertClient, Duration.ofMinutes(5))
-            NyQuizMalMonitor(this, quizMalBot)
             BehovUtenLøsningMonitor(this, slackAlertClient)
             BehandlingPåminnelseMonitor(this, slackAlertClient)
             VurderAvklaringMottak(

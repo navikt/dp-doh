@@ -10,7 +10,6 @@ import com.slack.api.Slack
 import com.slack.api.methods.MethodsClient
 import no.nav.dagpenger.doh.slack.ArenasinkBot
 import no.nav.dagpenger.doh.slack.InMemorySlackTrådRepository
-import no.nav.dagpenger.doh.slack.QuizMalBot
 import no.nav.dagpenger.doh.slack.RampBot
 import no.nav.dagpenger.doh.slack.SlackClient
 import no.nav.dagpenger.doh.slack.VedtakBot
@@ -23,10 +22,6 @@ internal object Configuration {
 
     val rampBotSlackChannelId: String? by lazy {
         properties.getOrNull(Key("DP_SLACKER_RAMP_CHANNEL_ID", stringType))
-    }
-
-    val quizMalSlackChannelId by lazy {
-        properties[Key("dp.slacker.mal.channel.id", stringType)]
     }
 
     val vedtakBotSlackChannelId: String? by lazy {
@@ -116,10 +111,6 @@ internal object Configuration {
                 )
             }
         }
-    }
-
-    val quizMalBot: QuizMalBot? by lazy {
-        slackBotClient?.let { QuizMalBot(it, quizMalSlackChannelId) }
     }
 
     val rampBot: RampBot? by lazy {
