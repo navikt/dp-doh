@@ -35,10 +35,10 @@ internal class BehandlingEndretTilstandMonitor(
         metadata: MessageMetadata,
         meterRegistry: MeterRegistry,
     ) {
-        val behandlingId = packet["behandlingId"].asText()
-        val forrigeTilstand = packet["forrigeTilstand"].asText()
-        val gjeldendeTilstand = packet["gjeldendeTilstand"].asText()
-        val tidBrukt = packet["tidBrukt"].asText().let { Duration.parse(it) }
+        val behandlingId = packet["behandlingId"].asString()
+        val forrigeTilstand = packet["forrigeTilstand"].asString()
+        val gjeldendeTilstand = packet["gjeldendeTilstand"].asString()
+        val tidBrukt = packet["tidBrukt"].asString().let { Duration.parse(it) }
 
         withLoggingContext(
             "behandlingId" to behandlingId,

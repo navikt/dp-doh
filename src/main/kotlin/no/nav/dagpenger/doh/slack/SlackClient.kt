@@ -47,7 +47,7 @@ internal class SlackClient(
 
         return "https://slack.com/api/chat.postMessage"
             .post(objectMapper.writeValueAsString(parameters))
-            ?.let { objectMapper.readTree(it)["ts"]?.asText() }
+            ?.let { objectMapper.readTree(it)["ts"]?.asString() }
     }
 
     private fun String.post(jsonPayload: String): String? {

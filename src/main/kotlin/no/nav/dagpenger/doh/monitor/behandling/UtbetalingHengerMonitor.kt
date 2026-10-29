@@ -44,8 +44,8 @@ internal class UtbetalingHengerMonitor(
         metadata: MessageMetadata,
         meterRegistry: MeterRegistry,
     ) {
-        val behandlingId = packet["behandlingId"].asText()
-        val sakId = packet["sakId"].asText()
+        val behandlingId = packet["behandlingId"].asString()
+        val sakId = packet["sakId"].asString()
         val ventetidMinutter = packet["ventetidMinutter"].asLong()
         val antallVarslerSåLangt = packet["antallVarslerSåLangt"].asInt()
 

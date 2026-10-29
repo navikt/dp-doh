@@ -60,7 +60,7 @@ internal class BehovUtenLøsningMonitor(
         metadata: MessageMetadata,
         meterRegistry: MeterRegistry,
     ) {
-        packet["mangler"].toList().map(JsonNode::asText).forEach {
+        packet["mangler"].toList().map(JsonNode::asString).forEach {
             uløsteBehovCounter.labelValues(it).inc()
         }
 
@@ -68,10 +68,10 @@ internal class BehovUtenLøsningMonitor(
             String.format(
                 "Behov <%s|%s> mottok aldri løsning for %s innen %s",
                 OpenSearch.createUrl(
-                    String.format("\"%s\"", packet["behov_id"].asText()),
+                    String.format("\"%s\"", packet["behov_id"].asString()),
                     packet["behov_opprettet"].asLocalDateTime().minusHours(1),
                 ),
-                packet["behov_id"].asText(),
+                packet["behov_id"].asString(),
                 packet["mangler"].joinToString(),
                 humanReadableTime(
                     ChronoUnit.SECONDS.between(

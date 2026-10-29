@@ -34,7 +34,7 @@ internal class KorrigertMeldekortMonitor(
     ) {
         val fraOgMed = packet["periode"]["fraOgMed"].asLocalDate()
         val tilOgMed = packet["periode"]["tilOgMed"].asLocalDate()
-        val korrigeringAv = packet["originalMeldekortId"].asText()
+        val korrigeringAv = packet["originalMeldekortId"].asString()
         val melding = "Mottok korrigert av meldekort ($korrigeringAv) for perioden $fraOgMed -> $tilOgMed!"
 
         slackClient?.korrigertMeldekort(melding)

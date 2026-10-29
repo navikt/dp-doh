@@ -27,8 +27,8 @@ internal class SøknadPipelineMonitor(
         metadata: MessageMetadata,
         meterRegistry: MeterRegistry,
     ) {
-        val søknadId = packet["søknadId"].asText()
-        val mottatt = packet["mottatt"].asText()
+        val søknadId = packet["søknadId"].asString()
+        val mottatt = packet["mottatt"].asString()
         val antallVarsler = packet["antallVarsler"].asInt()
 
         val melding = "Søknad $søknadId (mottatt $mottatt) har ikke nådd behandling. Antall varsler: $antallVarsler"

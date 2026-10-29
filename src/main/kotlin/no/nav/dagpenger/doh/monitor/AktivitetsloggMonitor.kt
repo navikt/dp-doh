@@ -45,23 +45,23 @@ internal class AktivitetsloggMonitor(
         metadata: MessageMetadata,
         meterRegistry: MeterRegistry,
     ) {
-        val tilstand = packet["forrigeTilstand"].asText()
+        val tilstand = packet["forrigeTilstand"].asString()
         val harFlereFeil =
             packet["aktivitetslogg.aktiviteter"]
                 .takeIf(JsonNode::isArray)
-                ?.count { it["alvorlighetsgrad"].asText() in listOf("ERROR") }
+                ?.count { it["alvorlighetsgrad"].asString() in listOf("ERROR") }
                 .let {
                     it !== null && it > 1
                 }
 
         packet["aktivitetslogg.aktiviteter"]
             .takeIf(JsonNode::isArray)
-            ?.filter { it["alvorlighetsgrad"].asText() in listOf("WARN", "ERROR") }
+            ?.filter { it["alvorlighetsgrad"].asString() in listOf("WARN", "ERROR") }
             ?.onEach {
                 aktivitetCounter
                     .labelValues(
-                        it["alvorlighetsgrad"].asText(),
-                        it["melding"].asText(),
+                        it["alvorlighetsgrad"].asString(),
+                        it["melding"].asString(),
                         tilstand,
                         harFlereFeil.toString(),
                     ).inc()

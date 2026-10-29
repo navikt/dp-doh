@@ -150,13 +150,13 @@ internal class AppStateMonitor(
                 it["last_active_time"].asLocalDateTime().isBefore(grenseForVarsel)
             }.map {
                 Triple(
-                    it["app"].asText(),
+                    it["app"].asString(),
                     it["last_active_time"].asLocalDateTime(),
                     it["instances"]
                         .filter { instance -> instance.path("state").asInt(0) == 0 }
                         .map { instance ->
                             Pair(
-                                instance.path("instance").asText(),
+                                instance.path("instance").asString(),
                                 instance.path("last_active_time").asLocalDateTime(),
                             )
                         },

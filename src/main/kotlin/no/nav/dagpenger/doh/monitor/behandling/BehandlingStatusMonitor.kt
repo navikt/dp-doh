@@ -45,19 +45,19 @@ internal class BehandlingStatusMonitor(
         metadata: MessageMetadata,
         meterRegistry: MeterRegistry,
     ) {
-        val behandlingId = packet["behandlingId"].asText()
+        val behandlingId = packet["behandlingId"].asString()
 
         val behandletHendelse =
             BehandletHendelse(
-                id = packet["behandletHendelse"]["id"].asText(),
-                type = packet["behandletHendelse"]["type"].asText(),
+                id = packet["behandletHendelse"]["id"].asString(),
+                type = packet["behandletHendelse"]["type"].asString(),
             )
 
         withLoggingContext(
             "behandlingId" to behandlingId,
             behandletHendelse.type to behandletHendelse.id,
         ) {
-            val eventName = packet["@event_name"].asText()
+            val eventName = packet["@event_name"].asString()
             logger.info { "Vi har behandling med $eventName" + "(slackbot er konfiguert? ${vedtakBot != null})" }
             behandlingStatusCounter.labelValues(eventName.lowercase()).inc()
 
@@ -76,9 +76,9 @@ internal class BehandlingStatusMonitor(
                     else -> return
                 }
 
-            val førteTil = packet["førteTil"].takeUnless { it.isMissingOrNull() }?.asText()
+            val førteTil = packet["førteTil"].takeUnless { it.isMissingOrNull() }?.asString()
             val automatisk = packet["automatisk"].takeIf { automatisk -> automatisk.isBoolean }?.asBoolean()
-            val årsak = packet["årsak"].takeUnless { årsak -> årsak.isMissingNode }?.asText()
+            val årsak = packet["årsak"].takeUnless { årsak -> årsak.isMissingNode }?.asString()
 
             if (status == Status.BEHANDLING_AVBRUTT) {
                 behandlingAvbruttCounter.labelValues(årsak ?: "Ukjent").inc()

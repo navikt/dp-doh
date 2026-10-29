@@ -32,14 +32,14 @@ internal class UtbetalingFeilUtbetalingsdagerMonitor(
         metadata: MessageMetadata,
         meterRegistry: MeterRegistry,
     ) {
-        val behandlingId = packet["behandlingId"].asText()
+        val behandlingId = packet["behandlingId"].asString()
 
         withLoggingContext("behandlingId" to behandlingId) {
             val tekst = createSlackMessage(packet) ?: return
             logger.info { "$tekst (slackbot er konfiguert? ${slackClient != null})" }
             slackClient?.utbetalingStatus(
                 tekst = tekst,
-                eksternSakId = packet["eksternSakId"].asText(),
+                eksternSakId = packet["eksternSakId"].asString(),
                 behandlingId = behandlingId,
                 opprettet = packet["@opprettet"].asLocalDateTime(),
             )
@@ -47,15 +47,15 @@ internal class UtbetalingFeilUtbetalingsdagerMonitor(
     }
 
     private fun createSlackMessage(packet: JsonMessage): String {
-        val behandlingId = packet["behandlingId"].asText()
-        val sakId = packet["sakId"].asText()
-        val eksternSakId = packet["eksternSakId"].asText()
-        val eksternBehandlingId = packet["eksternBehandlingId"].asText()
+        val behandlingId = packet["behandlingId"].asString()
+        val sakId = packet["sakId"].asString()
+        val eksternSakId = packet["eksternSakId"].asString()
+        val eksternBehandlingId = packet["eksternBehandlingId"].asString()
 
         return """
         |${":alert: :alert: :alert: Utbetalingsdager stemmer ikke med behandling"}
-        |*Forventet dato:* ${packet["førsteUtbetalingsdag"].asText()}
-        |*Dato fra Hel Ved:* ${packet["førsteDagFraHelVed"].asText()}
+        |*Forventet dato:* ${packet["førsteUtbetalingsdag"].asString()}
+        |*Dato fra Hel Ved:* ${packet["førsteDagFraHelVed"].asString()}
         |*Behandling:* $behandlingId 
         | - Helved-ref: `$eksternBehandlingId`
         |*SakId:* $sakId 

@@ -41,9 +41,9 @@ internal class OpprettJournalpostFeiletMonitor(
         metadata: MessageMetadata,
         meterRegistry: MeterRegistry,
     ) {
-        val behovId = packet["behovId"].asText()
-        val søknadId = packet["søknadId"].asText()
-        val type = packet["type"].asText()
+        val behovId = packet["behovId"].asString()
+        val søknadId = packet["søknadId"].asString()
+        val type = packet["type"].asString()
 
         runBlocking {
             val loggURL =

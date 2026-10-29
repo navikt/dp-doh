@@ -32,8 +32,8 @@ internal class UtbetalingStatusMonitor(
         metadata: MessageMetadata,
         meterRegistry: MeterRegistry,
     ) {
-        val eventName = packet["@event_name"].asText()
-        val behandlingId = packet["behandlingId"].asText()
+        val eventName = packet["@event_name"].asString()
+        val behandlingId = packet["behandlingId"].asString()
 
         withLoggingContext("behandlingId" to behandlingId) {
             logger.info { "Mottok utbetaling hendelse: $eventName for behandlingId: $behandlingId" }
@@ -42,7 +42,7 @@ internal class UtbetalingStatusMonitor(
             logger.info { "$tekst (slackbot er konfiguert? ${slackClient != null})" }
             slackClient?.utbetalingStatus(
                 tekst = tekst,
-                eksternSakId = packet["eksternSakId"].asText(),
+                eksternSakId = packet["eksternSakId"].asString(),
                 behandlingId = behandlingId,
                 opprettet = packet["@opprettet"].asLocalDateTime(),
             )
@@ -53,12 +53,12 @@ internal class UtbetalingStatusMonitor(
         eventName: String,
         packet: JsonMessage,
     ): String? {
-        val behandlingId = packet["behandlingId"].asText()
-        val sakId = packet["sakId"].asText()
-        val eksternSakId = packet["eksternSakId"].asText()
-        val eksternBehandlingId = packet["eksternBehandlingId"].asText()
-        val behandletHendelseId = packet["behandletHendelseId"].asText()
-        val behandletHendelseType = packet["behandletHendelseType"].asText()
+        val behandlingId = packet["behandlingId"].asString()
+        val sakId = packet["sakId"].asString()
+        val eksternSakId = packet["eksternSakId"].asString()
+        val eksternBehandlingId = packet["eksternBehandlingId"].asString()
+        val behandletHendelseId = packet["behandletHendelseId"].asString()
+        val behandletHendelseType = packet["behandletHendelseType"].asString()
 
         val melding =
             when (eventName) {

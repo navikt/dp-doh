@@ -32,8 +32,8 @@ internal class BrukerHarMeldekortMedEndretMeldesyklusIArenaMonitor(
         metadata: MessageMetadata,
         meterRegistry: MeterRegistry,
     ) {
-        val referanseId = packet["referanseId"].asText()
-        val personId = packet["personId"].asText()
+        val referanseId = packet["referanseId"].asString()
+        val personId = packet["personId"].asString()
         logger.info { "Mottok bruker-har-meldekort-med-endret-meldesyklus-i-arena for referanseId=$referanseId personId=$personId" }
         rampBot?.postBrukerHarMeldekortMedEndretMeldesyklusIArena(referanseId = referanseId, personId = personId)
     }

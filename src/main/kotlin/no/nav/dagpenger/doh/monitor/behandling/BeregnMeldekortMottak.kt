@@ -32,8 +32,8 @@ internal class BeregnMeldekortMottak(
         metadata: MessageMetadata,
         meterRegistry: MeterRegistry,
     ) {
-        val meldekortId = packet["meldekortId"].asText()
-        val eksternMeldekortId = packet["eksternMeldekortId"].asText().takeIf { !it.isNullOrEmpty() }
+        val meldekortId = packet["meldekortId"].asString()
+        val eksternMeldekortId = packet["eksternMeldekortId"].asString().takeIf { !it.isNullOrEmpty() }
 
         val melding =
             """

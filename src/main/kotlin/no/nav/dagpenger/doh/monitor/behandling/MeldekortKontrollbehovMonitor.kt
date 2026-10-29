@@ -31,8 +31,8 @@ internal class MeldekortKontrollbehovMonitor(
         metadata: MessageMetadata,
         meterRegistry: MeterRegistry,
     ) {
-        val behandlingId = packet["behandlingId"].asText()
-        val behandletHendelseId = packet["behandletHendelseId"].asText()
+        val behandlingId = packet["behandlingId"].asString()
+        val behandletHendelseId = packet["behandletHendelseId"].asString()
         val begrunnelse = begrunnelse(packet)
 
         val melding =

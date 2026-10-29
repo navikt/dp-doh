@@ -38,9 +38,9 @@ internal class SaksbehandlingAlertMonitor(
         metadata: MessageMetadata,
         meterRegistry: MeterRegistry,
     ) {
-        val alertType = packet["alertType"].asText()
-        val feilMelding = packet["feilMelding"].asText()
-        val utvidetFeilMelding = packet["utvidetFeilMelding"].asText("")
+        val alertType = packet["alertType"].asString()
+        val feilMelding = packet["feilMelding"].asString()
+        val utvidetFeilMelding = packet["utvidetFeilMelding"].asString("")
 
         runBlocking {
             val text = "Saksbehandling Alert: $alertType\n$feilMelding\n$utvidetFeilMelding"

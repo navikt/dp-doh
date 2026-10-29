@@ -33,7 +33,7 @@ internal class BehandlingPåminnelseMonitor(
         metadata: MessageMetadata,
         meterRegistry: MeterRegistry,
     ) {
-        val behandlingId = packet["behandlingId"].asText()
+        val behandlingId = packet["behandlingId"].asString()
         val antallGangerUtsatt = packet["antallGangerUtsatt"].asInt()
         if (antallGangerUtsatt > 10) {
             val melding =
