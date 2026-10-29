@@ -8,7 +8,6 @@ import com.natpryce.konfig.overriding
 import com.natpryce.konfig.stringType
 import com.slack.api.Slack
 import com.slack.api.methods.MethodsClient
-import no.nav.dagpenger.doh.slack.ArenasinkBot
 import no.nav.dagpenger.doh.slack.InMemorySlackTrådRepository
 import no.nav.dagpenger.doh.slack.RampBot
 import no.nav.dagpenger.doh.slack.SlackClient
@@ -32,10 +31,6 @@ internal object Configuration {
         properties.getOrNull(Key("DP_SLACKER_BEREGNING_KONTROLLBEHOV_CHANNEL_ID", stringType))
     }
 
-    val publiserArenaVedtak by lazy {
-        properties[Key("DP_ARENA_SINK_OPPRETTET_MELDING", stringType)].toBoolean()
-    }
-
     val alertChannel by lazy { properties[Key("DP_SLACKER_ALERT_CHANNEL_ID", stringType)] }
 
     private val defaultProperties =
@@ -45,7 +40,6 @@ internal object Configuration {
                 "KAFKA_RAPID_TOPIC" to "teamdagpenger.rapid.v1",
                 "KAFKA_RESET_POLICY" to "latest",
                 "HTTP_PORT" to "8080",
-                "DP_ARENA_SINK_OPPRETTET_MELDING" to "true",
                 "DP_SLACKER_STSB_CHANNEL_ID" to "C0823NK0PNW",
             ),
         )
@@ -93,18 +87,6 @@ internal object Configuration {
         slackBotClient?.let { slackBotClient ->
             beregningKontrollbehovSlackChannelId?.let {
                 VedtakBot(
-                    slackBotClient,
-                    it,
-                    slackTrådRepository,
-                )
-            }
-        }
-    }
-
-    val arenaSinkBot by lazy {
-        slackBotClient?.let { slackBotClient ->
-            vedtakBotSlackChannelId?.let {
-                ArenasinkBot(
                     slackBotClient,
                     it,
                     slackTrådRepository,

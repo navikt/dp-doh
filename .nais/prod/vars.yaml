@@ -7,5 +7,3 @@ dp_slacker_beregning_kontrollbehov_channel_id: "C0B6MNGK801" #dagpenger-beregnin
 dp_slacker_ramp_channel_id: "C073D509YNQ" # say-ramp-dev
 DP_SLACKER_STSB_CHANNEL_ID: "C0823NK0PNW" #team-dagpenger-stsb-alert
 kafka_pool: nav-prod
-
-dp_arena_sink_opprettet_melding: false

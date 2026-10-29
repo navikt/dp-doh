@@ -1,8 +1,6 @@
 package no.nav.dagpenger.doh
 
-import no.nav.dagpenger.doh.Configuration.arenaSinkBot
 import no.nav.dagpenger.doh.Configuration.kontrollbehovBot
-import no.nav.dagpenger.doh.Configuration.publiserArenaVedtak
 import no.nav.dagpenger.doh.Configuration.rampBot
 import no.nav.dagpenger.doh.Configuration.slackAlertClient
 import no.nav.dagpenger.doh.Configuration.slackBotClient
@@ -14,8 +12,6 @@ import no.nav.dagpenger.doh.monitor.MeldingerUtenEnvelopeMonitor
 import no.nav.dagpenger.doh.monitor.OpprettJournalpostFeiletMonitor
 import no.nav.dagpenger.doh.monitor.SaksbehandlingAlertMonitor
 import no.nav.dagpenger.doh.monitor.SøknadPipelineMonitor
-import no.nav.dagpenger.doh.monitor.behandling.ArenasinkVedtakFeiletMonitor
-import no.nav.dagpenger.doh.monitor.behandling.ArenasinkVedtakOpprettetMonitor
 import no.nav.dagpenger.doh.monitor.behandling.BehandlingEndretTilstandMonitor
 import no.nav.dagpenger.doh.monitor.behandling.BehandlingPåminnelseMonitor
 import no.nav.dagpenger.doh.monitor.behandling.BehandlingStatusMonitor
@@ -53,10 +49,6 @@ fun main() {
 
             BehandlingEndretTilstandMonitor(this)
             BehandlingStatusMonitor(this, vedtakBot)
-            if (publiserArenaVedtak) {
-                ArenasinkVedtakOpprettetMonitor(this, arenaSinkBot)
-            }
-            ArenasinkVedtakFeiletMonitor(this, arenaSinkBot)
             MeldingerUtenEnvelopeMonitor(this)
             SaksbehandlingAlertMonitor(this, Configuration.slackClient(stsbSlackAlertChannel))
 

@@ -7,5 +7,3 @@ dp_slacker_vedtak_channel_id: "C020LB2653N" #dp-behandlingslogg-dev
 dp_slacker_ramp_channel_id: "CSFNZC8KY" # team-dagpenger-alert-non-prod
 DP_SLACKER_STSB_CHANNEL_ID: "C081YG37202" #team-dagpenger-stsb-alert-dev
 kafka_pool: nav-dev
-
-dp_arena_sink_opprettet_melding: true
