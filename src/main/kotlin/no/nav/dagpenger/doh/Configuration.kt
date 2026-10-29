@@ -14,6 +14,7 @@ import no.nav.dagpenger.doh.slack.QuizMalBot
 import no.nav.dagpenger.doh.slack.RampBot
 import no.nav.dagpenger.doh.slack.SlackClient
 import no.nav.dagpenger.doh.slack.VedtakBot
+import kotlin.lazy
 
 internal object Configuration {
     val stsbSlackAlertChannel: String by lazy {
@@ -39,6 +40,8 @@ internal object Configuration {
     val publiserArenaVedtak by lazy {
         properties[Key("DP_ARENA_SINK_OPPRETTET_MELDING", stringType)].toBoolean()
     }
+
+    val alertChannel by lazy { properties[Key("DP_SLACKER_ALERT_CHANNEL_ID", stringType)] }
 
     private val defaultProperties =
         ConfigurationMap(
@@ -69,7 +72,7 @@ internal object Configuration {
         slackToken?.let {
             SlackClient(
                 accessToken = it,
-                channel = properties[Key("DP_SLACKER_ALERT_CHANNEL_ID", stringType)],
+                channel = alertChannel,
             )
         }
     }

@@ -6,6 +6,7 @@ import no.nav.dagpenger.doh.Configuration.publiserArenaVedtak
 import no.nav.dagpenger.doh.Configuration.quizMalBot
 import no.nav.dagpenger.doh.Configuration.rampBot
 import no.nav.dagpenger.doh.Configuration.slackAlertClient
+import no.nav.dagpenger.doh.Configuration.slackBotClient
 import no.nav.dagpenger.doh.Configuration.stsbSlackAlertChannel
 import no.nav.dagpenger.doh.Configuration.vedtakBot
 import no.nav.dagpenger.doh.monitor.AppStateMonitor
@@ -22,9 +23,11 @@ import no.nav.dagpenger.doh.monitor.behandling.BehandlingStatusMonitor
 import no.nav.dagpenger.doh.monitor.behandling.BeregnMeldekortMottak
 import no.nav.dagpenger.doh.monitor.behandling.BrukerHarMeldekortMedEndretMeldesyklusIArenaMonitor
 import no.nav.dagpenger.doh.monitor.behandling.MeldekortKontrollbehovMonitor
+import no.nav.dagpenger.doh.monitor.behandling.RegelKjøringLoopSlackBot
 import no.nav.dagpenger.doh.monitor.behandling.UtbetalingFeilUtbetalingsdagerMonitor
 import no.nav.dagpenger.doh.monitor.behandling.UtbetalingHengerMonitor
 import no.nav.dagpenger.doh.monitor.behandling.UtbetalingStatusMonitor
+import no.nav.dagpenger.doh.monitor.behandling.VurderAvklaringMottak
 import no.nav.dagpenger.doh.monitor.quiz.NyQuizMalMonitor
 import no.nav.helse.rapids_rivers.RapidApplication
 import java.time.Duration
@@ -40,6 +43,16 @@ fun main() {
             NyQuizMalMonitor(this, quizMalBot)
             BehovUtenLøsningMonitor(this, slackAlertClient)
             BehandlingPåminnelseMonitor(this, slackAlertClient)
+            VurderAvklaringMottak(
+                this,
+                regelKjøringLoopSlackBot =
+                    slackBotClient?.let {
+                        RegelKjøringLoopSlackBot(
+                            it,
+                            Configuration.alertChannel,
+                        )
+                    },
+            )
 
             BehandlingEndretTilstandMonitor(this)
             BehandlingStatusMonitor(this, vedtakBot)
