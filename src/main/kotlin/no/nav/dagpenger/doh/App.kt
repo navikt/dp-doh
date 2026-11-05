@@ -40,11 +40,6 @@ fun main() {
                             "shutdownGracePeriod=$shutdownGracePeriod, shutdownTimeout=$shutdownTimeout, " +
                             "connectionIdleTimeoutSeconds=$connectionIdleTimeoutSeconds",
                     )
-                    println("Default parallelism ≈ max(2, cpus) = ${maxOf(2, Runtime.getRuntime().availableProcessors())}")
-                    println("IO parallelism = ${System.getProperty("kotlinx.coroutines.io.parallelism") ?: "default (max(64, cpus))"}")
-                    println(
-                        "Scheduler core pool = ${System.getProperty("kotlinx.coroutines.scheduler.core.pool.size") ?: "default (cpus)"}",
-                    )
                 }
             },
         ).apply {
