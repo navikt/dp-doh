@@ -32,16 +32,6 @@ fun main() {
     RapidApplication
         .create(
             Configuration.asMap(),
-            configure = { engine, rapid ->
-                with(engine.engineConfig) {
-                    println(
-                        "CIO config: connectionGroupSize=$connectionGroupSize, " +
-                            "workerGroupSize=$workerGroupSize, callGroupSize=$callGroupSize, " +
-                            "shutdownGracePeriod=$shutdownGracePeriod, shutdownTimeout=$shutdownTimeout, " +
-                            "connectionIdleTimeoutSeconds=$connectionIdleTimeoutSeconds",
-                    )
-                }
-            },
         ).apply {
             AppStateMonitor(this, slackAlertClient, Duration.ofMinutes(5))
             BehovUtenLøsningMonitor(this, slackAlertClient)
