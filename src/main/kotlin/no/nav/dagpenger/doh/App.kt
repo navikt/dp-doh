@@ -29,6 +29,8 @@ import kotlin.time.ExperimentalTime
 
 @ExperimentalTime
 fun main() {
+    val cpus = Runtime.getRuntime().availableProcessors()
+    println("Running with $cpus CPUs")
     RapidApplication
         .create(
             Configuration.asMap(),
